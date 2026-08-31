@@ -1,0 +1,80 @@
+{
+  "title": "Pilih dunia visual SoonWiki",
+  "question": "Arah mana yang paling terasa seperti arsip komunitas yang hidup, modern, dan membanggakan—bukan direktori korporat?",
+  "options": [
+    {
+      "id": "atlas-perjalanan",
+      "label": "Atlas Perjalanan",
+      "kicker": "THE ROLL",
+      "lineage": "Wayfinding transportasi publik Indonesia × atlas editorial",
+      "thesis": "Setiap Soonie menjadi simpul perjalanan; pencarian terasa seperti memilih tujuan berikutnya.",
+      "palette": [
+        "#F3ECDD",
+        "#123126",
+        "#EF3F2B",
+        "#1749D1"
+      ],
+      "materials": [
+        "enamel signage",
+        "route lines",
+        "warm paper",
+        "editorial portraits"
+      ],
+      "viewport": "Hero pencarian membuka peta perjalanan yang menghubungkan wajah, perusahaan, expertise, dan batch.",
+      "risk": "Metafora perjalanan bisa terasa terlalu infrastruktural jika portrait dan cerita tidak tetap dominan.",
+      "comp": ".impeccable/mocks/decision/atlas-perjalanan.png"
+    },
+    {
+      "id": "lembar-kontak-redaksi",
+      "label": "Lembar Kontak Redaksi",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "Contact sheet fotojurnalistik × majalah Minggu × yearbook hidup",
+      "thesis": "Komunitas tampil sebagai lembar kontak manusia, dengan caption yang membuka perjalanan dan karya mereka.",
+      "palette": [
+        "#F1EBDD",
+        "#161616",
+        "#2045B8",
+        "#EB5428"
+      ],
+      "materials": [
+        "newsprint",
+        "contact sheets",
+        "caption strips",
+        "documentary portraits"
+      ],
+      "viewport": "Headline editorial dan pencarian mengantar langsung ke contact sheet portrait yang bisa digeser dan dibuka.",
+      "risk": "Bahasa editorialnya familiar; tanpa interaction grammar yang disiplin, ia dapat terasa seperti portfolio fotografi.",
+      "comp": ".impeccable/mocks/decision/lembar-kontak-redaksi.png"
+    }
+  ],
+  "reroll": {
+    "registers": [
+      "safer",
+      "bolder"
+    ]
+  },
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  },
+  "canon": true,
+  "canonCard": {
+    "label": "Direktori Modern",
+    "thesis": "Pola directory yang langsung dikenali, dieksekusi dengan rapi, hangat, dan mudah digunakan.",
+    "palette": [
+      "#FCFAF7",
+      "#242720",
+      "#CC6347",
+      "#A6B79B"
+    ],
+    "materials": [
+      "clean grid",
+      "soft borders",
+      "portrait cards"
+    ],
+    "viewport": "Hero terpusat, pencarian besar, statistik ringkas, lalu grid profil dua kolom.",
+    "risk": "Aman dan jelas, tetapi paling mudah tertukar dengan directory komunitas lain.",
+    "comp": ".impeccable/mocks/decision/direktori-modern.png"
+  },
+  "steer": true
+}

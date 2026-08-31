@@ -1,0 +1,42 @@
+{
+  "title": "Kunci komposisi homepage",
+  "question": "Ketiganya memakai dunia Lembar Kontak Redaksi. Pilih struktur yang paling kuat untuk menjadi spatial contract implementasi.",
+  "options": [
+    {
+      "id": "contact-sheet-utama",
+      "label": "Contact Sheet Utama",
+      "kicker": "ORIGINAL PICK",
+      "lineage": "Headline editorial → pencarian → contact sheet komunitas",
+      "thesis": "Komunitas langsung menjadi hero melalui banyak wajah dan caption yang setara.",
+      "palette": ["#F1EBDD", "#161616", "#2045B8", "#EB5428"],
+      "materials": ["newsprint", "contact sheet", "caption strips", "documentary portraits"],
+      "viewport": "Headline besar dan pencarian membuka grid portrait padat, lalu cerita achievement masuk pada fold berikutnya.",
+      "risk": "Paling seimbang, tetapi focal point tersebar karena banyak wajah mendapat bobot hampir sama.",
+      "comp": ".impeccable/mocks/decision/lembar-kontak-redaksi.png"
+    },
+    {
+      "id": "filmstrip-cobalt",
+      "label": "Filmstrip Cobalt",
+      "kicker": "MOTION-LED",
+      "lineage": "Bidang editorial cobalt → search desk → filmstrip interaktif",
+      "thesis": "Gerakan swipe dan frame counter menjadi cara utama menjelajahi komunitas.",
+      "palette": ["#F1EBDD", "#101010", "#123DB5", "#F05A28"],
+      "materials": ["cobalt field", "filmstrip", "registration marks", "documentary portraits"],
+      "viewport": "Bidang cobalt mengunci identitas, lalu filmstrip horizontal memenuhi lebar dan mengundang swipe.",
+      "risk": "Bidang merek sangat kuat; perlu dijaga agar wordmark besar tidak mengalahkan pencarian dan manusia.",
+      "comp": ".impeccable/mocks/homepage-contact-sheet-b.png"
+    },
+    {
+      "id": "editorial-lead",
+      "label": "Editorial Lead",
+      "kicker": "PEOPLE-FIRST",
+      "lineage": "Feature story manusia → caption search → vertical contact index",
+      "thesis": "Satu perjalanan manusia membuka pintu menuju seluruh komunitas.",
+      "palette": ["#F1EBDD", "#151515", "#2045B8", "#E95124"],
+      "materials": ["newsprint", "feature portrait", "vertical contact index", "caption bar"],
+      "viewport": "Satu portrait memenuhi setengah fold, pencarian menyeberangi foto, dan profil lain menjadi indeks vertikal.",
+      "risk": "Paling emosional, tetapi homepage bisa terasa terlalu bergantung pada kualitas featured profile dan fotonya.",
+      "comp": ".impeccable/mocks/homepage-contact-sheet-c.png"
+    }
+  ]
+}
