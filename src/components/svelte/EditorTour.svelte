@@ -127,8 +127,14 @@
       return;
     }
 
-    // Scroll into view smoothly
-    target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    const isMobile = window.innerWidth < 768;
+
+    // Scroll into view smoothly (center on mobile to provide maximum viewing clarity)
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: isMobile ? 'center' : 'nearest',
+      inline: 'nearest',
+    });
 
     // Wait a brief tick for smooth scroll to initiate
     const rect = target.getBoundingClientRect();
@@ -140,11 +146,28 @@
 
     targetRect = { x, y, width, height };
 
-    // Calculate popover coordinates
+    if (isMobile) {
+      // Mobile positioning: Dock dynamically to top or bottom depending on target position
+      // If target center is in bottom half of viewport, dock card at TOP
+      // If target center is in top half of viewport, dock card at BOTTOM
+      const targetMidY = y + height / 2;
+      const placeAtTop = targetMidY > window.innerHeight * 0.48;
+
+      if (placeAtTop) {
+        popoverStyle =
+          'top: calc(env(safe-area-inset-top, 0px) + 12px); bottom: auto; left: 12px; right: 12px; width: auto; max-width: calc(100vw - 24px);';
+      } else {
+        popoverStyle =
+          'bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); top: auto; left: 12px; right: 12px; width: auto; max-width: calc(100vw - 24px);';
+      }
+      return;
+    }
+
+    // Calculate desktop popover coordinates
     const popoverWidth = Math.min(window.innerWidth - 32, 380);
     const placement = currentStep.placement || 'auto';
+    const estimatedHeight = 280;
 
-    // Decide vertical position
     let top: number;
     let left: number;
 
@@ -152,34 +175,28 @@
     const spaceAbove = y;
     const spaceRight = window.innerWidth - (x + width);
 
-    if (window.innerWidth < 768) {
-      // Mobile positioning: center or pin to bottom/top
-      if (spaceBelow > 260) {
-        top = y + height + 16;
-      } else if (spaceAbove > 260) {
-        top = Math.max(16, y - 260);
-      } else {
-        top = window.innerHeight - 270;
-      }
-      left = (window.innerWidth - popoverWidth) / 2;
-    } else if (placement === 'left' && x > popoverWidth + 24) {
-      top = Math.max(20, Math.min(window.innerHeight - 280, y + 20));
+    if (placement === 'left' && x > popoverWidth + 24) {
+      top = Math.max(16, Math.min(window.innerHeight - estimatedHeight - 16, y));
       left = x - popoverWidth - 20;
     } else if (placement === 'right' && spaceRight > popoverWidth + 24) {
-      top = Math.max(20, Math.min(window.innerHeight - 280, y + 20));
+      top = Math.max(16, Math.min(window.innerHeight - estimatedHeight - 16, y));
       left = x + width + 20;
-    } else if (spaceBelow > 240) {
+    } else if (spaceBelow > estimatedHeight) {
       top = y + height + 16;
       left = Math.max(16, Math.min(window.innerWidth - popoverWidth - 16, x));
-    } else if (spaceAbove > 240) {
-      top = Math.max(16, y - 250);
+    } else if (spaceAbove > estimatedHeight) {
+      top = Math.max(16, y - estimatedHeight - 16);
       left = Math.max(16, Math.min(window.innerWidth - popoverWidth - 16, x));
     } else {
-      top = Math.max(16, (window.innerHeight - 260) / 2);
+      top = Math.max(16, (window.innerHeight - estimatedHeight) / 2);
       left = Math.max(16, (window.innerWidth - popoverWidth) / 2);
     }
 
-    popoverStyle = `top: ${Math.round(top)}px; left: ${Math.round(left)}px; width: ${popoverWidth}px;`;
+    // Strict boundary clamping so popover NEVER overflows viewport
+    top = Math.max(16, Math.min(window.innerHeight - estimatedHeight - 16, top));
+    left = Math.max(16, Math.min(window.innerWidth - popoverWidth - 16, left));
+
+    popoverStyle = `top: ${Math.round(top)}px; bottom: auto; left: ${Math.round(left)}px; width: ${popoverWidth}px;`;
   }
 
   async function goToStep(index: number) {
@@ -587,10 +604,15 @@
       0 20px 48px -10px rgba(0, 0, 0, 0.35),
       0 4px 16px -2px rgba(0, 0, 0, 0.1);
     display: grid;
-    gap: 0.85rem;
-    padding: 1.35rem;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    max-height: min(420px, 80dvh);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
     transition:
       top 250ms cubic-bezier(0.16, 1, 0.3, 1),
+      bottom 250ms cubic-bezier(0.16, 1, 0.3, 1),
       left 250ms cubic-bezier(0.16, 1, 0.3, 1),
       opacity 200ms ease;
     animation: popIn 200ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -802,5 +824,56 @@
   .btn-popover-next:hover {
     background: var(--accent-strong);
     transform: translateY(-1px);
+  }
+
+  @media (max-width: 767px) {
+    .tour-popover {
+      padding: 0.95rem 1.15rem;
+      border-radius: 1.1rem;
+      gap: 0.6rem;
+      max-height: min(340px, 58dvh);
+      box-shadow:
+        0 16px 40px -8px rgba(0, 0, 0, 0.45),
+        0 2px 10px -2px rgba(0, 0, 0, 0.15);
+    }
+
+    .popover-badge {
+      font-size: 0.68rem;
+      padding: 0.2rem 0.55rem;
+    }
+
+    .popover-title {
+      font-size: 0.96rem;
+    }
+
+    .popover-desc {
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .popover-tip {
+      padding: 0.45rem 0.65rem;
+      gap: 0.2rem;
+    }
+
+    .popover-tip p {
+      font-size: 0.76rem;
+      line-height: 1.35;
+    }
+
+    .popover-footer {
+      padding-top: 0.6rem;
+    }
+
+    .btn-popover-next {
+      min-height: 42px;
+      padding: 0.5rem 0.95rem;
+    }
+
+    .btn-popover-back,
+    .btn-popover-skip {
+      min-height: 42px;
+      padding: 0.45rem 0.75rem;
+    }
   }
 </style>
