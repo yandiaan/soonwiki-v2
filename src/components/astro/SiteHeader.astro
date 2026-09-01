@@ -26,19 +26,23 @@ const navItems = [
       </span>
     </a>
 
-    <!-- Center Navigation Links (Pill Dock) -->
+    <!-- Center Navigation Links with Sliding Active Pill -->
     <nav aria-label="Navigasi utama" class="desktop-nav">
-      <ul class="nav-pill-list">
+      <ul class="nav-pill-list" id="nav-pill-list">
+        <!-- Floating Sliding Background Indicator Pill -->
+        <li class="nav-indicator" id="nav-indicator" aria-hidden="true"></li>
+
         {
           navItems.map((link) => {
             const isActive =
               currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
             return (
-              <li>
+              <li class="nav-item">
                 <a
                   href={link.href}
                   class:list={['nav-link', { 'is-active': isActive }]}
                   aria-current={isActive ? 'page' : undefined}
+                  data-nav-item
                 >
                   <span>{link.label}</span>
                 </a>
@@ -49,35 +53,8 @@ const navItems = [
       </ul>
     </nav>
 
-    <!-- Right Controls: Surprise Action & Auth CTA -->
+    <!-- Right Controls: Auth CTA -->
     <div class="site-header__actions">
-      <!-- Surprise Me Action: Kisah Acak -->
-      <a
-        href={paths.randomJourney()}
-        class="surprise-btn"
-        title="Buka kisah alumni secara acak (Elemen Kejutan)"
-        aria-label="Kisah Acak"
-      >
-        <svg
-          class="surprise-icon"
-          viewBox="0 0 24 24"
-          width="16"
-          height="16"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path
-            d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"
-          ></path>
-        </svg>
-        <span>Kisah Acak</span>
-      </a>
-
-      <!-- Login CTA -->
       <a
         href={paths.login()}
         class:list={['login-btn', { 'is-active': currentPath === paths.login() }]}
@@ -90,10 +67,12 @@ const navItems = [
 </header>
 
 <script>
-  function setupHeaderScroll() {
+  function setupHeader() {
     const header = document.getElementById('site-header');
-    if (!header) return;
+    const list = document.getElementById('nav-pill-list');
+    const indicator = document.getElementById('nav-indicator');
 
+    // 1. Scroll-Aware Island Compression
     let ticking = false;
     function onScroll() {
       if (!ticking) {
@@ -108,13 +87,60 @@ const navItems = [
         ticking = true;
       }
     }
-
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+
+    // 2. Sliding Active Pill Motion Engine
+    if (!list || !indicator) return;
+
+    function moveIndicatorTo(targetEl: HTMLElement | null, animate = true) {
+      if (!targetEl || !indicator || !list) return;
+      const listRect = list.getBoundingClientRect();
+      const targetRect = targetEl.getBoundingClientRect();
+
+      const left = targetRect.left - listRect.left;
+      const width = targetRect.width;
+
+      if (!animate) {
+        indicator.style.transition = 'none';
+      } else {
+        indicator.style.transition =
+          'transform 350ms cubic-bezier(0.19, 1, 0.22, 1), width 350ms cubic-bezier(0.19, 1, 0.22, 1), opacity 200ms ease';
+      }
+
+      indicator.style.opacity = '1';
+      indicator.style.transform = `translate3d(${left}px, 0, 0)`;
+      indicator.style.width = `${width}px`;
+    }
+
+    const activeLink =
+      list.querySelector<HTMLElement>('.nav-link.is-active') ||
+      list.querySelector<HTMLElement>('.nav-link');
+
+    // Initial position without jump
+    moveIndicatorTo(activeLink, false);
+    setTimeout(() => {
+      moveIndicatorTo(activeLink, true);
+    }, 50);
+
+    // Hover & focus gliding
+    const links = list.querySelectorAll<HTMLElement>('[data-nav-item]');
+    links.forEach((link) => {
+      link.addEventListener('mouseenter', () => {
+        moveIndicatorTo(link, true);
+      });
+      link.addEventListener('focus', () => {
+        moveIndicatorTo(link, true);
+      });
+    });
+
+    list.addEventListener('mouseleave', () => {
+      moveIndicatorTo(activeLink, true);
+    });
   }
 
-  setupHeaderScroll();
-  document.addEventListener('astro:page-load', setupHeaderScroll);
+  setupHeader();
+  document.addEventListener('astro:page-load', setupHeader);
 </script>
 
 <style>
@@ -163,7 +189,7 @@ const navItems = [
   }
 
   .site-header[data-scrolled='true'] .site-header__container {
-    max-width: min(100%, 64rem);
+    max-width: min(100%, 54rem);
     background: color-mix(in srgb, var(--surface) 88%, transparent);
     backdrop-filter: blur(28px) saturate(1.6);
     -webkit-backdrop-filter: blur(28px) saturate(1.6);
@@ -232,15 +258,41 @@ const navItems = [
   }
 
   /* Desktop Navigation Pills */
-  .desktop-nav ul {
+  .desktop-nav {
+    position: relative;
+  }
+
+  .nav-pill-list {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.25rem;
     margin: 0;
-    padding: 0.25rem 0.35rem;
+    padding: 0.25rem;
     border-radius: 9999px;
     background: color-mix(in srgb, var(--ink) 4%, transparent);
     list-style: none;
+  }
+
+  .nav-item {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Floating Active Indicator Pill */
+  .nav-indicator {
+    position: absolute;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    left: 0;
+    z-index: 1;
+    border-radius: 9999px;
+    background: var(--surface);
+    box-shadow:
+      0 2px 8px -1px rgb(0 0 0 / 0.08),
+      0 1px 2px 0 rgb(0 0 0 / 0.04);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .nav-link {
@@ -249,27 +301,18 @@ const navItems = [
     align-items: center;
     justify-content: center;
     min-height: 36px;
-    padding: 0.35rem 1.1rem;
+    padding: 0.35rem 1.15rem;
     border-radius: 9999px;
     color: var(--ink-soft);
     font-size: 0.88rem;
     font-weight: 700;
     text-decoration: none;
-    transition:
-      color 200ms ease,
-      background-color 200ms ease,
-      transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
+    transition: color 200ms ease;
   }
 
-  .nav-link:hover {
-    color: var(--ink);
-    background: color-mix(in srgb, var(--surface) 70%, transparent);
-  }
-
+  .nav-link:hover,
   .nav-link.is-active {
     color: var(--ink);
-    background: var(--surface);
-    box-shadow: 0 2px 8px -2px rgb(0 0 0 / 0.08);
   }
 
   /* Right Actions */
@@ -279,50 +322,13 @@ const navItems = [
     gap: 0.6rem;
   }
 
-  /* Surprise Button (Kisah Acak) */
-  .surprise-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    min-height: 38px;
-    padding: 0.4rem 0.95rem;
-    border-radius: 9999px;
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    color: var(--accent);
-    font-size: 0.84rem;
-    font-weight: 750;
-    text-decoration: none;
-    border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
-    transition:
-      transform 250ms cubic-bezier(0.19, 1, 0.22, 1),
-      background-color 200ms ease,
-      border-color 200ms ease,
-      box-shadow 250ms ease;
-  }
-
-  .surprise-btn:hover {
-    background: var(--accent);
-    color: var(--surface);
-    border-color: var(--accent);
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 8px 20px -4px color-mix(in srgb, var(--accent) 45%, transparent);
-  }
-
-  .surprise-btn:hover .surprise-icon {
-    transform: rotate(18deg) scale(1.15);
-  }
-
-  .surprise-icon {
-    transition: transform 300ms cubic-bezier(0.19, 1, 0.22, 1);
-  }
-
   /* Login Button */
   .login-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 38px;
-    padding: 0.4rem 1.15rem;
+    padding: 0.4rem 1.25rem;
     border-radius: 9999px;
     background: var(--ink);
     color: var(--surface);
@@ -348,14 +354,6 @@ const navItems = [
   @media (max-width: 768px) {
     .desktop-nav {
       display: none;
-    }
-
-    .surprise-btn span {
-      display: none;
-    }
-
-    .surprise-btn {
-      padding: 0.4rem 0.6rem;
     }
   }
 </style>
