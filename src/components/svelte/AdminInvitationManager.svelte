@@ -27,11 +27,10 @@
       return null;
     }
 
-    return fetch(`${import.meta.env.PUBLIC_SUPABASE_URL}/functions/v1/invitations`, {
+    return fetch('/api/invitations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        apikey: import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY,
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),

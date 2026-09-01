@@ -10,10 +10,23 @@ import {
 import type { InvitationRequest } from './types.ts';
 
 const SITE_URL = Deno.env.get('SITE_URL') ?? 'http://127.0.0.1:4321';
-const ALLOWED_ORIGINS = new Set([SITE_URL, 'http://127.0.0.1:4321', 'http://localhost:4321']);
+
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
+  if (
+    origin === 'https://soonwiki.com' ||
+    origin === 'https://www.soonwiki.com' ||
+    origin.endsWith('.vercel.app') ||
+    origin.startsWith('http://localhost') ||
+    origin.startsWith('http://127.0.0.1')
+  ) {
+    return true;
+  }
+  return false;
+}
 
 function buildCorsHeaders(origin: string | null): HeadersInit {
-  const allowOrigin = origin && ALLOWED_ORIGINS.has(origin) ? origin : SITE_URL;
+  const allowOrigin = origin && isAllowedOrigin(origin) ? origin : SITE_URL;
   return {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Headers': 'authorization, content-type, apikey',
