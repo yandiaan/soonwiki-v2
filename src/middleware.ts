@@ -21,6 +21,15 @@ const CONTENT_SECURITY_POLICY = [
 ].join('; ');
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // If OAuth code or error landed on any page other than /auth/callback (e.g. root '/' due to Supabase Site URL fallback),
+  // automatically forward to /auth/callback to complete session exchange.
+  if (
+    context.url.pathname !== '/auth/callback' &&
+    (context.url.searchParams.has('code') || context.url.searchParams.has('error'))
+  ) {
+    return context.redirect(`/auth/callback${context.url.search}`);
+  }
+
   const requestId = getOrCreateRequestId(context);
   context.locals.requestId = requestId;
 
