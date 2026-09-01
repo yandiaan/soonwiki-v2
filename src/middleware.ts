@@ -14,7 +14,7 @@ const CONTENT_SECURITY_POLICY = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' https: data:",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co https://accounts.google.com",
+  "connect-src 'self' https://*.supabase.co https://accounts.google.com https://nominatim.openstreetmap.org",
   "frame-ancestors 'none'",
   "base-uri 'self'",
 ].join('; ');
@@ -31,7 +31,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set(
     'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+    'camera=(), microphone=(), geolocation=(self), interest-cohort=()',
   );
 
   return response;

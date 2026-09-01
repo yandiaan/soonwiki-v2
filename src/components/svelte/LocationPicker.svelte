@@ -64,12 +64,8 @@
 
     isSearching = true;
     try {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
-      const res = await fetch(url, {
-        headers: {
-          'Accept-Language': 'id,en',
-        },
-      });
+      const url = `/api/geo/search?q=${encodeURIComponent(query)}`;
+      const res = await fetch(url);
 
       if (!res.ok) throw new Error('Gagal memuat saran kota');
       const data = (await res.json()) as Array<{
@@ -132,13 +128,9 @@
         try {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
+          const url = `/api/geo/reverse?lat=${lat}&lon=${lon}`;
 
-          const res = await fetch(url, {
-            headers: {
-              'Accept-Language': 'id,en',
-            },
-          });
+          const res = await fetch(url);
 
           if (!res.ok) throw new Error('Gagal mengambil nama lokasi');
           const data = (await res.json()) as {
