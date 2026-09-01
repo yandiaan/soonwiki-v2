@@ -1,0 +1,67 @@
+---
+import EmptyState from '@/components/astro/EmptyState.astro';
+import ProfileCard from '@/components/astro/ProfileCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPlaceCollection } from '@/lib/server/public-repository';
+import { paths } from '@/lib/shared/paths';
+import '@/styles/collections.css';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return new Response('Tempat ini tidak ditemukan.', { status: 404 });
+}
+
+const result = await getPlaceCollection(Astro, slug);
+
+if (!result.ok) {
+  return new Response('Tempat ini tidak ditemukan.', { status: 404 });
+}
+
+const { name, profiles } = result.data;
+---
+
+<BaseLayout
+  title={name}
+  description={`Soonies yang berproses di ${name}.`}
+  canonical={new URL(`/place/${slug}`, Astro.url)}
+>
+  <main id="main-content" class="collection">
+    <p class="frame-number">TEMPAT, ORGANISASI, ATAU USAHA</p>
+    <h1>{name}</h1>
+    <p class="collection__intro">Soonies yang menjalani perjalanannya lewat {name}.</p>
+    {
+      profiles.length === 0 ? (
+        <EmptyState
+          title="Belum ada kisah di sini"
+          description="Belum ada Soonies di tempat ini yang menerbitkan profilnya."
+          actionHref={paths.explore()}
+          actionLabel="Jelajahi semua Soonies"
+        />
+      ) : (
+        <ul class="collection__grid">
+          {profiles.map((profile) => (
+            <li>
+              <ProfileCard profile={profile} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

@@ -1,0 +1,69 @@
+---
+import EmptyState from '@/components/astro/EmptyState.astro';
+import ProfileCard from '@/components/astro/ProfileCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getFieldCollection } from '@/lib/server/public-repository';
+import { paths } from '@/lib/shared/paths';
+import '@/styles/collections.css';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return new Response('Hal yang ditekuni ini tidak ditemukan.', { status: 404 });
+}
+
+const result = await getFieldCollection(Astro, slug);
+
+if (!result.ok) {
+  return new Response('Hal yang ditekuni ini tidak ditemukan.', { status: 404 });
+}
+
+const { name, profiles } = result.data;
+---
+
+<BaseLayout
+  title={name}
+  description={`Soonies yang menekuni ${name}.`}
+  canonical={new URL(`/field/${slug}`, Astro.url)}
+>
+  <main id="main-content" class="collection">
+    <p class="frame-number">HAL YANG DITEKUNI</p>
+    <h1>{name}</h1>
+    <p class="collection__intro">
+      Soonies yang menekuni {name} di berbagai peran, tempat, dan tahap perjalanan.
+    </p>
+    {
+      profiles.length === 0 ? (
+        <EmptyState
+          title="Belum ada kisah di sini"
+          description="Belum ada Soonies yang menekuni bidang ini dan menerbitkan profilnya."
+          actionHref={paths.explore()}
+          actionLabel="Jelajahi semua Soonies"
+        />
+      ) : (
+        <ul class="collection__grid">
+          {profiles.map((profile) => (
+            <li>
+              <ProfileCard profile={profile} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+import JourneyChapterList from '@/components/astro/JourneyChapterList.astro';
+import MetadataStrip from '@/components/astro/MetadataStrip.astro';
+import ProfileHero from '@/components/astro/ProfileHero.astro';
+import ProudMomentGallery from '@/components/astro/ProudMomentGallery.astro';
+import RelatedJourneys from '@/components/astro/RelatedJourneys.astro';
+import StoryChapter from '@/components/astro/StoryChapter.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getProfileBySlug } from '@/lib/server/public-repository';
+import { publicStorageUrl } from '@/lib/shared/paths';
+import '@/styles/profile.css';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return new Response('Profil tidak ditemukan.', { status: 404 });
+}
+
+const result = await getProfileBySlug(Astro, slug);
+
+if (!result.ok) {
+  return new Response('Profil tidak ditemukan.', { status: 404 });
+}
+
+const profile = result.data;
+
+const socialLinks = [
+  profile.linkedinUrl && { href: profile.linkedinUrl, label: 'LinkedIn' },
+  profile.instagramUrl && { href: profile.instagramUrl, label: 'Instagram' },
+  profile.websiteUrl && { href: profile.websiteUrl, label: 'Situs' },
+].filter((link): link is { href: string; label: string } => Boolean(link));
+
+const image = profile.photoPath ? publicStorageUrl('profile-photos', profile.photoPath) : undefined;
+---
+
+<BaseLayout
+  title={profile.name}
+  description={profile.bio ?? `Perjalanan ${profile.name} dari SOON.`}
+  canonical={new URL(`/people/${profile.slug}`, Astro.url)}
+  {...image ? { image } : {}}
+>
+  <main id="main-content" class="profile">
+    <ProfileHero profile={profile} />
+    {profile.sinceSoonStory && <StoryChapter label="Sejak SOON" story={profile.sinceSoonStory} />}
+    {profile.journeys.length > 0 && <JourneyChapterList journeys={profile.journeys} />}
+    {
+      profile.turningPointStory && (
+        <StoryChapter label="Turning point" story={profile.turningPointStory} />
+      )
+    }
+    {profile.proudMoments.length > 0 && <ProudMomentGallery moments={profile.proudMoments} />}
+    {
+      profile.currentDirectionStory && (
+        <StoryChapter label="Arah sekarang" story={profile.currentDirectionStory} />
+      )
+    }
+    {profile.fieldLabels.length > 0 && <MetadataStrip items={profile.fieldLabels} />}
+    {
+      socialLinks.length > 0 && (
+        <ul class="profile__social">
+          {socialLinks.map((link) => (
+            <li>
+              <a href={link.href} target="_blank" rel="noreferrer">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    {profile.relatedProfiles.length > 0 && <RelatedJourneys profiles={profile.relatedProfiles} />}
+  </main>
+</BaseLayout>

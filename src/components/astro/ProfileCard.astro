@@ -1,0 +1,40 @@
+---
+import MetadataStrip from '@/components/astro/MetadataStrip.astro';
+import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import { paths } from '@/lib/shared/paths';
+
+import type { ProfileCard as ProfileCardModel } from '@/lib/shared/public-models';
+
+interface Props {
+  profile: ProfileCardModel;
+}
+
+const { profile } = Astro.props;
+const metadata = [profile.currentActivity, profile.currentPlaceName].filter(
+  (item): item is string => Boolean(item),
+);
+---
+
+<a class="profile-card" href={paths.profile(profile.slug)}>
+  <PortraitFrame
+    photoPath={profile.photoPath}
+    name={profile.name}
+    caption={`${profile.name} · Soon ${profile.batchYear}`}
+    transitionKey={`profile-${profile.id}`}
+  />
+  <MetadataStrip items={metadata} />
+</a>
+
+<style>
+  .profile-card {
+    display: grid;
+    gap: 0.5rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .profile-card:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+</style>

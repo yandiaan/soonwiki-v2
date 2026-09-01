@@ -250,6 +250,10 @@ export async function getBatchCollection(
   context: ServerContext,
   year: number,
 ): Promise<RepositoryResult<{ year: number; profiles: ProfileCard[] }>> {
+  if (year < 2000 || year > 2100) {
+    return { ok: false, code: 'NOT_FOUND' };
+  }
+
   const supabase = createServerSupabase(context);
   const { data, error } = await supabase.rpc('search_profiles', {
     batch_year: year,
@@ -261,10 +265,6 @@ export async function getBatchCollection(
   }
 
   const profiles = (data ?? []).map(toProfileCard);
-
-  if (profiles.length === 0) {
-    return { ok: false, code: 'NOT_FOUND' };
-  }
 
   return { ok: true, data: { year, profiles } };
 }

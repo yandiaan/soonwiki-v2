@@ -1,0 +1,102 @@
+---
+import JourneyTimeline from '@/components/svelte/JourneyTimeline.svelte';
+
+import type { JourneyChapter } from '@/lib/shared/public-models';
+
+interface Props {
+  journeys: JourneyChapter[];
+}
+
+const { journeys } = Astro.props;
+
+function formatPeriod(entry: JourneyChapter): string {
+  if (entry.startYear && entry.endYear) {
+    return `${entry.startYear}–${entry.endYear}`;
+  }
+
+  if (entry.startYear) {
+    return `${entry.startYear}–Sekarang`;
+  }
+
+  return '';
+}
+---
+
+<section class="journey-list" aria-labelledby="journey-list-title">
+  <p class="frame-number">PERJALANAN</p>
+  <h2 id="journey-list-title">Perjalanan</h2>
+  <JourneyTimeline client:visible>
+    <ol class="journey-list__items">
+      {
+        journeys.map((entry) => (
+          <li data-journey-entry>
+            {formatPeriod(entry) && <p class="journey-list__period">{formatPeriod(entry)}</p>}
+            <h3>{entry.activity}</h3>
+            {entry.placeName && <p class="journey-list__place">{entry.placeName}</p>}
+            {entry.story && <p class="journey-list__story">{entry.story}</p>}
+          </li>
+        ))
+      }
+    </ol>
+  </JourneyTimeline>
+</section>
+
+<style>
+  .journey-list {
+    display: grid;
+    gap: 0.75rem;
+    padding-block: 1.5rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .journey-list__items {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .journey-list__items li {
+    display: grid;
+    gap: 0.35rem;
+    padding-inline-start: 1rem;
+    border-left: 2px solid var(--sage);
+  }
+
+  .journey-list__period {
+    margin: 0;
+    color: var(--signal);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .journey-list__items h3 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .journey-list__place {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  .journey-list__story {
+    max-width: 60ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+</style>

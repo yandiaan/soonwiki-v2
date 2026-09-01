@@ -1,0 +1,68 @@
+---
+import MetadataStrip from '@/components/astro/MetadataStrip.astro';
+import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+
+import type { ProfileDetail } from '@/lib/shared/public-models';
+
+interface Props {
+  profile: ProfileDetail;
+}
+
+const { profile } = Astro.props;
+
+const metadata = [
+  `Soon ${profile.batchYear}`,
+  profile.currentActivity,
+  profile.currentPlaceName,
+].filter((item): item is string => Boolean(item));
+---
+
+<header class="profile-hero">
+  <p class="frame-number">PROFIL</p>
+  <PortraitFrame
+    photoPath={profile.photoPath}
+    name={profile.name}
+    caption={`${profile.name} · Soon ${profile.batchYear}`}
+    loading="eager"
+    transitionKey={`profile-${profile.id}`}
+  />
+  <div class="profile-hero__body">
+    <h1>{profile.name}</h1>
+    <MetadataStrip items={metadata} />
+    {profile.bio && <p class="profile-hero__bio">{profile.bio}</p>}
+  </div>
+</header>
+
+<style>
+  .profile-hero {
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.5rem;
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .profile-hero__body {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .profile-hero__body h1 {
+    margin: 0;
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    line-height: 1.05;
+  }
+
+  .profile-hero__bio {
+    max-width: 60ch;
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+</style>

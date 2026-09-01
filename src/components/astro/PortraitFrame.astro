@@ -1,5 +1,6 @@
 ---
 import { publicStorageUrl } from '@/lib/shared/paths';
+import { viewTransitionStyle } from '@/lib/browser/view-transitions';
 
 interface Props {
   photoPath?: string | null;
@@ -22,7 +23,11 @@ const initials = name
 const photoUrl = photoPath ? publicStorageUrl('profile-photos', photoPath) : null;
 ---
 
-<figure class="portrait-frame" data-profile-transition-key={transitionKey}>
+<figure
+  class="portrait-frame"
+  data-profile-transition-key={transitionKey}
+  style={viewTransitionStyle(transitionKey)}
+>
   {
     photoUrl ? (
       <img src={photoUrl} alt={name} loading={loading} decoding="async" />

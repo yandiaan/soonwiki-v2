@@ -1,7 +1,6 @@
 ---
 import EmptyState from '@/components/astro/EmptyState.astro';
-import MetadataStrip from '@/components/astro/MetadataStrip.astro';
-import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import ProfileCard from '@/components/astro/ProfileCard.astro';
 import ExploreFilters from '@/components/svelte/ExploreFilters.svelte';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { searchPublishedProfiles } from '@/lib/server/public-repository';
@@ -66,18 +65,7 @@ function buildQuery(overrides: Record<string, string | number | undefined>): str
         <ul class="explore__results">
           {profiles.map((profile) => (
             <li>
-              <a href={paths.profile(profile.slug)}>
-                <PortraitFrame
-                  photoPath={profile.photoPath}
-                  name={profile.name}
-                  caption={`${profile.name} · Soon ${profile.batchYear}`}
-                />
-                <MetadataStrip
-                  items={[profile.currentActivity, profile.currentPlaceName].filter(
-                    (item): item is string => Boolean(item),
-                  )}
-                />
-              </a>
+              <ProfileCard profile={profile} />
             </li>
           ))}
         </ul>

@@ -1,0 +1,70 @@
+---
+import EmptyState from '@/components/astro/EmptyState.astro';
+import ProfileCard from '@/components/astro/ProfileCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getBatchCollection } from '@/lib/server/public-repository';
+import { paths } from '@/lib/shared/paths';
+import '@/styles/collections.css';
+
+const yearParam = Astro.params.year;
+const year = yearParam ? Number.parseInt(yearParam, 10) : Number.NaN;
+
+if (!Number.isFinite(year)) {
+  return new Response('Batch ini tidak ditemukan.', { status: 404 });
+}
+
+const result = await getBatchCollection(Astro, year);
+
+if (!result.ok) {
+  return new Response('Batch ini tidak ditemukan.', { status: 404 });
+}
+
+const { profiles } = result.data;
+---
+
+<BaseLayout
+  title={`Soon ${year}`}
+  description={`Soonies dari batch Soon ${year}.`}
+  canonical={new URL(`/batch/${year}`, Astro.url)}
+>
+  <main id="main-content" class="collection">
+    <p class="frame-number">BATCH</p>
+    <h1>Soon {year}</h1>
+    <p class="collection__intro">
+      Perjalanan Soonies dari batch {year}, dari berbagai jalan hidup.
+    </p>
+    {
+      profiles.length === 0 ? (
+        <EmptyState
+          title="Belum ada kisah di sini"
+          description="Belum ada Soonies dari batch ini yang menerbitkan profilnya."
+          actionHref={paths.explore()}
+          actionLabel="Jelajahi semua Soonies"
+        />
+      ) : (
+        <ul class="collection__grid">
+          {profiles.map((profile) => (
+            <li>
+              <ProfileCard profile={profile} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

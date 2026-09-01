@@ -1,0 +1,114 @@
+---
+import { publicStorageUrl } from '@/lib/shared/paths';
+
+import type { ProudMoment } from '@/lib/shared/public-models';
+
+interface Props {
+  moments: ProudMoment[];
+}
+
+const { moments } = Astro.props;
+---
+
+<section class="proud-moment-gallery" aria-labelledby="proud-moment-gallery-title">
+  <p class="frame-number">HAL YANG DIBANGGAKAN</p>
+  <h2 id="proud-moment-gallery-title">Hal yang dibanggakan</h2>
+  <ul class="proud-moment-gallery__items">
+    {
+      moments.map((moment) => {
+        const imageUrl = moment.imagePath
+          ? publicStorageUrl('proud-moments', moment.imagePath)
+          : null;
+        const caption = [moment.placeName, moment.year ? String(moment.year) : null].filter(
+          (part): part is string => Boolean(part),
+        );
+
+        return (
+          <li>
+            {imageUrl && (
+              <figure class="proud-moment-gallery__figure">
+                <img src={imageUrl} alt={moment.title} loading="lazy" decoding="async" />
+              </figure>
+            )}
+            <h3>{moment.title}</h3>
+            {moment.description && <p>{moment.description}</p>}
+            {caption.length > 0 && (
+              <p class="proud-moment-gallery__caption">{caption.join(' · ')}</p>
+            )}
+            {moment.externalUrl && (
+              <a href={moment.externalUrl} target="_blank" rel="noreferrer">
+                Lihat selengkapnya
+              </a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ul>
+</section>
+
+<style>
+  .proud-moment-gallery {
+    display: grid;
+    gap: 0.75rem;
+    padding-block: 1.5rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .proud-moment-gallery__items {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .proud-moment-gallery__items li {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .proud-moment-gallery__figure {
+    margin: 0;
+    border: 2px solid var(--ink);
+  }
+
+  .proud-moment-gallery__figure img {
+    width: 100%;
+    max-height: 20rem;
+    object-fit: cover;
+  }
+
+  .proud-moment-gallery__items h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .proud-moment-gallery__caption {
+    margin: 0;
+    color: var(--signal);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .proud-moment-gallery__items a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 700;
+    color: var(--cobalt);
+  }
+</style>

@@ -1,0 +1,21 @@
+.collection {
+  max-width: 60rem;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+  padding-block-end: 4rem;
+}
+
+.collection__intro {
+  max-width: 60ch;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.collection__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+}
