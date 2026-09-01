@@ -1,36 +1,187 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { paths } from '@/lib/shared/paths';
 ---
 
 <BaseLayout
-  title="Butuh tautan undangan"
+  title="Akses Terbatas · Butuh Undangan"
   description="Akses SoonWiki membutuhkan tautan undangan dari pengelola SOON."
 >
-  <main id="main-content" class="join-required">
-    <p class="frame-number">AKSES / SOON</p>
-    <h1>Kamu perlu tautan undangan</h1>
-    <p>
-      Akun Google ini belum terhubung dengan keanggotaan SoonWiki. Minta tautan undangan dari
-      pengelola komunitas SOON untuk bergabung dan membuat profil.
-    </p>
-    <a href="/login">Sudah member? Masuk di sini</a>
+  <main id="main-content" class="auth-page">
+    <div class="auth-card" data-reveal>
+      <header class="auth-card__header">
+        <a href={paths.home()} class="auth-card__back" aria-label="Kembali ke Beranda">
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+          <span>Beranda</span>
+        </a>
+        <span class="auth-card__tag">Akses Terkurasi</span>
+        <h1>Undangan Diperlukan</h1>
+        <p class="auth-card__subtitle">
+          Akun Google ini belum terdaftar dalam keanggotaan SoonWiki. Komunitas ini menjaga keaslian
+          cerita melalui verifikasi sesama alumni.
+        </p>
+      </header>
+
+      <div class="auth-card__body">
+        <p class="auth-card__instructions">
+          Minta tautan undangan resmi dari pengurus angkatan atau pengelola komunitas SOON untuk
+          mulai mengisi profil dan perjalananmu.
+        </p>
+        <a href={paths.login()} class="auth-card__action-btn">Coba akun lain</a>
+      </div>
+
+      <footer class="auth-card__footer">
+        <a href={paths.explore()} class="auth-card__explore-link">
+          Ingin sekadar membaca? Jelajahi profil publik →
+        </a>
+      </footer>
+    </div>
   </main>
 </BaseLayout>
 
 <style>
-  .join-required {
-    display: grid;
-    gap: 1rem;
-    max-width: 32rem;
-    min-height: 100vh;
-    align-content: center;
-    padding: var(--page-gutter);
+  .auth-page {
+    position: relative;
+    display: flex;
+    min-height: calc(100svh - 4.5rem);
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 4.5rem) var(--page-gutter);
+    background:
+      radial-gradient(
+        ellipse at 50% 10%,
+        color-mix(in srgb, var(--accent) 12%, transparent),
+        transparent 60%
+      ),
+      var(--canvas);
   }
 
-  .frame-number {
-    color: var(--cobalt);
+  .auth-card {
+    position: relative;
+    display: grid;
+    gap: 1.75rem;
+    width: min(100%, 30rem);
+    padding: clamp(2rem, 5vw, 3rem);
+    border-radius: 1.25rem;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    box-shadow:
+      0 24px 60px -12px rgb(0 0 0 / 0.08),
+      0 4px 16px -2px rgb(0 0 0 / 0.03);
+  }
+
+  .auth-card__header {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .auth-card__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: fit-content;
+    margin-bottom: 0.5rem;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .auth-card__back:hover {
+    color: var(--ink);
+    transform: translateX(-2px);
+  }
+
+  .auth-card__tag {
+    color: var(--accent);
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.85rem, 4vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .auth-card__subtitle {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .auth-card__body {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--surface-muted);
+  }
+
+  .auth-card__instructions {
+    margin: 0;
+    color: var(--ink);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .auth-card__action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding-inline: 1.25rem;
+    border-radius: 0.5rem;
+    background: var(--ink);
+    color: var(--surface);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      background 180ms ease,
+      transform 180ms ease;
+  }
+
+  .auth-card__action-btn:hover {
+    background: color-mix(in srgb, var(--ink) 85%, white);
+    transform: translateY(-1px);
+  }
+
+  .auth-card__footer {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-soft);
+    text-align: center;
+  }
+
+  .auth-card__explore-link {
+    color: var(--accent);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .auth-card__explore-link:hover {
+    text-decoration: underline;
   }
 </style>

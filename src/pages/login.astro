@@ -1,38 +1,224 @@
 ---
 import JoinWithGoogle from '@/components/svelte/JoinWithGoogle.svelte';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { paths } from '@/lib/shared/paths';
 
 const message = Astro.url.searchParams.get('message');
 ---
 
-<BaseLayout title="Masuk" description="Masuk ke SoonWiki dengan Google.">
-  <main id="main-content" class="login">
-    <p class="frame-number">MASUK / SOON</p>
-    <h1>Masuk ke SoonWiki</h1>
-    {message && <p role="alert">{message}</p>}
-    <JoinWithGoogle client:load mode="login" />
+<BaseLayout
+  title="Masuk ke SoonWiki"
+  description="Masuk ke SoonWiki untuk mengelola perjalanan dan kisah kamu."
+>
+  <main id="main-content" class="auth-page">
+    <div class="auth-card" data-reveal>
+      <header class="auth-card__header">
+        <a href={paths.home()} class="auth-card__back" aria-label="Kembali ke Beranda">
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+          <span>Beranda</span>
+        </a>
+        <span class="auth-card__tag">Ruang Soonies</span>
+        <h1>Selamat datang kembali</h1>
+        <p class="auth-card__subtitle">
+          Masuk dengan akun Google yang terdaftar untuk menyunting linimasa dan kisah perjalananmu.
+        </p>
+      </header>
+
+      {
+        message && (
+          <div class="auth-card__alert" role="alert">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>{message}</span>
+          </div>
+        )
+      }
+
+      <div class="auth-card__form">
+        <JoinWithGoogle client:load mode="login" />
+      </div>
+
+      <footer class="auth-card__footer">
+        <div class="auth-card__perks">
+          <div class="perk-item">
+            <span class="perk-icon">✦</span>
+            <span>Linimasa Perjalanan Hidup</span>
+          </div>
+          <div class="perk-item">
+            <span class="perk-icon">✦</span>
+            <span>Momen Kebanggaan Terkurasi</span>
+          </div>
+          <div class="perk-item">
+            <span class="perk-icon">✦</span>
+            <span>Direktori Komunitas Otentik</span>
+          </div>
+        </div>
+
+        <p class="auth-card__notice">
+          Belum punya akses? SoonWiki adalah arsip terkurasi. Hubungi pengelola komunitas SOON untuk
+          mendapatkan tautan undangan.
+        </p>
+      </footer>
+    </div>
   </main>
 </BaseLayout>
 
 <style>
-  .login {
-    display: grid;
-    gap: 1rem;
-    max-width: 32rem;
-    min-height: 100vh;
-    align-content: center;
-    padding: var(--page-gutter);
+  .auth-page {
+    position: relative;
+    display: flex;
+    min-height: calc(100svh - 4.5rem);
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 4.5rem) var(--page-gutter);
+    background:
+      radial-gradient(
+        ellipse at 50% 10%,
+        color-mix(in srgb, var(--accent) 12%, transparent),
+        transparent 60%
+      ),
+      var(--canvas);
   }
 
-  .frame-number {
-    color: var(--cobalt);
+  .auth-card {
+    position: relative;
+    display: grid;
+    gap: 1.75rem;
+    width: min(100%, 30rem);
+    padding: clamp(2rem, 5vw, 3rem);
+    border-radius: 1.25rem;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    box-shadow:
+      0 24px 60px -12px rgb(0 0 0 / 0.08),
+      0 4px 16px -2px rgb(0 0 0 / 0.03);
+  }
+
+  .auth-card__header {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .auth-card__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: fit-content;
+    margin-bottom: 0.5rem;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .auth-card__back:hover {
+    color: var(--ink);
+    transform: translateX(-2px);
+  }
+
+  .auth-card__tag {
+    color: var(--accent);
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
-  [role='alert'] {
-    color: var(--signal);
+  h1 {
+    margin: 0;
+    font-size: clamp(1.85rem, 4vw, 2.35rem);
     font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .auth-card__subtitle {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .auth-card__alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--signal) 30%, transparent);
+    background: color-mix(in srgb, var(--signal) 8%, var(--surface));
+    color: var(--signal);
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .auth-card__alert svg {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .auth-card__form {
+    padding-block: 0.25rem;
+  }
+
+  .auth-card__footer {
+    display: grid;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .auth-card__perks {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .perk-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .perk-icon {
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+
+  .auth-card__notice {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    line-height: 1.5;
   }
 </style>

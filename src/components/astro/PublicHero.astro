@@ -28,12 +28,19 @@ const people = [
 ---
 
 <section class="public-hero" aria-labelledby="public-hero-title">
+  <!-- Motion Blur Background Atmosphere -->
+  <div class="public-hero__ambient" aria-hidden="true">
+    <div class="public-hero__orb public-hero__orb--primary"></div>
+    <div class="public-hero__orb public-hero__orb--secondary"></div>
+    <div class="public-hero__orb public-hero__orb--accent"></div>
+  </div>
+
   <div class="public-hero__media" aria-hidden={people.length === 0 ? 'true' : undefined}>
     {
       people.length > 0 ? (
         <ul>
           {people.map((person) => (
-            <li>
+            <li class="public-hero__portrait-item">
               <PortraitFrame
                 photoPath={person.photoPath}
                 name={person.name}
@@ -53,7 +60,7 @@ const people = [
     }
   </div>
   <div class="public-hero__veil"></div>
-  <div class="public-hero__content">
+  <div class="public-hero__content" data-reveal>
     <h1 id="public-hero-title">Banyak jalan dimulai dari SOON.</h1>
     <p>Temukan perjalanan nyata, perubahan hidup, dan hal-hal yang dibanggakan oleh Soonies.</p>
     <div class="public-hero__actions">
@@ -92,6 +99,74 @@ const people = [
     color: var(--surface);
   }
 
+  /* Ambient Motion Blur Orbs */
+  .public-hero__ambient {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .public-hero__orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.45;
+    mix-blend-mode: screen;
+    animation: orb-drift 14s ease-in-out infinite alternate;
+  }
+
+  .public-hero__orb--primary {
+    top: -10%;
+    right: 15%;
+    width: min(50vw, 36rem);
+    height: min(50vw, 36rem);
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  }
+
+  .public-hero__orb--secondary {
+    bottom: -15%;
+    left: 5%;
+    width: min(60vw, 44rem);
+    height: min(60vw, 44rem);
+    background: radial-gradient(circle, #2b4c7e 0%, transparent 75%);
+    animation-duration: 18s;
+    animation-delay: -4s;
+  }
+
+  .public-hero__orb--accent {
+    top: 40%;
+    right: 40%;
+    width: min(35vw, 24rem);
+    height: min(35vw, 24rem);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 80%, white) 0%,
+      transparent 70%
+    );
+    animation-duration: 22s;
+    animation-delay: -9s;
+  }
+
+  @keyframes orb-drift {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(5%, 8%, 0) scale(1.12);
+    }
+    100% {
+      transform: translate3d(-6%, -5%, 0) scale(0.92);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .public-hero__orb {
+      animation: none;
+    }
+  }
+
   .public-hero__media,
   .public-hero__veil {
     position: absolute;
@@ -109,12 +184,15 @@ const people = [
     list-style: none;
   }
 
-  .public-hero__media li {
+  .public-hero__portrait-item {
     min-width: 0;
     overflow: hidden;
+    transition:
+      transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
+      filter 600ms ease-out;
   }
 
-  .public-hero__media li:nth-child(2n) {
+  .public-hero__portrait-item:nth-child(2n) {
     transform: translateY(8%);
   }
 
@@ -144,9 +222,10 @@ const people = [
   }
 
   .public-hero__veil {
+    backdrop-filter: blur(2px);
     background:
-      linear-gradient(90deg, rgb(10 12 11 / 0.88) 0%, rgb(10 12 11 / 0.48) 48%, transparent 82%),
-      linear-gradient(0deg, rgb(10 12 11 / 0.42), transparent 55%);
+      linear-gradient(90deg, rgb(10 12 11 / 0.92) 0%, rgb(10 12 11 / 0.52) 48%, transparent 82%),
+      linear-gradient(0deg, rgb(10 12 11 / 0.55), transparent 55%);
   }
 
   .public-hero__content {
@@ -168,6 +247,7 @@ const people = [
     font-weight: 650;
     line-height: 0.92;
     letter-spacing: -0.04em;
+    text-wrap: balance;
   }
 
   .public-hero__content > p {
@@ -175,6 +255,7 @@ const people = [
     margin: 0;
     font-size: clamp(1.05rem, 2vw, 1.3rem);
     line-height: 1.5;
+    color: color-mix(in srgb, var(--surface) 88%, transparent);
   }
 
   .public-hero__actions {
@@ -189,23 +270,34 @@ const people = [
     align-items: center;
     min-height: 48px;
     font-weight: 750;
+    transition:
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 200ms ease;
   }
 
   .public-hero__primary {
-    padding-inline: 1.25rem;
+    padding-inline: 1.35rem;
     border-radius: 0.75rem;
     background: var(--accent);
     color: var(--surface);
     text-decoration: none;
+    box-shadow: 0 8px 24px -4px color-mix(in srgb, var(--accent) 50%, transparent);
   }
 
   .public-hero__primary:hover {
     background: var(--accent-strong);
     transform: translateY(-2px);
+    box-shadow: 0 12px 28px -4px color-mix(in srgb, var(--accent) 65%, transparent);
   }
 
   .public-hero__secondary {
+    color: var(--surface);
     text-decoration-color: color-mix(in srgb, var(--surface) 55%, transparent);
+  }
+
+  .public-hero__secondary:hover {
+    transform: translateY(-1px);
+    text-decoration-color: var(--surface);
   }
 
   .public-hero__metrics {
@@ -214,11 +306,13 @@ const people = [
     align-items: center;
     gap: 1rem 1.75rem;
     margin: 1.5rem 0 0;
-    padding: 0.85rem 1.25rem;
-    border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--surface) 8%, transparent);
-    backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--surface) 15%, transparent);
+    padding: 0.9rem 1.35rem;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--surface) 7%, transparent);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid color-mix(in srgb, var(--surface) 14%, transparent);
+    box-shadow: 0 16px 36px -8px rgb(0 0 0 / 0.3);
     list-style: none;
     width: fit-content;
   }
@@ -257,16 +351,16 @@ const people = [
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .public-hero__media li:nth-child(n + 4) {
+    .public-hero__portrait-item:nth-child(n + 4) {
       display: none;
     }
 
     .public-hero__veil {
-      background: linear-gradient(0deg, rgb(10 12 11 / 0.92) 0%, rgb(10 12 11 / 0.48) 72%);
+      background: linear-gradient(0deg, rgb(10 12 11 / 0.94) 0%, rgb(10 12 11 / 0.55) 72%);
     }
 
     h1 {
-      font-size: clamp(3rem, 15vw, 4.3rem);
+      font-size: clamp(2.8rem, 13vw, 4.3rem);
     }
 
     .public-hero__metrics {
