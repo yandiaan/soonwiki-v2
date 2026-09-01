@@ -1,71 +1,95 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   export type TabKey = 'identity' | 'story' | 'journey' | 'moments' | 'links';
 
-  interface TourStep {
-    tab: TabKey;
+  export interface TourStep {
+    selector: string;
+    tab?: TabKey;
     badge: string;
-    title: string;
     icon: string;
+    title: string;
     description: string;
     tip: string;
+    placement?: 'bottom' | 'top' | 'left' | 'right' | 'auto';
   }
 
   const TOUR_STEPS: TourStep[] = [
     {
+      selector: '[data-tour="photo-upload"]',
       tab: 'identity',
-      badge: 'Langkah 1 dari 6',
+      badge: 'Langkah 1 dari 7',
       icon: '📸',
-      title: 'Identitas & Foto Diri',
+      title: 'Pasang Foto Portrait Terbaikmu',
       description:
-        'Pasang foto portrait terbaikmu! Isi nama lengkap atau nama panggilan akrab dan tahun angkatan SOON. Ini bakal jadi kartu pengenal utamamu.',
-      tip: '💡 Tips: Foto dengan rasio kotak (1:1) dan wajah tersenyum jelas paling enak dilihat.',
+        'Foto 1:1 dengan senyum ramah paling mantap di sini! Format JPG, PNG, atau WebP otomatis dikompresi agar cepat diakses.',
+      tip: '💡 Boleh foto formal santai atau candid dokumenter yang mencerminkan dirimu.',
+      placement: 'bottom',
     },
     {
-      tab: 'story',
-      badge: 'Langkah 2 dari 6',
-      icon: '✍️',
-      title: 'Narasi & Refleksi Hidup',
-      description:
-        'Gak usah kaku kayak nulis CV formal! Tulis santai tentang apa yang berubah dalam caramu memandang dunia sejak di SOON, dan titik balik yang mengubah arah hidupmu.',
-      tip: '💡 Tips: Cerita yang jujur dan apa adanya selalu jadi yang paling inspiratif bagi sesama SoonMates.',
-    },
-    {
-      tab: 'journey',
-      badge: 'Langkah 3 dari 6',
-      icon: '🛤️',
-      title: 'Jejak Perjalanan (Timeline)',
-      description:
-        'Pernah magang, ganti haluan karir, bikin usaha sendiri, atau kuliah lagi? Rangkai babak-babak penting hidupmu di sini. Satu per satu aja, gak harus langsung komplit.',
-      tip: '💡 Tips: Gunakan tombol naik/turun untuk merapikan urutan kronologi perjalananmu.',
-    },
-    {
-      tab: 'moments',
-      badge: 'Langkah 4 dari 6',
-      icon: '🏆',
-      title: 'Karya & Momen Kebanggaan',
-      description:
-        'Showcase hal-hal bermakna yang pernah kamu wujudkan: rilis buku, proyek open-source, pameran seni, inovasi riset, atau inisiatif sosial. Kamu juga bisa lampirkan foto dokumentasi!',
-      tip: '💡 Tips: Tambahkan link ke Behance, GitHub, artikel berita, atau website karyamu.',
-    },
-    {
-      tab: 'links',
-      badge: 'Langkah 5 dari 6',
-      icon: '🌐',
-      title: 'Bidang, Jejaring & Publikasi',
-      description:
-        'Pilih bidang-bidang yang kamu tekuni dan pasang tautan LinkedIn atau Instagram agar teman lintas angkatan bisa saling terhubung.',
-      tip: '💡 Tips: Pastikan toggle "Terbitkan ke Publik" aktif agar profilmu bisa ditemukan di direktori!',
-    },
-    {
+      selector: '[data-tour="identity-fields"]',
       tab: 'identity',
-      badge: 'Langkah 6 dari 6',
-      icon: '✨',
-      title: 'Live Preview & Otomatis Aman!',
+      badge: 'Langkah 2 dari 7',
+      icon: '🏷️',
+      title: 'Nama & Angkatan SOON',
       description:
-        'Lihat panel di sebelah kanan? Setiap huruf yang kamu ketik langsung berubah jadi kartu profil keren secara real-time. Tenang, drafmu otomatis tersimpan di HP/laptop ini!',
-      tip: '💡 Tips: Kapan pun siap, klik tombol "Simpan Profil" di bar bawah atau cukup tekan Ctrl+S / Cmd+S.',
+        'Tulis nama panggilan akrab dan tahun angkatan SOON-mu. Masukkan juga peran atau kesibukan yang lagi kamu jalani saat ini.',
+      tip: '💡 Ini kartu pengenal utamamu agar sesama SoonMates mudah menemukan dan mengenali kamu.',
+      placement: 'bottom',
+    },
+    {
+      selector: '[data-tour="story-prompts"]',
+      tab: 'story',
+      badge: 'Langkah 3 dari 7',
+      icon: '✍️',
+      title: 'Ceritakan Titik Balik & Refleksi',
+      description:
+        'Gak usah kaku kayak nulis CV! Tulis santai tentang perubahan cara pandangmu sejak di SOON dan keputusan penting yang mengubah arah hidupmu.',
+      tip: '💡 Cerita yang autentik dan apa adanya selalu jadi yang paling berkesan.',
+      placement: 'bottom',
+    },
+    {
+      selector: '[data-tour="journey-section"]',
+      tab: 'journey',
+      badge: 'Langkah 4 dari 7',
+      icon: '🛤️',
+      title: 'Rangkai Jejak Perjalananmu',
+      description:
+        'Pernah magang, ganti karir, bikin startup, atau lanjut studi? Susun babak-babak hidupmu di sini. Gunakan tombol naik/turun untuk merapikan urutan kronologi.',
+      tip: '💡 Satu per satu aja, gak harus langsung semua terisi sekarang.',
+      placement: 'bottom',
+    },
+    {
+      selector: '[data-tour="moments-section"]',
+      tab: 'moments',
+      badge: 'Langkah 5 dari 7',
+      icon: '🏆',
+      title: 'Showcase Karya & Kebanggaan',
+      description:
+        'Pernah rilis karya, proyek open-source, buku, atau inisiatif sosial? Upload foto dokumentasinya dan cantumkan link portofoliomu di sini!',
+      tip: '💡 Setiap karya berharga dan bisa jadi inspirasi bagi adik tingkat dan rekan alumni.',
+      placement: 'bottom',
+    },
+    {
+      selector: '[data-tour="links-section"]',
+      tab: 'links',
+      badge: 'Langkah 6 dari 7',
+      icon: '🌐',
+      title: 'Bidang, Tautan & Publikasi',
+      description:
+        'Pilih bidang yang kamu tekuni, pasang link LinkedIn/Instagram, lalu nyalakan toggle "Terbit ke Publik" agar profilmu tayang di direktori SoonWiki!',
+      tip: '💡 Profil yang terbit akan masuk ke penelusuran publik SoonWiki.',
+      placement: 'bottom',
+    },
+    {
+      selector: '[data-tour="live-preview"]',
+      badge: 'Langkah 7 dari 7',
+      icon: '✨',
+      title: 'Live Preview Real-Time & Auto-Save',
+      description:
+        'Setiap huruf yang kamu ketik langsung berubah jadi kartu profil keren di panel ini! Drafmu otomatis aman tersimpan di browser.',
+      tip: '💡 Kapan pun siap, klik "Simpan Profil" di bar bawah atau tekan tombol shortcut Ctrl+S / Cmd+S.',
+      placement: 'left',
     },
   ];
 
@@ -78,22 +102,98 @@
   } = $props();
 
   let stepIndex = $state(0);
+  let targetRect = $state<{ x: number; y: number; width: number; height: number } | null>(null);
+  let popoverStyle = $state('');
 
   const currentStep = $derived(TOUR_STEPS[stepIndex] ?? TOUR_STEPS[0]);
 
-  function goToStep(index: number) {
+  async function updateSpotlightPosition() {
+    if (!isOpen) return;
+
+    await tick();
+    const selector = currentStep.selector;
+    let target = document.querySelector(selector) as HTMLElement | null;
+
+    // If target is inside preview and on mobile preview is closed, fallback to studio tabs
+    if (!target && selector === '[data-tour="live-preview"]') {
+      target = document.querySelector('[data-tour="save-bar"]') as HTMLElement | null;
+    }
+
+    if (!target) {
+      targetRect = null;
+      popoverStyle = 'top: 50%; left: 50%; transform: translate(-50%, -50%);';
+      return;
+    }
+
+    // Scroll into view smoothly
+    target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+
+    // Wait a brief tick for smooth scroll to initiate
+    const rect = target.getBoundingClientRect();
+    const pad = 10;
+    const x = Math.max(4, rect.left - pad);
+    const y = Math.max(4, rect.top - pad);
+    const width = Math.min(window.innerWidth - 8, rect.width + pad * 2);
+    const height = rect.height + pad * 2;
+
+    targetRect = { x, y, width, height };
+
+    // Calculate popover coordinates
+    const popoverWidth = Math.min(window.innerWidth - 32, 380);
+    const placement = currentStep.placement || 'auto';
+
+    // Decide vertical position
+    let top: number;
+    let left: number;
+
+    const spaceBelow = window.innerHeight - (y + height);
+    const spaceAbove = y;
+    const spaceRight = window.innerWidth - (x + width);
+
+    if (window.innerWidth < 768) {
+      // Mobile positioning: center or pin to bottom/top
+      if (spaceBelow > 260) {
+        top = y + height + 16;
+      } else if (spaceAbove > 260) {
+        top = Math.max(16, y - 260);
+      } else {
+        top = window.innerHeight - 270;
+      }
+      left = (window.innerWidth - popoverWidth) / 2;
+    } else if (placement === 'left' && x > popoverWidth + 24) {
+      top = Math.max(20, Math.min(window.innerHeight - 280, y + 20));
+      left = x - popoverWidth - 20;
+    } else if (placement === 'right' && spaceRight > popoverWidth + 24) {
+      top = Math.max(20, Math.min(window.innerHeight - 280, y + 20));
+      left = x + width + 20;
+    } else if (spaceBelow > 240) {
+      top = y + height + 16;
+      left = Math.max(16, Math.min(window.innerWidth - popoverWidth - 16, x));
+    } else if (spaceAbove > 240) {
+      top = Math.max(16, y - 250);
+      left = Math.max(16, Math.min(window.innerWidth - popoverWidth - 16, x));
+    } else {
+      top = Math.max(16, (window.innerHeight - 260) / 2);
+      left = Math.max(16, (window.innerWidth - popoverWidth) / 2);
+    }
+
+    popoverStyle = `top: ${Math.round(top)}px; left: ${Math.round(left)}px; width: ${popoverWidth}px;`;
+  }
+
+  async function goToStep(index: number) {
     if (index >= 0 && index < TOUR_STEPS.length) {
       stepIndex = index;
-      const next = TOUR_STEPS[index];
-      if (next) {
-        onTabChange(next.tab);
+      const step = TOUR_STEPS[index];
+      if (step?.tab) {
+        onTabChange(step.tab);
       }
+      setTimeout(updateSpotlightPosition, 100);
     }
   }
 
   function handleNext() {
     if (stepIndex < TOUR_STEPS.length - 1) {
-      goToStep(stepIndex + 1);
+      void goToStep(stepIndex + 1);
     } else {
       handleClose();
     }
@@ -101,7 +201,7 @@
 
   function handlePrev() {
     if (stepIndex > 0) {
-      goToStep(stepIndex - 1);
+      void goToStep(stepIndex - 1);
     }
   }
 
@@ -123,35 +223,105 @@
     }
   }
 
+  $effect(() => {
+    if (isOpen) {
+      const step = TOUR_STEPS[stepIndex];
+      if (step?.tab) {
+        onTabChange(step.tab);
+      }
+      void updateSpotlightPosition();
+    }
+  });
+
   onMount(() => {
+    const handleReposition = () => {
+      if (isOpen) {
+        void updateSpotlightPosition();
+      }
+    };
+
+    window.addEventListener('resize', handleReposition);
+    window.addEventListener('scroll', handleReposition, { passive: true });
+
     // Auto trigger on first visit if not seen
     const urlParams = new URLSearchParams(window.location.search);
     const isWelcome = urlParams.get('welcome') === '1';
     const hasSeen = localStorage.getItem('soonwiki_editor_tour_seen');
 
     if (isWelcome || !hasSeen) {
-      isOpen = true;
-      const initial = TOUR_STEPS[0];
-      if (initial) {
-        onTabChange(initial.tab);
-      }
+      setTimeout(() => {
+        isOpen = true;
+        void goToStep(0);
+      }, 500);
     }
+
+    return () => {
+      window.removeEventListener('resize', handleReposition);
+      window.removeEventListener('scroll', handleReposition);
+    };
   });
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
 {#if isOpen}
-  <div class="tour-backdrop" role="dialog" aria-modal="true" aria-labelledby="tour-title">
-    <div class="tour-card" data-reveal>
-      <!-- Header with Icon & Close -->
-      <div class="tour-card__header">
-        <div class="step-indicator">
-          <span class="step-badge">{currentStep.badge}</span>
-        </div>
+  <div
+    class="spotlight-tour-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="spotlight-title"
+  >
+    <!-- SVG Mask Backdrop with Rounded Cutout -->
+    <svg class="spotlight-svg" aria-hidden="true">
+      <defs>
+        <mask id="spotlight-cutout-mask">
+          <!-- White background covers everything -->
+          <rect width="100%" height="100%" fill="white" />
+          <!-- Black rectangle cuts a transparent hole for target element -->
+          {#if targetRect}
+            <rect
+              x={targetRect.x}
+              y={targetRect.y}
+              width={targetRect.width}
+              height={targetRect.height}
+              rx="14"
+              fill="black"
+            />
+          {/if}
+        </mask>
+      </defs>
+
+      <!-- Masked dark overlay covering whole screen -->
+      <rect
+        width="100%"
+        height="100%"
+        fill="rgba(10, 14, 12, 0.75)"
+        mask="url(#spotlight-cutout-mask)"
+      />
+
+      <!-- Glowing border outline around the spotlight hole -->
+      {#if targetRect}
+        <rect
+          x={targetRect.x}
+          y={targetRect.y}
+          width={targetRect.width}
+          height={targetRect.height}
+          rx="14"
+          fill="none"
+          stroke="var(--accent)"
+          stroke-width="3"
+          class="spotlight-glow-rect"
+        />
+      {/if}
+    </svg>
+
+    <!-- Interactive Floating Popover Card -->
+    <div class="tour-popover" style={popoverStyle}>
+      <div class="popover-header">
+        <span class="popover-badge">{currentStep.badge}</span>
         <button
           type="button"
-          class="btn-close-tour"
+          class="btn-popover-close"
           onclick={handleClose}
           aria-label="Tutup panduan tur"
         >
@@ -159,27 +329,23 @@
         </button>
       </div>
 
-      <!-- Content Body -->
-      <div class="tour-card__body">
-        <div class="step-icon-bubble">
-          <span>{currentStep.icon}</span>
+      <div class="popover-body">
+        <div class="popover-title-row">
+          <span class="popover-icon">{currentStep.icon}</span>
+          <h3 id="spotlight-title" class="popover-title">{currentStep.title}</h3>
         </div>
-
-        <h3 id="tour-title" class="step-title">{currentStep.title}</h3>
-        <p class="step-desc">{currentStep.description}</p>
-
-        <div class="step-tip-box">
+        <p class="popover-desc">{currentStep.description}</p>
+        <div class="popover-tip">
           <p>{currentStep.tip}</p>
         </div>
       </div>
 
-      <!-- Footer with Progress Dots & Nav Buttons -->
-      <div class="tour-card__footer">
-        <div class="progress-dots">
+      <div class="popover-footer">
+        <div class="popover-dots">
           {#each TOUR_STEPS as step, i (step.title)}
             <button
               type="button"
-              class="dot-btn"
+              class="dot-pill"
               class:is-active={i === stepIndex}
               onclick={() => goToStep(i)}
               aria-label={`Lompat ke langkah ${i + 1}`}
@@ -187,18 +353,14 @@
           {/each}
         </div>
 
-        <div class="footer-buttons">
+        <div class="popover-nav-buttons">
           {#if stepIndex > 0}
-            <button type="button" class="btn-tour-secondary" onclick={handlePrev}>
-              ← Kembali
-            </button>
+            <button type="button" class="btn-popover-back" onclick={handlePrev}> ← Kembali </button>
           {:else}
-            <button type="button" class="btn-tour-secondary" onclick={handleClose}>
-              Lewati Tur
-            </button>
+            <button type="button" class="btn-popover-skip" onclick={handleClose}> Lewati </button>
           {/if}
 
-          <button type="button" class="btn-tour-primary" onclick={handleNext}>
+          <button type="button" class="btn-popover-next" onclick={handleNext}>
             {stepIndex === TOUR_STEPS.length - 1 ? 'Mulai Mengisi! 🚀' : 'Lanjut →'}
           </button>
         </div>
@@ -208,78 +370,89 @@
 {/if}
 
 <style>
-  .tour-backdrop {
+  .spotlight-tour-overlay {
     position: fixed;
     inset: 0;
     z-index: 100;
-    background: rgba(18, 21, 20, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.25rem;
-    animation: fadeIn 200ms ease;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .tour-card {
-    width: min(100%, 30rem);
-    background: var(--surface);
-    border-radius: 1.5rem;
-    border: 1px solid var(--line-soft);
-    box-shadow:
-      0 24px 60px -12px rgba(18, 21, 20, 0.25),
-      0 4px 16px -2px rgba(18, 21, 20, 0.08);
-    display: grid;
-    gap: 1.25rem;
-    padding: 1.75rem;
+    pointer-events: auto;
     overflow: hidden;
-    position: relative;
-    animation: slideUp 250ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  @keyframes slideUp {
+  .spotlight-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+  }
+
+  .spotlight-glow-rect {
+    filter: drop-shadow(0 0 10px rgba(35, 55, 110, 0.65));
+    animation: pulseGlow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseGlow {
+    from {
+      stroke-opacity: 0.85;
+      stroke-width: 2.5;
+    }
+    to {
+      stroke-opacity: 1;
+      stroke-width: 3.5;
+      filter: drop-shadow(0 0 16px rgba(35, 55, 110, 0.9));
+    }
+  }
+
+  .tour-popover {
+    position: fixed;
+    z-index: 101;
+    background: var(--surface);
+    border-radius: 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line-soft));
+    box-shadow:
+      0 20px 48px -10px rgba(0, 0, 0, 0.35),
+      0 4px 16px -2px rgba(0, 0, 0, 0.1);
+    display: grid;
+    gap: 0.85rem;
+    padding: 1.35rem;
+    transition:
+      top 250ms cubic-bezier(0.16, 1, 0.3, 1),
+      left 250ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 200ms ease;
+    animation: popIn 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes popIn {
     from {
       opacity: 0;
-      transform: translateY(16px) scale(0.97);
+      transform: scale(0.96);
     }
     to {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: scale(1);
     }
   }
 
-  .tour-card__header {
+  .popover-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
-  .step-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.3rem 0.75rem;
+  .popover-badge {
+    padding: 0.25rem 0.65rem;
     border-radius: 9999px;
     background: var(--accent-soft);
     color: var(--accent);
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  .btn-close-tour {
-    width: 32px;
-    height: 32px;
+  .btn-popover-close {
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     border: 1px solid var(--line-soft);
     background: var(--canvas);
@@ -288,114 +461,113 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 700;
     transition:
       background-color 150ms ease,
       color 150ms ease;
   }
 
-  .btn-close-tour:hover {
+  .btn-popover-close:hover {
     background: var(--surface-muted);
     color: var(--ink);
   }
 
-  .tour-card__body {
+  .popover-body {
     display: grid;
-    gap: 0.85rem;
+    gap: 0.65rem;
   }
 
-  .step-icon-bubble {
-    width: 54px;
-    height: 54px;
-    border-radius: 1rem;
-    background: var(--canvas);
-    border: 1px solid var(--line-soft);
+  .popover-title-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1.85rem;
+    gap: 0.5rem;
   }
 
-  .step-title {
-    margin: 0;
+  .popover-icon {
     font-size: 1.35rem;
+    flex-shrink: 0;
+  }
+
+  .popover-title {
+    margin: 0;
+    font-size: 1.12rem;
     font-weight: 750;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
     color: var(--ink);
-    line-height: 1.2;
+    line-height: 1.25;
   }
 
-  .step-desc {
+  .popover-desc {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     color: var(--ink-soft);
-    line-height: 1.55;
+    line-height: 1.5;
   }
 
-  .step-tip-box {
-    padding: 0.85rem 1rem;
-    border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--accent-soft) 50%, var(--surface));
-    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  .popover-tip {
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--accent-soft) 60%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   }
 
-  .step-tip-box p {
+  .popover-tip p {
     margin: 0;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--ink);
-    line-height: 1.45;
+    line-height: 1.4;
     font-weight: 550;
   }
 
-  .tour-card__footer {
+  .popover-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 1rem;
+    padding-top: 0.75rem;
     border-top: 1px solid var(--line-soft);
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
-  .progress-dots {
+  .popover-dots {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
   }
 
-  .dot-btn {
-    width: 8px;
-    height: 8px;
+  .dot-pill {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     border: none;
     background: var(--line-soft);
     cursor: pointer;
     padding: 0;
     transition:
-      width 200ms ease,
-      background-color 200ms ease,
-      border-radius 200ms ease;
+      width 180ms ease,
+      background-color 180ms ease;
   }
 
-  .dot-btn.is-active {
-    width: 22px;
+  .dot-pill.is-active {
+    width: 18px;
     border-radius: 9999px;
     background: var(--accent);
   }
 
-  .footer-buttons {
+  .popover-nav-buttons {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
 
-  .btn-tour-secondary {
-    padding: 0.6rem 1rem;
-    border-radius: 0.65rem;
+  .btn-popover-back,
+  .btn-popover-skip {
+    padding: 0.45rem 0.8rem;
+    border-radius: 0.55rem;
     border: 1px solid var(--line-soft);
     background: var(--surface);
     color: var(--ink-soft);
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     font-weight: 700;
     cursor: pointer;
     transition:
@@ -403,27 +575,28 @@
       color 150ms ease;
   }
 
-  .btn-tour-secondary:hover {
+  .btn-popover-back:hover,
+  .btn-popover-skip:hover {
     background: var(--canvas);
     color: var(--ink);
   }
 
-  .btn-tour-primary {
-    padding: 0.6rem 1.25rem;
-    border-radius: 0.65rem;
+  .btn-popover-next {
+    padding: 0.5rem 1rem;
+    border-radius: 0.6rem;
     border: none;
     background: var(--accent);
     color: var(--surface);
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     font-weight: 750;
     cursor: pointer;
-    box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: 0 4px 10px -2px color-mix(in srgb, var(--accent) 45%, transparent);
     transition:
       background-color 150ms ease,
       transform 150ms var(--ease-out);
   }
 
-  .btn-tour-primary:hover {
+  .btn-popover-next:hover {
     background: var(--accent-strong);
     transform: translateY(-1px);
   }

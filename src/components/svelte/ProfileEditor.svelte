@@ -488,7 +488,7 @@
           </div>
 
           <!-- Portrait Photo Uploader -->
-          <div class="uploader-container">
+          <div class="uploader-container" data-tour="photo-upload">
             <MediaUploader
               bucket="profile-photos"
               square
@@ -504,7 +504,7 @@
             />
           </div>
 
-          <div class="fields-grid">
+          <div class="fields-grid" data-tour="identity-fields">
             <div class="field field--required">
               <label for="profile-name">Nama Lengkap / Panggilan <span class="req">*</span></label>
               <input
@@ -592,7 +592,7 @@
             </p>
           </div>
 
-          <div class="fields-stack">
+          <div class="fields-stack" data-tour="story-prompts">
             <div class="field">
               <label for="profile-bio">Bio Singkat (1–2 Kalimat)</label>
               <textarea
@@ -670,7 +670,9 @@
             <p>Rangkai linimasa petualanganmu dari masa lalu hingga kini.</p>
           </div>
 
-          <JourneyEditor bind:entries={journeys} />
+          <div data-tour="journey-section">
+            <JourneyEditor bind:entries={journeys} />
+          </div>
 
           <div class="pane-footer">
             <button type="button" class="btn-step-next" onclick={nextTab}>
@@ -698,7 +700,9 @@
             <p>Showcase karya, portofolio, publikasi, atau inisiatif yang pernah kamu wujudkan.</p>
           </div>
 
-          <ProudMomentEditor {profileId} moments={initialProudMoments} />
+          <div data-tour="moments-section">
+            <ProudMomentEditor {profileId} moments={initialProudMoments} />
+          </div>
 
           <div class="pane-footer">
             <button type="button" class="btn-step-next" onclick={nextTab}>
@@ -720,7 +724,7 @@
 
       <!-- 5. BIDANG, TAUTAN & PUBLIKASI -->
       {#if currentTab === 'links'}
-        <section class="section-pane" aria-labelledby="heading-links">
+        <section class="section-pane" aria-labelledby="heading-links" data-tour="links-section">
           <div class="pane-header">
             <h2 id="heading-links">Bidang yang Ditekuni, Tautan & Publikasi</h2>
             <p>
@@ -788,7 +792,7 @@
 
   <!-- Live Sticky Preview Sidebar (Desktop & Mobile Modal) -->
   <aside class="editor-preview" class:is-open-mobile={showMobilePreview}>
-    <div class="preview-sticky-card">
+    <div class="preview-sticky-card" data-tour="live-preview">
       <div class="preview-header">
         <div class="preview-badge-live">
           <span class="live-dot"></span>
@@ -893,7 +897,7 @@
 </div>
 
 <!-- Floating Action Bar -->
-<div class="floating-save-bar">
+<div class="floating-save-bar" data-tour="save-bar">
   <div class="save-bar-content">
     <div class="save-status" role="status">
       {#if saveState === 'saving'}
