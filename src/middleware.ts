@@ -13,6 +13,7 @@ const CONTENT_SECURITY_POLICY = [
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' https: data: blob:",
+  "media-src 'self' https://*.supabase.co https: blob: data:",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co https://accounts.google.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
   "frame-ancestors 'none'",
