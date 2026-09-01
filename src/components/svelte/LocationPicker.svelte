@@ -3,7 +3,7 @@
 
   let {
     value = $bindable(''),
-    placeholder = 'Contoh: Bandung, Indonesia atau Tokyo, Japan',
+    placeholder = 'Ketik nama kota atau gunakan deteksi GPS…',
   }: {
     value: string;
     placeholder?: string;
@@ -12,6 +12,8 @@
   interface LocationSuggestion {
     display_name: string;
     name: string;
+    lat: number;
+    lon: number;
     city?: string;
     state?: string;
     country?: string;
@@ -22,6 +24,7 @@
   let suggestions = $state<LocationSuggestion[]>([]);
   let showSuggestions = $state(false);
   let geoError = $state('');
+  let coords = $state<{ lat: number; lon: number } | null>(null);
   let searchTimeout: ReturnType<typeof setTimeout> | undefined;
   let containerEl: HTMLElement | undefined;
 
@@ -70,6 +73,8 @@
       if (!res.ok) throw new Error('Gagal memuat saran kota');
       const data = (await res.json()) as Array<{
         name: string;
+        lat: string;
+        lon: string;
         display_name: string;
         address?: {
           city?: string;
@@ -84,6 +89,8 @@
       suggestions = data.map((d) => ({
         display_name: formatLocationName(d),
         name: d.name,
+        lat: Number.parseFloat(d.lat),
+        lon: Number.parseFloat(d.lon),
         city: d.address?.city || d.address?.town,
         state: d.address?.state,
         country: d.address?.country,
@@ -101,15 +108,17 @@
     const target = event.target as HTMLInputElement;
     value = target.value;
     geoError = '';
+    coords = null;
 
     if (searchTimeout) clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
       void fetchCitySuggestions(value);
-    }, 350);
+    }, 320);
   }
 
   function selectSuggestion(suggestion: LocationSuggestion) {
     value = suggestion.display_name;
+    coords = { lat: suggestion.lat, lon: suggestion.lon };
     showSuggestions = false;
     suggestions = [];
   }
@@ -152,6 +161,7 @@
           } else {
             value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
           }
+          coords = { lat, lon };
         } catch {
           geoError = 'Gagal menerjemahkan koordinat lokasi.';
         } finally {
@@ -161,7 +171,7 @@
       (error) => {
         isLocating = false;
         if (error.code === error.PERMISSION_DENIED) {
-          geoError = 'Izin lokasi tidak diberikan. Silakan ketik nama kota secara manual.';
+          geoError = 'Izin lokasi tidak diberikan. Silakan pilih nama kota dari saran pencarian.';
         } else if (error.code === error.TIMEOUT) {
           geoError = 'Waktu permintaan lokasi habis. Silakan coba lagi.';
         } else {
@@ -177,15 +187,34 @@
   }
 
   function handleBlur(event: FocusEvent) {
-    // Hide suggestions if focus moved outside container
     if (containerEl && !containerEl.contains(event.relatedTarget as Node)) {
       setTimeout(() => {
         showSuggestions = false;
-      }, 150);
+      }, 180);
     }
   }
 
   onMount(() => {
+    // If there is an existing location string on load, resolve its coordinates in background
+    if (value && !coords) {
+      void (async () => {
+        try {
+          const res = await fetch(`/api/geo/search?q=${encodeURIComponent(value)}`);
+          if (res.ok) {
+            const data = (await res.json()) as Array<{ lat: string; lon: string }>;
+            if (data.length > 0 && data[0]) {
+              coords = {
+                lat: Number.parseFloat(data[0].lat),
+                lon: Number.parseFloat(data[0].lon),
+              };
+            }
+          }
+        } catch {
+          // Ignore background verification failure
+        }
+      })();
+    }
+
     const handleDocumentClick = (e: MouseEvent) => {
       if (containerEl && !containerEl.contains(e.target as Node)) {
         showSuggestions = false;
@@ -236,6 +265,7 @@
           class="btn-clear-loc"
           onclick={() => {
             value = '';
+            coords = null;
             suggestions = [];
             showSuggestions = false;
           }}
@@ -297,29 +327,81 @@
   <!-- Autocomplete City Dropdown -->
   {#if showSuggestions && suggestions.length > 0}
     <ul class="suggestions-list" role="listbox">
-      {#each suggestions as item (item.display_name)}
+      {#each suggestions as item (item.lat + ',' + item.lon + ':' + item.display_name)}
         <li>
           <button type="button" class="suggestion-item" onclick={() => selectSuggestion(item)}>
-            <svg
-              class="item-pin"
-              viewBox="0 0 24 24"
-              width="14"
-              height="14"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-              <circle cx="12" cy="10" r="3" />
-            </svg>
-            <span class="item-text">{item.display_name}</span>
+            <div class="item-left">
+              <svg
+                class="item-pin"
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <div class="item-meta">
+                <span class="item-text">{item.display_name}</span>
+                {#if item.state || item.country}
+                  <span class="item-sub"
+                    >{[item.state, item.country].filter(Boolean).join(', ')}</span
+                  >
+                {/if}
+              </div>
+            </div>
+            <span class="item-coords">{item.lat.toFixed(2)}, {item.lon.toFixed(2)}</span>
           </button>
         </li>
       {/each}
     </ul>
+  {/if}
+
+  <!-- Coordinate Validation Status -->
+  {#if value && coords}
+    <div class="loc-status is-valid">
+      <svg
+        viewBox="0 0 24 24"
+        width="13"
+        height="13"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <span
+        >Koordinat Peta Valid: <strong>{coords.lat.toFixed(4)}, {coords.lon.toFixed(4)}</strong
+        ></span
+      >
+    </div>
+  {:else if value && !coords && !isSearching}
+    <div class="loc-status is-pending">
+      <svg
+        viewBox="0 0 24 24"
+        width="13"
+        height="13"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <span>Pilih dari daftar rekomendasi di atas agar koordinat peta tercatat akurat.</span>
+    </div>
   {/if}
 
   {#if geoError}
@@ -348,7 +430,7 @@
   .location-picker {
     position: relative;
     display: grid;
-    gap: 0.4rem;
+    gap: 0.45rem;
     width: 100%;
   }
 
@@ -493,7 +575,7 @@
     list-style: none;
     margin: 0;
     padding: 0.35rem;
-    max-height: 220px;
+    max-height: 240px;
     overflow-y: auto;
   }
 
@@ -501,13 +583,13 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 0.55rem;
-    padding: 0.6rem 0.75rem;
-    border-radius: 0.5rem;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 0.55rem;
     border: none;
     background: transparent;
     color: var(--ink);
-    font-size: 0.86rem;
     text-align: left;
     cursor: pointer;
     transition: background-color 120ms ease;
@@ -516,19 +598,79 @@
   .suggestion-item:hover,
   .suggestion-item:focus {
     background: var(--accent-soft);
-    color: var(--accent);
     outline: none;
+  }
+
+  .item-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    min-width: 0;
   }
 
   .item-pin {
     flex-shrink: 0;
     color: var(--accent);
+    margin-top: 0.15rem;
+  }
+
+  .item-meta {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
   }
 
   .item-text {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--ink);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .item-sub {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-coords {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--canvas);
+    padding: 0.2rem 0.45rem;
+    border-radius: 0.35rem;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+  }
+
+  /* Location Status Indicator */
+  .loc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.45rem;
+    width: fit-content;
+  }
+
+  .loc-status.is-valid {
+    background: color-mix(in srgb, #10b981 12%, var(--surface));
+    color: #059669;
+    border: 1px solid color-mix(in srgb, #10b981 30%, transparent);
+    font-weight: 600;
+  }
+
+  .loc-status.is-pending {
+    background: color-mix(in srgb, #f59e0b 12%, var(--surface));
+    color: #d97706;
+    border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent);
+    font-weight: 600;
   }
 
   .geo-error-msg {
