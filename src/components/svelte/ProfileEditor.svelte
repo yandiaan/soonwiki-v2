@@ -972,7 +972,7 @@
     grid-template-columns: 1fr;
     gap: 2rem;
     align-items: start;
-    padding-bottom: 7rem;
+    padding-bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px));
   }
 
   @media (min-width: 1024px) {
@@ -1583,30 +1583,47 @@
     position: fixed;
     bottom: 0;
     inset-inline: 0;
-    z-index: 45;
-    background: color-mix(in srgb, var(--surface) 92%, var(--canvas));
-    backdrop-filter: blur(20px) saturate(1.8);
-    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    z-index: 60;
+    background: color-mix(in srgb, var(--surface) 94%, var(--canvas));
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
     border-top: 1px solid var(--line-soft);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 -6px 24px rgba(18, 21, 20, 0.08);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .save-bar-content {
     max-width: var(--content-max);
     margin-inline: auto;
-    padding: 0.85rem var(--page-gutter);
+    padding: 0.75rem var(--page-gutter);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
   }
 
+  @media (max-width: 640px) {
+    .save-bar-content {
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 0.4rem;
+      padding-block: 0.65rem 0.5rem;
+    }
+  }
+
   .save-status {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 650;
+  }
+
+  @media (max-width: 640px) {
+    .save-status {
+      justify-content: center;
+      font-size: 0.78rem;
+    }
   }
 
   .text-saved {
@@ -1649,6 +1666,12 @@
     gap: 0.75rem;
   }
 
+  @media (max-width: 640px) {
+    .save-bar-actions {
+      width: 100%;
+    }
+  }
+
   .btn-ghost-preview {
     display: none;
     align-items: center;
@@ -1680,8 +1703,10 @@
   .btn-save-primary {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.55rem;
     padding: 0.75rem 1.65rem;
+    min-height: 46px;
     border-radius: 0.75rem;
     border: none;
     background: var(--accent);
@@ -1694,6 +1719,14 @@
       background-color 150ms ease,
       transform 150ms var(--ease-out),
       box-shadow 150ms ease;
+  }
+
+  @media (max-width: 640px) {
+    .btn-save-primary {
+      width: 100%;
+      min-height: 48px;
+      font-size: 0.95rem;
+    }
   }
 
   .btn-save-primary:hover:not(:disabled) {

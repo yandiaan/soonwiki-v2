@@ -104,118 +104,120 @@
   });
 </script>
 
-<nav aria-label="Navigasi bawah mobile" class="mobile-dock">
-  <div class="mobile-dock__capsule">
-    <!-- Smooth Magnetic Active Indicator Pill -->
-    <div
-      class="mobile-active-pill"
-      style="transform: translate3d(calc({activeIndex} * 100%), 0, 0);"
-      aria-hidden="true"
-    ></div>
+{#if !currentPath.startsWith('/me/edit')}
+  <nav aria-label="Navigasi bawah mobile" class="mobile-dock">
+    <div class="mobile-dock__capsule">
+      <!-- Smooth Magnetic Active Indicator Pill -->
+      <div
+        class="mobile-active-pill"
+        style="transform: translate3d(calc({activeIndex} * 100%), 0, 0);"
+        aria-hidden="true"
+      ></div>
 
-    <!-- Navigation Items -->
-    {#each navItems as item, idx (item.href)}
-      {@const isActive = idx === activeIndex}
-      <a
-        href={item.href}
-        class="dock-item"
-        class:is-active={isActive}
-        aria-current={isActive ? 'page' : undefined}
-        aria-label={item.label}
-      >
-        <span class="dock-icon-wrapper">
-          {#if item.icon === 'home'}
-            <!-- Editorial House / Home Architecture -->
-            <svg
-              class="dock-icon"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.85"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M3 10.5L12 3l9 7.5v10a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20.5z" />
-              <path d="M9 22V12h6v10" />
-            </svg>
-          {:else if item.icon === 'explore'}
-            <!-- Bespoke Editorial Compass / Discovery Lens -->
-            <svg
-              class="dock-icon"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.85"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="9.25" />
-              <polygon
-                points="15.8 8.2 13.5 13.5 8.2 15.8 10.5 10.5"
-                fill={isActive ? 'var(--accent-soft)' : 'none'}
-              />
-              <circle cx="12" cy="12" r="1.2" fill="currentColor" />
-            </svg>
-          {:else if item.icon === 'about'}
-            <!-- Open Editorial Storybook / Archive Journal -->
-            <svg
-              class="dock-icon"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.85"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-              <line x1="9" y1="7" x2="16" y2="7" />
-              <line x1="9" y1="11" x2="14" y2="11" />
-            </svg>
-          {:else if item.icon === 'admin'}
-            <!-- Admin Shield / Security Aura -->
-            <svg
-              class="dock-icon"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.85"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-          {:else if item.icon === 'profile' || item.icon === 'login'}
-            <!-- Member Silhouette with Keyhole Aura -->
-            <svg
-              class="dock-icon"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.85"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          {/if}
-        </span>
-        <span class="dock-label">{item.label}</span>
-      </a>
-    {/each}
-  </div>
-</nav>
+      <!-- Navigation Items -->
+      {#each navItems as item, idx (item.href)}
+        {@const isActive = idx === activeIndex}
+        <a
+          href={item.href}
+          class="dock-item"
+          class:is-active={isActive}
+          aria-current={isActive ? 'page' : undefined}
+          aria-label={item.label}
+        >
+          <span class="dock-icon-wrapper">
+            {#if item.icon === 'home'}
+              <!-- Editorial House / Home Architecture -->
+              <svg
+                class="dock-icon"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.85"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 10.5L12 3l9 7.5v10a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20.5z" />
+                <path d="M9 22V12h6v10" />
+              </svg>
+            {:else if item.icon === 'explore'}
+              <!-- Bespoke Editorial Compass / Discovery Lens -->
+              <svg
+                class="dock-icon"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.85"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="9.25" />
+                <polygon
+                  points="15.8 8.2 13.5 13.5 8.2 15.8 10.5 10.5"
+                  fill={isActive ? 'var(--accent-soft)' : 'none'}
+                />
+                <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+              </svg>
+            {:else if item.icon === 'about'}
+              <!-- Open Editorial Storybook / Archive Journal -->
+              <svg
+                class="dock-icon"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.85"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                <line x1="9" y1="7" x2="16" y2="7" />
+                <line x1="9" y1="11" x2="14" y2="11" />
+              </svg>
+            {:else if item.icon === 'admin'}
+              <!-- Admin Shield / Security Aura -->
+              <svg
+                class="dock-icon"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.85"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            {:else if item.icon === 'profile' || item.icon === 'login'}
+              <!-- Member Silhouette with Keyhole Aura -->
+              <svg
+                class="dock-icon"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.85"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            {/if}
+          </span>
+          <span class="dock-label">{item.label}</span>
+        </a>
+      {/each}
+    </div>
+  </nav>
+{/if}
 
 <style>
   .mobile-dock {
