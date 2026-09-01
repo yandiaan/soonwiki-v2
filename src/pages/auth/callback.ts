@@ -59,11 +59,14 @@ export const GET: APIRoute = async (context) => {
 
   const { data: member } = await supabase
     .from('members')
-    .select('status')
+    .select('role, status')
     .eq('user_id', data.session.user.id)
     .maybeSingle();
 
   if (member?.status === 'active') {
+    if (member.role === 'admin') {
+      return context.redirect('/admin');
+    }
     return context.redirect('/me');
   }
 

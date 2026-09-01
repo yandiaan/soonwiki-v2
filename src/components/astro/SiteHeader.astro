@@ -1,18 +1,29 @@
 ---
 import { paths } from '@/lib/shared/paths';
+import type { MemberSession } from '@/lib/server/session';
 
 interface Props {
   currentPath: string;
+  session?: MemberSession | null | undefined;
 }
 
-const { currentPath } = Astro.props;
+const { currentPath, session } = Astro.props;
 const isDarkHero = currentPath === '/';
+const isLoggedIn = !!session?.user;
+const isAdmin = session?.member?.role === 'admin' && session?.member?.status === 'active';
 
 const navItems = [
   { href: paths.home(), label: 'Beranda' },
   { href: paths.explore(), label: 'Jelajahi' },
   { href: paths.about(), label: 'Tentang' },
 ];
+
+if (isAdmin) {
+  navItems.push({ href: paths.admin(), label: 'Admin' });
+}
+if (isLoggedIn) {
+  navItems.push({ href: paths.me(), label: 'Profilku' });
+}
 ---
 
 <header
@@ -68,32 +79,93 @@ const navItems = [
       </ul>
     </nav>
 
-    <!-- Right Controls: Auth CTA Button -->
+    <!-- Right Controls: Auth Actions -->
     <div class="site-header__actions">
-      <a
-        href={paths.login()}
-        class:list={[
-          'login-btn',
-          { 'is-active': currentPath.startsWith('/login') || currentPath.startsWith('/join') },
-        ]}
-        aria-label="Masuk ke Ruang SoonMates"
-      >
-        <span>Masuk</span>
-        <svg
-          class="login-btn__arrow"
-          viewBox="0 0 16 16"
-          width="12"
-          height="12"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10"></path>
-        </svg>
-      </a>
+      {
+        isLoggedIn ? (
+          <>
+            {isAdmin && (
+              <a
+                href={paths.admin()}
+                class:list={['admin-pill-btn', { 'is-active': currentPath.startsWith('/admin') }]}
+                aria-label="Panel Admin"
+              >
+                <span class="admin-pill-btn__dot" aria-hidden="true" />
+                <span>Admin</span>
+              </a>
+            )}
+            <a
+              href={paths.me()}
+              class:list={['user-pill-btn', { 'is-active': currentPath.startsWith('/me') }]}
+              aria-label="Profilku"
+            >
+              <svg
+                class="user-pill-btn__icon"
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span>Profil</span>
+            </a>
+            <a
+              href={paths.logout()}
+              class="logout-icon-btn"
+              title="Keluar dari akun"
+              aria-label="Keluar"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </a>
+          </>
+        ) : (
+          <a
+            href={paths.login()}
+            class:list={[
+              'login-btn',
+              { 'is-active': currentPath.startsWith('/login') || currentPath.startsWith('/join') },
+            ]}
+            aria-label="Masuk ke Ruang SoonMates"
+          >
+            <span>Masuk</span>
+            <svg
+              class="login-btn__arrow"
+              viewBox="0 0 16 16"
+              width="12"
+              height="12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10" />
+            </svg>
+          </a>
+        )
+      }
     </div>
   </div>
 </header>
@@ -333,18 +405,44 @@ const navItems = [
     font-weight: 750;
   }
 
-  .site-header.is-dark-hero:not([data-scrolled='true']) .login-btn {
+  .site-header.is-dark-hero:not([data-scrolled='true']) .login-btn,
+  .site-header.is-dark-hero:not([data-scrolled='true']) .user-pill-btn {
     background: rgba(255, 255, 255, 0.14);
     color: var(--surface);
     border-color: rgba(255, 255, 255, 0.25);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   }
 
-  .site-header.is-dark-hero:not([data-scrolled='true']) .login-btn:hover {
+  .site-header.is-dark-hero:not([data-scrolled='true']) .login-btn:hover,
+  .site-header.is-dark-hero:not([data-scrolled='true']) .user-pill-btn:hover {
     background: var(--surface);
     color: var(--ink);
     border-color: var(--surface);
     box-shadow: 0 8px 24px -4px rgba(255, 255, 255, 0.3);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .admin-pill-btn {
+    background: rgba(43, 91, 238, 0.25);
+    color: #93c5fd;
+    border-color: rgba(147, 197, 253, 0.35);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .admin-pill-btn:hover {
+    background: var(--cobalt);
+    color: #ffffff;
+    border-color: var(--cobalt);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .logout-icon-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .logout-icon-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.4);
   }
 
   /* ----------------------------------------------------
@@ -555,8 +653,9 @@ const navItems = [
     gap: 0.5rem;
   }
 
-  /* Premium Architectural Login Button */
-  .login-btn {
+  /* Premium Architectural Login & User Pill Buttons */
+  .login-btn,
+  .user-pill-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -582,11 +681,13 @@ const navItems = [
       color 250ms ease;
   }
 
-  .login-btn__arrow {
+  .login-btn__arrow,
+  .user-pill-btn__icon {
     transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .login-btn:hover {
+  .login-btn:hover,
+  .user-pill-btn:hover {
     background: color-mix(in srgb, var(--ink) 82%, var(--accent));
     transform: translateY(-1px);
     box-shadow:
@@ -599,13 +700,98 @@ const navItems = [
     transform: translate(1.5px, -1.5px);
   }
 
-  .login-btn:active {
+  .login-btn:active,
+  .user-pill-btn:active {
     transform: translateY(0) scale(0.97);
   }
 
-  .login-btn.is-active {
+  .login-btn.is-active,
+  .user-pill-btn.is-active {
     background: var(--accent);
     border-color: color-mix(in srgb, var(--accent-soft) 40%, transparent);
+  }
+
+  /* Admin Pill Button */
+  .admin-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 36px;
+    padding: 0.38rem 0.85rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--cobalt) 12%, transparent);
+    color: var(--cobalt);
+    border: 1px solid color-mix(in srgb, var(--cobalt) 25%, transparent);
+    font-size: 0.8rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    transition:
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .admin-pill-btn__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cobalt);
+    box-shadow: 0 0 6px var(--cobalt);
+  }
+
+  .admin-pill-btn:hover {
+    background: var(--cobalt);
+    color: #ffffff;
+    border-color: var(--cobalt);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--cobalt) 40%, transparent);
+  }
+
+  .admin-pill-btn:hover .admin-pill-btn__dot {
+    background: #ffffff;
+    box-shadow: 0 0 6px #ffffff;
+  }
+
+  .admin-pill-btn.is-active {
+    background: var(--cobalt);
+    color: #ffffff;
+    border-color: var(--cobalt);
+  }
+
+  .admin-pill-btn.is-active .admin-pill-btn__dot {
+    background: #ffffff;
+  }
+
+  /* Logout Icon Button */
+  .logout-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    color: var(--ink-soft);
+    border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+    text-decoration: none;
+    transition:
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .logout-icon-btn:hover {
+    background: color-mix(in srgb, var(--signal) 14%, transparent);
+    color: var(--signal);
+    border-color: color-mix(in srgb, var(--signal) 30%, transparent);
+    transform: translateY(-1px);
+  }
+
+  .logout-icon-btn:active {
+    transform: translateY(0) scale(0.95);
   }
 
   @media (max-width: 768px) {
@@ -626,10 +812,22 @@ const navItems = [
       display: none;
     }
 
-    .login-btn {
+    .login-btn,
+    .user-pill-btn {
       min-height: 32px;
-      padding: 0.3rem 0.95rem;
+      padding: 0.3rem 0.85rem;
       font-size: 0.8rem;
+    }
+
+    .admin-pill-btn {
+      min-height: 32px;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.76rem;
+    }
+
+    .logout-icon-btn {
+      width: 32px;
+      height: 32px;
     }
   }
 </style>

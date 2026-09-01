@@ -5,6 +5,7 @@ import '@/styles/global.css';
 import MobileNavigation from '@/components/svelte/MobileNavigation.svelte';
 import SiteFooter from '@/components/astro/SiteFooter.astro';
 import SiteHeader from '@/components/astro/SiteHeader.astro';
+import { getMemberSession, type MemberSession } from '@/lib/server/session';
 
 interface Props {
   title: string;
@@ -13,9 +14,12 @@ interface Props {
   imageAlt?: string | undefined;
   canonical?: URL | undefined;
   type?: 'website' | 'profile' | 'article' | undefined;
+  session?: MemberSession | null | undefined;
 }
 
 const { title, description, image, imageAlt, canonical, type = 'website' } = Astro.props;
+const session =
+  Astro.props.session !== undefined ? Astro.props.session : await getMemberSession(Astro);
 const siteName = 'SoonWiki';
 const fullTitle =
   title === siteName ? `${siteName} — Direktori & Arsip Alumni SOON` : `${title} · ${siteName}`;
@@ -93,10 +97,15 @@ const ogImageAlt = imageAlt || `SoonWiki — ${fullTitle}`;
     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
     -->
     <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
-    <SiteHeader currentPath={currentPath} />
+    <SiteHeader currentPath={currentPath} session={session} />
     <slot />
     <SiteFooter />
-    <MobileNavigation client:load currentPath={currentPath} />
+    <MobileNavigation
+      client:load
+      currentPath={currentPath}
+      isLoggedIn={!!session?.user}
+      userRole={session?.member?.role}
+    />
 
     <script>
       import { initScrollReveals } from '@/lib/browser/motion-effects';

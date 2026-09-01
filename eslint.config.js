@@ -6,7 +6,14 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['.astro/**', '.impeccable/**', '.superpowers/**', 'dist/**', 'src/types/database.ts'],
+    ignores: [
+      '.astro/**',
+      '.vercel/**',
+      '.impeccable/**',
+      '.superpowers/**',
+      'dist/**',
+      'src/types/database.ts',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

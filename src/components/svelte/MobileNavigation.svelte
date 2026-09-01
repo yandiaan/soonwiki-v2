@@ -1,34 +1,102 @@
 <script lang="ts">
   import { paths } from '@/lib/shared/paths';
 
-  let { currentPath }: { currentPath: string } = $props();
+  let {
+    currentPath,
+    isLoggedIn = false,
+    userRole,
+  }: {
+    currentPath: string;
+    isLoggedIn?: boolean;
+    userRole?: string | undefined;
+  } = $props();
 
-  const navItems = [
-    {
-      href: paths.home(),
-      label: 'Beranda',
-      icon: 'home',
-      match: (p: string) => p === '/',
-    },
-    {
-      href: paths.explore(),
-      label: 'Jelajahi',
-      icon: 'explore',
-      match: (p: string) => p === '/explore' || p.startsWith('/explore'),
-    },
-    {
-      href: paths.about(),
-      label: 'Tentang',
-      icon: 'about',
-      match: (p: string) => p === '/#tentang',
-    },
-    {
-      href: paths.login(),
-      label: 'Masuk',
-      icon: 'login',
-      match: (p: string) => p === '/login' || p.startsWith('/login') || p.startsWith('/join'),
-    },
-  ];
+  const navItems = $derived.by(() => {
+    if (isLoggedIn) {
+      if (userRole === 'admin') {
+        return [
+          {
+            href: paths.home(),
+            label: 'Beranda',
+            icon: 'home',
+            match: (p: string) => p === '/',
+          },
+          {
+            href: paths.explore(),
+            label: 'Jelajahi',
+            icon: 'explore',
+            match: (p: string) => p === '/explore' || p.startsWith('/explore'),
+          },
+          {
+            href: paths.admin(),
+            label: 'Admin',
+            icon: 'admin',
+            match: (p: string) => p === '/admin' || p.startsWith('/admin'),
+          },
+          {
+            href: paths.me(),
+            label: 'Profilku',
+            icon: 'profile',
+            match: (p: string) => p === '/me' || p.startsWith('/me'),
+          },
+        ];
+      }
+
+      return [
+        {
+          href: paths.home(),
+          label: 'Beranda',
+          icon: 'home',
+          match: (p: string) => p === '/',
+        },
+        {
+          href: paths.explore(),
+          label: 'Jelajahi',
+          icon: 'explore',
+          match: (p: string) => p === '/explore' || p.startsWith('/explore'),
+        },
+        {
+          href: paths.about(),
+          label: 'Tentang',
+          icon: 'about',
+          match: (p: string) => p === '/#tentang',
+        },
+        {
+          href: paths.me(),
+          label: 'Profilku',
+          icon: 'profile',
+          match: (p: string) => p === '/me' || p.startsWith('/me'),
+        },
+      ];
+    }
+
+    return [
+      {
+        href: paths.home(),
+        label: 'Beranda',
+        icon: 'home',
+        match: (p: string) => p === '/',
+      },
+      {
+        href: paths.explore(),
+        label: 'Jelajahi',
+        icon: 'explore',
+        match: (p: string) => p === '/explore' || p.startsWith('/explore'),
+      },
+      {
+        href: paths.about(),
+        label: 'Tentang',
+        icon: 'about',
+        match: (p: string) => p === '/#tentang',
+      },
+      {
+        href: paths.login(),
+        label: 'Masuk',
+        icon: 'login',
+        match: (p: string) => p === '/login' || p.startsWith('/login') || p.startsWith('/join'),
+      },
+    ];
+  });
 
   let activeIndex = $derived.by(() => {
     const idx = navItems.findIndex((item) => item.match(currentPath));
@@ -110,7 +178,22 @@
               <line x1="9" y1="7" x2="16" y2="7" />
               <line x1="9" y1="11" x2="14" y2="11" />
             </svg>
-          {:else if item.icon === 'login'}
+          {:else if item.icon === 'admin'}
+            <!-- Admin Shield / Security Aura -->
+            <svg
+              class="dock-icon"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.85"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          {:else if item.icon === 'profile' || item.icon === 'login'}
             <!-- Member Silhouette with Keyhole Aura -->
             <svg
               class="dock-icon"

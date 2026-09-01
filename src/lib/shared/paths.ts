@@ -8,7 +8,9 @@ export const paths = {
   place: (slug: string) => `/place/${slug}`,
   me: () => '/me',
   meEdit: () => '/me/edit',
+  admin: () => '/admin',
   login: () => '/login',
+  logout: () => '/auth/logout',
   join: (token: string) => `/join/${token}`,
 };
 

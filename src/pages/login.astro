@@ -1,7 +1,16 @@
 ---
 import JoinWithGoogle from '@/components/svelte/JoinWithGoogle.svelte';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getMemberSession } from '@/lib/server/session';
 import { paths } from '@/lib/shared/paths';
+
+const session = await getMemberSession(Astro);
+if (session?.member?.status === 'active') {
+  if (session.member.role === 'admin') {
+    return Astro.redirect(paths.admin());
+  }
+  return Astro.redirect(paths.me());
+}
 
 const message = Astro.url.searchParams.get('message');
 ---
