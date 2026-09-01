@@ -50,5 +50,23 @@ const currentPath = Astro.url.pathname;
     <slot />
     <SiteFooter />
     <MobileNavigation client:load links={navigationLinks} currentPath={currentPath} />
+
+    <script>
+      import { initScrollReveals } from '@/lib/browser/motion-effects';
+
+      let cleanup: (() => void) | undefined;
+      function run() {
+        if (cleanup) cleanup();
+        cleanup = initScrollReveals();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run);
+      } else {
+        run();
+      }
+
+      document.addEventListener('astro:page-load', run);
+    </script>
   </body>
 </html>

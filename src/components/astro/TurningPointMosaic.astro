@@ -13,7 +13,7 @@ const { highlights } = Astro.props;
 {
   highlights.length > 0 && (
     <section class="turning-points" aria-labelledby="turning-points-title">
-      <div class="turning-points__header">
+      <div class="turning-points__header" data-reveal>
         <p class="turning-points__tag">Turning point</p>
         <h2 id="turning-points-title">Titik balik yang mengubah arah hidup.</h2>
         <p class="turning-points__intro">
@@ -21,7 +21,7 @@ const { highlights } = Astro.props;
         </p>
       </div>
 
-      <div class="turning-points__grid">
+      <div class="turning-points__grid" data-reveal-group>
         {highlights.map((item, index) => (
           <article
             class={`turning-point-card turning-point-card--${index === 0 ? 'lead' : 'secondary'}`}

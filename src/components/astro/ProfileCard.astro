@@ -36,11 +36,13 @@ const subtitle = [
     gap: 0.75rem;
     color: var(--ink);
     text-decoration: none;
-    transition: transform 180ms var(--ease-out);
+    transition:
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .profile-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
   }
 
   .profile-card:hover strong {

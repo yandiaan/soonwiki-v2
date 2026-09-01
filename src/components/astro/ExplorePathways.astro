@@ -15,7 +15,7 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
 ---
 
 <section class="explore-pathways" aria-labelledby="explore-pathways-title">
-  <div class="explore-pathways__content">
+  <div class="explore-pathways__content" data-reveal>
     <h2 id="explore-pathways-title">Cari seseorang. Temukan lebih banyak jalan.</h2>
     <p>Semua kisah dapat dibaca tanpa akun.</p>
     <form method="get" action={paths.explore()} role="search">
@@ -46,7 +46,7 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
       Punya cerita untuk dibagikan? <a href={paths.login()}>Masuk sebagai member</a>
     </p>
   </div>
-  <ul class="explore-pathways__people" aria-label="Beberapa Soonies">
+  <ul class="explore-pathways__people" aria-label="Beberapa Soonies" data-reveal-group>
     {
       profiles.map((profile) => (
         <li>
