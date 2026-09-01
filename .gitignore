@@ -4,5 +4,6 @@
 !.env.example
 .astro/
 .supabase/
+.vercel/
 dist/
 node_modules/
