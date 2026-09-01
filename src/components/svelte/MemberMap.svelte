@@ -450,11 +450,8 @@
     gap: 1.25rem;
     background: var(--surface);
     border: 1px solid var(--line-soft);
-    border-radius: 1.25rem;
+    border-radius: 1rem;
     padding: 1.25rem;
-    box-shadow:
-      0 12px 32px -8px rgba(18, 21, 20, 0.06),
-      0 2px 8px -2px rgba(18, 21, 20, 0.03);
   }
 
   /* Map Controls */
