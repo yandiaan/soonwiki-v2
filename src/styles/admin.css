@@ -1,7 +1,7 @@
 .admin {
   max-width: var(--content-max);
   margin-inline: auto;
-  padding: 1.5rem var(--page-gutter) 6rem;
+  padding: calc(var(--nav-height) + 1.25rem) var(--page-gutter) 6rem;
 }
 
 .admin h1 {

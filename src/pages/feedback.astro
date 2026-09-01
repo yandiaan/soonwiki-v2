@@ -54,7 +54,7 @@ const myFeedbacks = session?.user ? await listMyFeedbacks(supabase, session.user
   .feedback-page {
     max-width: var(--content-max);
     margin-inline: auto;
-    padding: clamp(1.5rem, 4vw, 3rem) var(--page-gutter) clamp(4rem, 8vw, 6rem);
+    padding: calc(var(--nav-height) + 1.25rem) var(--page-gutter) clamp(4rem, 8vw, 6rem);
     display: grid;
     gap: 2.5rem;
   }

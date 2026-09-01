@@ -18,13 +18,6 @@ const navItems = [
   { href: paths.memories(), label: 'Kenangan' },
   { href: paths.about(), label: 'Tentang' },
 ];
-
-if (isAdmin) {
-  navItems.push({ href: paths.admin(), label: 'Admin' });
-}
-if (isLoggedIn) {
-  navItems.push({ href: paths.me(), label: 'Profilku' });
-}
 ---
 
 <header

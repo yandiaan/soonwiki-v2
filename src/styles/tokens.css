@@ -21,6 +21,7 @@
   --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
   --page-gutter: clamp(1rem, 4vw, 4.5rem);
   --content-max: 90rem;
+  --nav-height: 5.5rem;
   --focus-ring: 0 0 0 3px var(--canvas), 0 0 0 6px var(--accent);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
