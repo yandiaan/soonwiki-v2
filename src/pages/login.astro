@@ -10,10 +10,58 @@ const message = Astro.url.searchParams.get('message');
   title="Masuk ke SoonWiki"
   description="Masuk ke SoonWiki untuk mengelola perjalanan dan kisah kamu."
 >
-  <main id="main-content" class="auth-page">
-    <div class="auth-card" data-reveal>
-      <header class="auth-card__header">
-        <a href={paths.home()} class="auth-card__back" aria-label="Kembali ke Beranda">
+  <main id="main-content" class="login-layout">
+    <!-- Left Column: Editorial Atmospheric Showcase -->
+    <aside class="login-showcase" aria-hidden="true">
+      <div class="login-showcase__ambient">
+        <div class="showcase-orb showcase-orb--1"></div>
+        <div class="showcase-orb showcase-orb--2"></div>
+      </div>
+
+      <div class="login-showcase__content" data-reveal>
+        <div class="showcase-badge">
+          <span class="showcase-badge__dot"></span>
+          <span>SOONWIKI · ARSIP ALUMNI</span>
+        </div>
+
+        <blockquote class="showcase-quote">
+          <p>
+            “Banyak cara untuk menjalani hidup. Setiap pilihan dan titik balik Soonies layak dicatat
+            dan dibagikan.”
+          </p>
+        </blockquote>
+
+        <div class="showcase-footer">
+          <div class="showcase-avatars">
+            <img
+              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80"
+              alt=""
+              class="avatar"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
+              alt=""
+              class="avatar"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=120&q=80"
+              alt=""
+              class="avatar"
+            />
+            <span class="avatar-count">+6</span>
+          </div>
+          <div class="showcase-meta">
+            <strong>Komunitas Terkurasi</strong>
+            <span>Menghubungkan lintas angkatan dan bidang</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Column: Minimalist Vault Form -->
+    <section class="login-panel" aria-labelledby="login-title">
+      <header class="login-panel__top">
+        <a href={paths.home()} class="login-back-btn">
           <svg
             viewBox="0 0 24 24"
             width="18"
@@ -27,148 +75,276 @@ const message = Astro.url.searchParams.get('message');
           >
             <path d="M19 12H5M12 19l-7-7 7-7"></path>
           </svg>
-          <span>Beranda</span>
+          <span>Kembali ke Beranda</span>
         </a>
-        <span class="auth-card__tag">Ruang Soonies</span>
-        <h1>Selamat datang kembali</h1>
-        <p class="auth-card__subtitle">
-          Masuk dengan akun Google yang terdaftar untuk menyunting linimasa dan kisah perjalananmu.
-        </p>
       </header>
 
-      {
-        message && (
-          <div class="auth-card__alert" role="alert">
-            <svg
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <span>{message}</span>
+      <div class="login-panel__center">
+        <div class="login-form-card" data-reveal>
+          <div class="login-form-card__header">
+            <span class="login-tag">Ruang Khusus Soonies</span>
+            <h1 id="login-title">Masuk ke SoonWiki</h1>
+            <p class="login-subtitle">
+              Sambungkan akun Google terdaftarmu untuk memperbarui linimasa perjalanan dan karya
+              kebanggaanmu.
+            </p>
           </div>
-        )
-      }
 
-      <div class="auth-card__form">
-        <JoinWithGoogle client:load mode="login" />
+          {
+            message && (
+              <div class="login-alert" role="alert">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span>{message}</span>
+              </div>
+            )
+          }
+
+          <div class="login-form-card__action">
+            <JoinWithGoogle client:load mode="login" />
+          </div>
+
+          <div class="login-form-card__perks">
+            <div class="login-perk">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Sunting babak hidup sejak lulus SOON</span>
+            </div>
+            <div class="login-perk">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Katalogkan karya dan momen kebanggaan</span>
+            </div>
+            <div class="login-perk">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Terhubung dalam direktori terpercaya alumni</span>
+            </div>
+          </div>
+
+          <footer class="login-form-card__footer">
+            <p class="invite-notice">
+              Belum punya akses? SoonWiki adalah arsip terkurasi. Hubungi koordinator angkatan SOON
+              untuk mendapatkan tautan undangan.
+            </p>
+          </footer>
+        </div>
       </div>
-
-      <footer class="auth-card__footer">
-        <ul class="auth-card__perks">
-          <li class="perk-item">
-            <svg
-              class="perk-icon"
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>Linimasa Perjalanan Hidup</span>
-          </li>
-          <li class="perk-item">
-            <svg
-              class="perk-icon"
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>Momen Kebanggaan Terkurasi</span>
-          </li>
-          <li class="perk-item">
-            <svg
-              class="perk-icon"
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>Direktori Komunitas Otentik</span>
-          </li>
-        </ul>
-
-        <p class="auth-card__notice">
-          Belum punya akses? SoonWiki adalah arsip terkurasi. Hubungi pengelola komunitas SOON untuk
-          mendapatkan tautan undangan.
-        </p>
-      </footer>
-    </div>
+    </section>
   </main>
 </BaseLayout>
 
 <style>
-  .auth-page {
-    position: relative;
-    display: flex;
+  .login-layout {
+    display: grid;
     min-height: calc(100svh - 4.5rem);
-    align-items: center;
-    justify-content: center;
-    padding: clamp(2rem, 5vw, 4.5rem) var(--page-gutter);
-    background:
-      radial-gradient(
-        ellipse at 50% 10%,
-        color-mix(in srgb, var(--accent) 12%, transparent),
-        transparent 60%
-      ),
-      var(--canvas);
+    background: var(--canvas);
   }
 
-  .auth-card {
+  /* Left Showcase Panel (Editorial Dark with Motion Blur Orbs) */
+  .login-showcase {
     position: relative;
-    display: grid;
-    gap: 1.75rem;
-    width: min(100%, 30rem);
-    padding: clamp(2rem, 5vw, 3rem);
-    border-radius: 1.25rem;
-    border: 1px solid var(--line-soft);
-    background: var(--surface);
-    box-shadow:
-      0 24px 60px -12px rgb(0 0 0 / 0.08),
-      0 4px 16px -2px rgb(0 0 0 / 0.03);
+    display: none;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--surface);
+    padding: clamp(3rem, 6vw, 5rem);
+    border-right: 1px solid var(--line-soft);
   }
 
-  .auth-card__header {
-    display: grid;
-    gap: 0.75rem;
+  .login-showcase__ambient {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
   }
 
-  .auth-card__back {
+  .showcase-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    mix-blend-mode: screen;
+  }
+
+  .showcase-orb--1 {
+    top: -10%;
+    left: -10%;
+    width: 32rem;
+    height: 32rem;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  }
+
+  .showcase-orb--2 {
+    bottom: -15%;
+    right: -10%;
+    width: 36rem;
+    height: 36rem;
+    background: radial-gradient(circle, #2a4365 0%, transparent 70%);
+  }
+
+  .login-showcase__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    max-width: 34rem;
+  }
+
+  .showcase-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.6rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--surface) 10%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--surface) 16%, transparent);
+    font-size: 0.75rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
     width: fit-content;
-    margin-bottom: 0.5rem;
+  }
+
+  .showcase-badge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .showcase-quote {
+    margin: 4rem 0;
+    padding: 0;
+  }
+
+  .showcase-quote p {
+    margin: 0;
+    font-size: clamp(1.6rem, 2.8vw, 2.35rem);
+    font-weight: 550;
+    line-height: 1.28;
+    letter-spacing: -0.025em;
+    color: var(--surface);
+  }
+
+  .showcase-footer {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-top: 2rem;
+    border-top: 1px solid color-mix(in srgb, var(--surface) 16%, transparent);
+  }
+
+  .showcase-avatars {
+    display: flex;
+    align-items: center;
+  }
+
+  .showcase-avatars .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    object-fit: cover;
+    margin-left: -8px;
+  }
+
+  .showcase-avatars .avatar:first-child {
+    margin-left: 0;
+  }
+
+  .showcase-avatars .avatar-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    background: color-mix(in srgb, var(--surface) 18%, transparent);
+    font-size: 0.75rem;
+    font-weight: 750;
+    margin-left: -8px;
+  }
+
+  .showcase-meta strong {
+    display: block;
+    font-size: 0.92rem;
+    color: var(--surface);
+  }
+
+  .showcase-meta span {
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--surface) 65%, transparent);
+  }
+
+  /* Right Login Panel */
+  .login-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  .login-panel__top {
+    display: flex;
+    align-items: center;
+  }
+
+  .login-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--ink-soft);
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 700;
     text-decoration: none;
     transition:
@@ -176,12 +352,38 @@ const message = Astro.url.searchParams.get('message');
       transform 150ms ease;
   }
 
-  .auth-card__back:hover {
+  .login-back-btn:hover {
     color: var(--ink);
-    transform: translateX(-2px);
+    transform: translateX(-3px);
   }
 
-  .auth-card__tag {
+  .login-panel__center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding-block: 2.5rem;
+  }
+
+  .login-form-card {
+    display: grid;
+    gap: 1.75rem;
+    width: min(100%, 26.5rem);
+    padding: clamp(2rem, 4vw, 2.75rem);
+    border-radius: 1.25rem;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    box-shadow:
+      0 20px 48px -12px rgb(0 0 0 / 0.06),
+      0 4px 16px -2px rgb(0 0 0 / 0.02);
+  }
+
+  .login-form-card__header {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .login-tag {
     color: var(--accent);
     font-size: 0.75rem;
     font-weight: 800;
@@ -191,21 +393,21 @@ const message = Astro.url.searchParams.get('message');
 
   h1 {
     margin: 0;
-    font-size: clamp(1.85rem, 4vw, 2.35rem);
+    font-size: clamp(1.8rem, 3.5vw, 2.2rem);
     font-weight: 700;
-    line-height: 1.08;
+    line-height: 1.1;
     letter-spacing: -0.03em;
     color: var(--ink);
   }
 
-  .auth-card__subtitle {
+  .login-subtitle {
     margin: 0;
     color: var(--ink-soft);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     line-height: 1.5;
   }
 
-  .auth-card__alert {
+  .login-alert {
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
@@ -219,48 +421,54 @@ const message = Astro.url.searchParams.get('message');
     line-height: 1.4;
   }
 
-  .auth-card__alert svg {
+  .login-alert svg {
     flex-shrink: 0;
     margin-top: 0.1rem;
   }
 
-  .auth-card__form {
-    padding-block: 0.25rem;
+  .login-form-card__action {
+    padding-top: 0.25rem;
   }
 
-  .auth-card__footer {
+  .login-form-card__perks {
     display: grid;
-    gap: 1.5rem;
-    padding-top: 1.5rem;
+    gap: 0.65rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--line-soft);
   }
 
-  .auth-card__perks {
-    display: grid;
-    gap: 0.65rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .perk-item {
+  .login-perk {
     display: flex;
     align-items: center;
     gap: 0.65rem;
     color: var(--ink-soft);
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     font-weight: 600;
   }
 
-  .perk-icon {
+  .login-perk svg {
     flex-shrink: 0;
     color: var(--accent);
   }
 
-  .auth-card__notice {
+  .login-form-card__footer {
+    padding-top: 0.5rem;
+  }
+
+  .invite-notice {
     margin: 0;
     color: var(--ink-soft);
     font-size: 0.8rem;
     line-height: 1.5;
+  }
+
+  @media (min-width: 960px) {
+    .login-layout {
+      grid-template-columns: 1.1fr 1fr;
+    }
+
+    .login-showcase {
+      display: block;
+    }
   }
 </style>
