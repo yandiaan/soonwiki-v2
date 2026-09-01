@@ -295,7 +295,7 @@ export type Database = {
       }
       profiles: {
         Row: {
-          batch_year: number
+          generation_key: string
           bio: string | null
           created_at: string
           current_activity: string | null
@@ -316,7 +316,7 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
-          batch_year: number
+          generation_key: string
           bio?: string | null
           created_at?: string
           current_activity?: string | null
@@ -337,7 +337,7 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
-          batch_year?: number
+          generation_key?: string
           bio?: string | null
           created_at?: string
           current_activity?: string | null
@@ -544,7 +544,7 @@ export type Database = {
     Views: {
       published_profile_cards: {
         Row: {
-          batch_year: number | null
+          generation_key: string | null
           current_activity: string | null
           current_place_name: string | null
           current_place_slug: string | null
@@ -559,7 +559,7 @@ export type Database = {
       }
       published_profile_details: {
         Row: {
-          batch_year: number | null
+          generation_key: string | null
           bio: string | null
           current_activity: string | null
           current_direction_story: string | null
@@ -651,7 +651,7 @@ export type Database = {
       }
       search_profiles: {
         Args: {
-          batch_year?: number
+          generation_key?: string
           field_slug?: string
           place_slug?: string
           query?: string
@@ -659,7 +659,7 @@ export type Database = {
           result_offset?: number
         }
         Returns: {
-          batch_year: number
+          generation_key: string
           current_activity: string
           current_place_name: string
           current_place_slug: string

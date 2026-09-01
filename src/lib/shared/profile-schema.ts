@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { GENERATION_KEYS } from '@/lib/shared/generations';
+
 function normalizeText(value: string): string {
   return value.normalize('NFC').trim().replace(/\s+/g, ' ');
 }
@@ -37,11 +39,7 @@ export const profileInputSchema = z.object({
     .refine((value) => value.length >= 2 && value.length <= 160, {
       message: 'Nama harus 2–160 karakter',
     }),
-  batchYear: z
-    .number()
-    .int()
-    .min(2000, { message: 'Batch minimal 2000' })
-    .max(2100, { message: 'Batch maksimal 2100' }),
+  generationKey: z.enum(GENERATION_KEYS, { message: 'Pilih angkatan SOON yang valid' }),
   photoPath: trimmedOptional(500),
   bio: trimmedOptional(500),
   location: trimmedOptional(120),

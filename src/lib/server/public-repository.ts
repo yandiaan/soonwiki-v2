@@ -25,7 +25,7 @@ interface ProfileCardLike {
   slug: string | null;
   name: string | null;
   photo_path: string | null;
-  batch_year: number | null;
+  generation_key: string | null;
   current_activity: string | null;
   current_place_name: string | null;
   current_place_slug: string | null;
@@ -39,7 +39,7 @@ function toProfileCard(row: ProfileCardLike): ProfileCard {
     slug: row.slug ?? '',
     name: row.name ?? '',
     photoPath: row.photo_path,
-    batchYear: row.batch_year ?? 0,
+    generationKey: row.generation_key ?? '',
     currentActivity: row.current_activity,
     currentPlaceName: row.current_place_name,
     currentPlaceSlug: row.current_place_slug,
@@ -51,7 +51,7 @@ function toProfileCard(row: ProfileCardLike): ProfileCard {
 export interface SearchFilters {
   query?: string;
   fieldSlug?: string;
-  batchYear?: number;
+  generationKey?: string;
   placeSlug?: string;
   limit?: number;
   offset?: number;
@@ -65,7 +65,7 @@ export async function searchPublishedProfiles(
   const { data, error } = await supabase.rpc('search_profiles', {
     ...(filters.query !== undefined && { query: filters.query }),
     ...(filters.fieldSlug !== undefined && { field_slug: filters.fieldSlug }),
-    ...(filters.batchYear !== undefined && { batch_year: filters.batchYear }),
+    ...(filters.generationKey !== undefined && { generation_key: filters.generationKey }),
     ...(filters.placeSlug !== undefined && { place_slug: filters.placeSlug }),
     result_limit: filters.limit ?? 20,
     result_offset: filters.offset ?? 0,
@@ -147,7 +147,7 @@ export async function getProfileBySlug(
       slug: profile.slug ?? slug,
       name: profile.name ?? '',
       photoPath: profile.photo_path ?? null,
-      batchYear: profile.batch_year ?? 0,
+      generationKey: profile.generation_key ?? '',
       bio: profile.bio ?? null,
       location: profile.location ?? null,
       currentActivity: profile.current_activity ?? null,
@@ -217,7 +217,7 @@ export async function getHomeStoryData(
       profileId: row.id ?? '',
       profileName: row.name ?? '',
       profileSlug: row.slug ?? '',
-      batchYear: row.batch_year ?? 0,
+      generationKey: row.generation_key ?? '',
       activity: row.current_activity ?? null,
       placeName: row.current_place_name ?? null,
       quote: row.turning_point_story ?? '',
@@ -231,8 +231,8 @@ export async function getHomeStoryData(
     .from('fields')
     .select('id', { count: 'exact', head: true });
 
-  const batchYears = Array.from(
-    new Set(candidates.map((c) => c.batch_year).filter((y): y is number => Boolean(y))),
+  const generationKeys = Array.from(
+    new Set(candidates.map((candidate) => candidate.generation_key).filter(Boolean)),
   );
 
   const firstProudMoment = featuredResult.data.proudMoments[0];
@@ -248,7 +248,7 @@ export async function getHomeStoryData(
       stats: {
         totalStories: totalPublishedProfiles ?? candidates.length,
         totalFields: totalFields ?? 8,
-        totalBatches: Math.max(batchYears.length, 1),
+        totalBatches: Math.max(generationKeys.length, 1),
       },
     },
   };
@@ -283,15 +283,11 @@ export async function getFieldCollection(
 
 export async function getBatchCollection(
   context: ServerContext,
-  year: number,
-): Promise<RepositoryResult<{ year: number; profiles: ProfileCard[] }>> {
-  if (year < 2000 || year > 2100) {
-    return { ok: false, code: 'NOT_FOUND' };
-  }
-
+  generationKey: string,
+): Promise<RepositoryResult<{ generationKey: string; profiles: ProfileCard[] }>> {
   const supabase = createServerSupabase(context);
   const { data, error } = await supabase.rpc('search_profiles', {
-    batch_year: year,
+    generation_key: generationKey,
     result_limit: 50,
   });
 
@@ -301,7 +297,7 @@ export async function getBatchCollection(
 
   const profiles = (data ?? []).map(toProfileCard);
 
-  return { ok: true, data: { year, profiles } };
+  return { ok: true, data: { generationKey, profiles } };
 }
 
 export async function getPlaceCollection(
@@ -338,10 +334,9 @@ export async function getMembersGeoDistribution(context: ServerContext): Promise
   const { data: profiles, error } = await supabase
     .from('published_profile_details')
     .select(
-      'id, slug, name, photo_path, batch_year, location, current_activity, current_place_name',
+      'id, slug, name, photo_path, generation_key, location, current_activity, current_place_name',
     )
-    .not('location', 'is', null)
-    .neq('location', '');
+    .limit(500);
 
   if (error || !profiles) {
     return [];
@@ -371,9 +366,9 @@ export async function getMembersGeoDistribution(context: ServerContext): Promise
   }> = [];
 
   for (const profile of profiles) {
-    if (!profile.location || !profile.slug) continue;
-    const coords = resolveCoordinates(profile.location);
-    if (!coords) continue;
+    if (!profile.slug) continue;
+    const locString = profile.location?.trim() || profile.current_place_name?.trim() || 'Indonesia';
+    const coords = resolveCoordinates(locString) || { lat: -2.5489, lon: 118.0149 };
 
     const clusterKey = `${coords.lat.toFixed(2)},${coords.lon.toFixed(2)}`;
     rawPins.push({ profile, coords, clusterKey });
@@ -400,8 +395,8 @@ export async function getMembersGeoDistribution(context: ServerContext): Promise
       slug: profile.slug ?? '',
       name: profile.name ?? '',
       photoPath: profile.photo_path ?? null,
-      batchYear: profile.batch_year ?? 0,
-      location: profile.location ?? '',
+      generationKey: profile.generation_key ?? '',
+      location: profile.location || profile.current_place_name || 'Indonesia',
       lat: jittered.lat,
       lon: jittered.lon,
       currentActivity: profile.current_activity ?? null,

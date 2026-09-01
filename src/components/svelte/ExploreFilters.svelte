@@ -35,8 +35,8 @@
       <label for="filter-batch">Generasi SOON</label>
       <select id="filter-batch" name="batch">
         <option value="">Semua Generasi</option>
-        {#each SOON_GENERATIONS as gen (gen.year)}
-          <option value={String(gen.year)} selected={batch === String(gen.year)}>
+        {#each SOON_GENERATIONS as gen (gen.key)}
+          <option value={gen.key} selected={batch === gen.key}>
             {gen.name}
           </option>
         {/each}

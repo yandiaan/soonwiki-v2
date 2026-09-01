@@ -8,6 +8,7 @@ import {
 } from '@/lib/server/admin-repository';
 import { getMemberSession } from '@/lib/server/session';
 import { createServerSupabase } from '@/lib/supabase/server';
+import { getGenerationName } from '@/lib/shared/generations';
 import '@/styles/admin.css';
 
 const session = await getMemberSession(Astro);
@@ -88,7 +89,7 @@ const currentPath = Astro.url.pathname;
               <td>
                 <a href={`/people/${profile.slug}`}>{profile.name}</a>
               </td>
-              <td>{profile.batchYear}</td>
+              <td>{getGenerationName(profile.generationKey)}</td>
               <td>{profile.isPublished ? 'Terbit' : 'Draf'}</td>
               <td>
                 <form class="inline" method="post">

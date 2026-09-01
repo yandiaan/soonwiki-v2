@@ -40,7 +40,7 @@ const { profiles } = Astro.props;
                   <strong class="person-name">{profile.name}</strong>
                   <span class="person-meta">
                     {profile.fieldLabels[0] ?? profile.currentActivity ?? 'Perjalanan'}
-                    {` · ${getGenerationName(profile.batchYear)}`}
+                    {` · ${getGenerationName(profile.generationKey)}`}
                   </span>
                 </div>
               </a>

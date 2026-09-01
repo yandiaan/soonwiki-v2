@@ -1,4 +1,4 @@
-const DRAFT_VERSION = 1;
+const DRAFT_VERSION = 2;
 
 export interface DraftEnvelope<T> {
   version: number;

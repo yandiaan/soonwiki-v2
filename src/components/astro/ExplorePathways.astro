@@ -10,7 +10,7 @@ interface Props {
 
 const { story } = Astro.props;
 const profiles = [story.featured, ...story.contactSheet].slice(0, 4);
-const firstBatch = profiles[0]?.batchYear;
+const firstBatch = profiles[0]?.generationKey;
 const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
 ---
 

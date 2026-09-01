@@ -34,7 +34,7 @@ export interface OwnProfile {
   slug: string;
   name: string;
   photoPath: string | null;
-  batchYear: number;
+  generationKey: string;
   bio: string | null;
   location: string | null;
   currentActivity: string | null;
@@ -60,7 +60,7 @@ export interface DuplicateCandidate {
   id: string;
   name: string;
   slug: string;
-  batchYear: number;
+  generationKey: string;
   photoPath: string | null;
 }
 
@@ -123,7 +123,7 @@ export async function loadOwnProfile(
         slug: profile.slug,
         name: profile.name,
         photoPath: profile.photo_path,
-        batchYear: profile.batch_year,
+        generationKey: profile.generation_key,
         bio: profile.bio,
         location: profile.location,
         currentActivity: profile.current_activity,
@@ -267,7 +267,7 @@ export async function upsertOwnProfile(
     owner_id: user.id,
     name: input.name,
     photo_path: input.photoPath ?? null,
-    batch_year: input.batchYear,
+    generation_key: input.generationKey,
     bio: input.bio ?? null,
     location: input.location ?? null,
     current_activity: input.currentActivity ?? null,
@@ -417,7 +417,7 @@ export async function deleteProudMoment(
 export async function findDuplicateCandidates(
   client: Client,
   name: string,
-  batchYear: number,
+  generationKey: string,
 ): Promise<DuplicateCandidate[]> {
   const trimmed = name.trim();
 
@@ -427,21 +427,23 @@ export async function findDuplicateCandidates(
 
   const { data } = await client
     .from('published_profile_cards')
-    .select('id, name, slug, batch_year, photo_path')
-    .eq('batch_year', batchYear)
+    .select('id, name, slug, generation_key, photo_path')
+    .eq('generation_key', generationKey)
     .ilike('name', `%${trimmed}%`)
     .limit(5);
 
   return (data ?? [])
     .filter(
-      (row): row is typeof row & { id: string; name: string; slug: string; batch_year: number } =>
-        Boolean(row.id && row.name && row.slug && row.batch_year),
+      (
+        row,
+      ): row is typeof row & { id: string; name: string; slug: string; generation_key: string } =>
+        Boolean(row.id && row.name && row.slug && row.generation_key),
     )
     .map((row) => ({
       id: row.id,
       name: row.name,
       slug: row.slug,
-      batchYear: row.batch_year,
+      generationKey: row.generation_key,
       photoPath: row.photo_path,
     }));
 }

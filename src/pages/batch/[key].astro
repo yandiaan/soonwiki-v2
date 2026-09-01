@@ -3,49 +3,49 @@ import EmptyState from '@/components/astro/EmptyState.astro';
 import ProfileCard from '@/components/astro/ProfileCard.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getBatchCollection } from '@/lib/server/public-repository';
-import { getGenerationName } from '@/lib/shared/generations';
+import { getGenerationName, SOON_GENERATIONS } from '@/lib/shared/generations';
 import { paths, publicStorageUrl } from '@/lib/shared/paths';
 import '@/styles/collections.css';
 
-const yearParam = Astro.params.year;
-const year = yearParam ? Number.parseInt(yearParam, 10) : Number.NaN;
+const generationKey = Astro.params.key ?? '';
+const generation = SOON_GENERATIONS.find((item) => item.key === generationKey);
 
-if (!Number.isFinite(year)) {
-  return new Response('Batch ini tidak ditemukan.', { status: 404 });
+if (!generation) {
+  return new Response('Angkatan ini tidak ditemukan.', { status: 404 });
 }
 
-const result = await getBatchCollection(Astro, year);
+const result = await getBatchCollection(Astro, generationKey);
 
 if (!result.ok) {
-  return new Response('Batch ini tidak ditemukan.', { status: 404 });
+  return new Response('Angkatan ini tidak ditemukan.', { status: 404 });
 }
 
 const { profiles } = result.data;
-const genName = getGenerationName(year);
+const generationName = getGenerationName(generationKey);
 const coverPhoto = profiles[0]?.photoPath
   ? publicStorageUrl('profile-photos', profiles[0].photoPath)
   : undefined;
 ---
 
 <BaseLayout
-  title={`${genName} | SoonWiki`}
-  description={`Kisah dan perjalanan hidup SoonMates dari angkatan ${genName}.`}
-  canonical={new URL(`/batch/${year}`, Astro.url)}
+  title={`${generationName} | SoonWiki`}
+  description={`Kisah dan perjalanan hidup SoonMates dari angkatan ${generationName}.`}
+  canonical={new URL(`/batch/${generationKey}`, Astro.url)}
   image={coverPhoto}
 >
   <main id="main-content" class="collection">
     <header class="collection__header">
       <p class="collection__tag">Generasi SOON</p>
-      <h1>{genName}</h1>
+      <h1>{generationName}</h1>
       <p class="collection__intro">
-        Perjalanan dan jejak langkah SoonMates dari {genName}, dari berbagai jalan hidup.
+        Perjalanan dan jejak langkah SoonMates dari {generationName}, dari berbagai jalan hidup.
       </p>
     </header>
     {
       profiles.length === 0 ? (
         <EmptyState
           title="Belum ada kisah di sini"
-          description="Belum ada SoonMates dari batch ini yang menerbitkan profilnya."
+          description="Belum ada SoonMates dari angkatan ini yang menerbitkan profilnya."
           actionHref={paths.explore()}
           actionLabel="Jelajahi semua"
         />

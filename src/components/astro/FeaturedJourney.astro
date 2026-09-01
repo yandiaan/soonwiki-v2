@@ -24,7 +24,7 @@ function toLead(value: string | null, fallback: string) {
 
 const lead = toLead(source, `Perjalanan ${profile.name} dari SOON.`);
 const metadata = [
-  getGenerationName(profile.batchYear),
+  getGenerationName(profile.generationKey),
   profile.fieldLabels[0],
   profile.currentPlaceName,
 ].filter((item): item is string => Boolean(item));

@@ -28,7 +28,7 @@
 
   interface ProfileFormState {
     name: string;
-    batchYear: string;
+    generationKey: string;
     bio: string;
     location: string;
     currentActivity: string;
@@ -78,7 +78,7 @@
   function toFormState(profile: OwnProfile | null): ProfileFormState {
     return {
       name: profile?.name ?? '',
-      batchYear: profile ? String(profile.batchYear) : '',
+      generationKey: profile?.generationKey ?? '',
       bio: profile?.bio ?? '',
       location: profile?.location ?? '',
       currentActivity: profile?.currentActivity ?? '',
@@ -126,7 +126,7 @@
   let completionStats = $derived.by(() => {
     const checks = [
       Boolean(form.name.trim()),
-      Boolean(form.batchYear.trim()),
+      Boolean(form.generationKey.trim()),
       Boolean(form.photoPath),
       Boolean(form.bio.trim() || form.currentActivity.trim()),
       Boolean(form.sinceSoonStory.trim() || form.turningPointStory.trim()),
@@ -201,11 +201,9 @@
       return;
     }
 
-    const batchYearNum = Number.parseInt(form.batchYear, 10);
-
     const parsed = profileInputSchema.safeParse({
       name: form.name,
-      batchYear: Number.isFinite(batchYearNum) ? batchYearNum : undefined,
+      generationKey: form.generationKey,
       photoPath: form.photoPath || undefined,
       bio: form.bio,
       location: form.location,
@@ -226,7 +224,7 @@
       // Jump to identity tab if name/batch error
       if (
         parsed.error.issues[0]?.path.includes('name') ||
-        parsed.error.issues[0]?.path.includes('batchYear')
+        parsed.error.issues[0]?.path.includes('generationKey')
       ) {
         currentTab = 'identity';
       }
@@ -281,10 +279,8 @@
   async function handleSave() {
     if (!profileId && !duplicateConfirmed) {
       const supabase = createBrowserSupabase();
-      const batchYear = Number.parseInt(form.batchYear, 10);
-
-      if (form.name.trim() && Number.isFinite(batchYear)) {
-        const candidates = await findDuplicateCandidates(supabase, form.name, batchYear);
+      if (form.name.trim() && form.generationKey) {
+        const candidates = await findDuplicateCandidates(supabase, form.name, form.generationKey);
         if (candidates.length > 0) {
           duplicateCandidates = candidates;
           return;
@@ -548,12 +544,12 @@
             <div class="field field--required">
               <label for="profile-batch">Angkatan / Generasi SOON <span class="req">*</span></label>
               <div class="select-box-wrap">
-                <select id="profile-batch" bind:value={form.batchYear} required>
-                  <option value="" disabled selected={!form.batchYear}
+                <select id="profile-batch" bind:value={form.generationKey} required>
+                  <option value="" disabled selected={!form.generationKey}
                     >Pilih Angkatan / Generasi SOON…</option
                   >
-                  {#each SOON_GENERATIONS as gen (gen.year)}
-                    <option value={String(gen.year)}>{gen.name}</option>
+                  {#each SOON_GENERATIONS as gen (gen.key)}
+                    <option value={gen.key}>{gen.name}</option>
                   {/each}
                 </select>
                 <svg
@@ -891,10 +887,8 @@
         <div class="card-meta">
           <div class="card-name-row">
             <h3 class="card-name">{form.name || 'Nama SoonMates'}</h3>
-            {#if form.batchYear}
-              <span class="batch-badge"
-                >{formatGenerationBadge(Number.parseInt(form.batchYear, 10))}</span
-              >
+            {#if form.generationKey}
+              <span class="batch-badge">{formatGenerationBadge(form.generationKey)}</span>
             {/if}
           </div>
 

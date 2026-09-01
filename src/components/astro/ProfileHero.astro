@@ -12,7 +12,7 @@ interface Props {
 const { profile } = Astro.props;
 
 const metadata = [
-  getGenerationName(profile.batchYear),
+  getGenerationName(profile.generationKey),
   profile.currentActivity,
   profile.currentPlaceName,
 ].filter((item): item is string => Boolean(item));

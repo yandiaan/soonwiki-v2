@@ -3,7 +3,7 @@ export interface ProfileCard {
   slug: string;
   name: string;
   photoPath: string | null;
-  batchYear: number;
+  generationKey: string;
   currentActivity: string | null;
   currentPlaceName: string | null;
   currentPlaceSlug: string | null;
@@ -35,7 +35,7 @@ export interface ProfileDetail {
   slug: string;
   name: string;
   photoPath: string | null;
-  batchYear: number;
+  generationKey: string;
   bio: string | null;
   location: string | null;
   currentActivity: string | null;
@@ -58,7 +58,7 @@ export interface TurningPointHighlight {
   profileId: string;
   profileName: string;
   profileSlug: string;
-  batchYear: number;
+  generationKey: string;
   activity: string | null;
   placeName: string | null;
   quote: string;

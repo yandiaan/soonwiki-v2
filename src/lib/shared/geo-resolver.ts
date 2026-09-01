@@ -8,7 +8,7 @@ export interface GeoMemberPin {
   slug: string;
   name: string;
   photoPath: string | null;
-  batchYear: number;
+  generationKey: string;
   location: string;
   lat: number;
   lon: number;
@@ -18,17 +18,32 @@ export interface GeoMemberPin {
 }
 
 /**
- * Curated reference coordinates for Indonesian regencies/cities and international tech hubs.
+ * Curated reference coordinates for Indonesian regencies/cities, provinces, and international tech hubs.
  * Provides instant 0ms geocoding with no external API calls required.
  */
 const KNOWN_COORDINATES: Record<string, GeoCoordinates> = {
+  // Country & Island Region Level Fallbacks
+  indonesia: { lat: -2.5489, lon: 118.0149 },
+  nusantara: { lat: -0.9739, lon: 116.7089 },
+  ikn: { lat: -0.9739, lon: 116.7089 },
+  jawa: { lat: -7.25, lon: 110.0 },
+  sumatera: { lat: -0.5897, lon: 101.3431 },
+  sumatra: { lat: -0.5897, lon: 101.3431 },
+  kalimantan: { lat: -0.0, lon: 114.0 },
+  sulawesi: { lat: -2.0, lon: 121.0 },
+  papua: { lat: -4.0, lon: 138.0 },
+  maluku: { lat: -3.2385, lon: 130.1453 },
+
   // Jabodetabek & Banten
   jakarta: { lat: -6.2088, lon: 106.8456 },
+  'dki jakarta': { lat: -6.2088, lon: 106.8456 },
+  dki: { lat: -6.2088, lon: 106.8456 },
   'jakarta selatan': { lat: -6.2615, lon: 106.8106 },
   'jakarta pusat': { lat: -6.1805, lon: 106.8284 },
   'jakarta barat': { lat: -6.1683, lon: 106.7588 },
   'jakarta timur': { lat: -6.225, lon: 106.9004 },
   'jakarta utara': { lat: -6.1384, lon: 106.864 },
+  'kepulauan seribu': { lat: -5.6122, lon: 106.5647 },
   depok: { lat: -6.4025, lon: 106.7942 },
   bogor: { lat: -6.5971, lon: 106.806 },
   tangerang: { lat: -6.1783, lon: 106.6319 },
@@ -40,8 +55,11 @@ const KNOWN_COORDINATES: Record<string, GeoCoordinates> = {
   cilegon: { lat: -6.0024, lon: 106.0152 },
   lebak: { lat: -6.5519, lon: 106.252 },
   pandeglang: { lat: -6.3084, lon: 106.1064 },
+  banten: { lat: -6.4058, lon: 106.064 },
 
   // Jawa Barat
+  'jawa barat': { lat: -6.9175, lon: 107.6191 },
+  jabar: { lat: -6.9175, lon: 107.6191 },
   bandung: { lat: -6.9175, lon: 107.6191 },
   'bandung barat': { lat: -6.8427, lon: 107.5029 },
   cimahi: { lat: -6.8723, lon: 107.5422 },
@@ -62,12 +80,16 @@ const KNOWN_COORDINATES: Record<string, GeoCoordinates> = {
   pangandaran: { lat: -7.7029, lon: 108.4947 },
 
   // DI Yogyakarta & Jawa Tengah
+  'di yogyakarta': { lat: -7.7956, lon: 110.3695 },
+  diy: { lat: -7.7956, lon: 110.3695 },
   yogyakarta: { lat: -7.7956, lon: 110.3695 },
   jogja: { lat: -7.7956, lon: 110.3695 },
   sleman: { lat: -7.7156, lon: 110.3556 },
   bantul: { lat: -7.8938, lon: 110.3306 },
   'kulon progo': { lat: -7.8256, lon: 110.1583 },
   gunungkidul: { lat: -7.9606, lon: 110.6014 },
+  'jawa tengah': { lat: -7.1509, lon: 110.1403 },
+  jateng: { lat: -7.1509, lon: 110.1403 },
   semarang: { lat: -7.0051, lon: 110.4381 },
   surakarta: { lat: -7.5666, lon: 110.8267 },
   solo: { lat: -7.5666, lon: 110.8267 },
@@ -96,8 +118,15 @@ const KNOWN_COORDINATES: Record<string, GeoCoordinates> = {
   wonogiri: { lat: -7.8139, lon: 110.9256 },
   karanganyar: { lat: -7.5972, lon: 110.9506 },
   sragen: { lat: -7.4267, lon: 111.0222 },
+  brebes: { lat: -6.8703, lon: 109.0436 },
+  pemalang: { lat: -6.8906, lon: 109.3808 },
+  batang: { lat: -6.9083, lon: 109.7333 },
+  purbalingga: { lat: -7.3878, lon: 109.3636 },
+  banjarnegara: { lat: -7.3986, lon: 109.6972 },
 
   // Jawa Timur
+  'jawa timur': { lat: -7.5361, lon: 112.2384 },
+  jatim: { lat: -7.5361, lon: 112.2384 },
   surabaya: { lat: -7.2575, lon: 112.7521 },
   malang: { lat: -7.9797, lon: 112.6304 },
   batu: { lat: -7.8712, lon: 112.5273 },
@@ -144,41 +173,84 @@ const KNOWN_COORDINATES: Record<string, GeoCoordinates> = {
   singaraja: { lat: -8.1128, lon: 115.0881 },
   mataram: { lat: -8.5833, lon: 116.1167 },
   lombok: { lat: -8.5833, lon: 116.1167 },
+  ntb: { lat: -8.6529, lon: 117.3616 },
+  'nusa tenggara barat': { lat: -8.6529, lon: 117.3616 },
+  sumbawa: { lat: -8.5, lon: 117.4167 },
+  bima: { lat: -8.4606, lon: 118.7264 },
   kupang: { lat: -10.1772, lon: 123.607 },
+  ntt: { lat: -8.6574, lon: 121.0794 },
+  'nusa tenggara timur': { lat: -8.6574, lon: 121.0794 },
   labuanbajo: { lat: -8.4964, lon: 119.8877 },
   'labuan bajo': { lat: -8.4964, lon: 119.8877 },
+  flores: { lat: -8.6, lon: 121.0 },
 
   // Sumatera
   medan: { lat: 3.5952, lon: 98.6722 },
+  'sumatera utara': { lat: 2.1154, lon: 99.5451 },
+  sumut: { lat: 2.1154, lon: 99.5451 },
   'banda aceh': { lat: 5.5483, lon: 95.3238 },
+  aceh: { lat: 4.6951, lon: 96.7494 },
   padang: { lat: -0.9471, lon: 100.4172 },
+  'sumatera barat': { lat: -0.7399, lon: 100.8 },
+  sumbar: { lat: -0.7399, lon: 100.8 },
+  bukittinggi: { lat: -0.3056, lon: 100.3692 },
   pekanbaru: { lat: 0.5071, lon: 101.4478 },
+  riau: { lat: 0.5071, lon: 101.4478 },
   batam: { lat: 1.1301, lon: 104.0529 },
+  'kepulauan riau': { lat: 3.9457, lon: 108.1429 },
+  kepri: { lat: 3.9457, lon: 108.1429 },
   tanjungpinang: { lat: 0.9167, lon: 104.45 },
   jambi: { lat: -1.6101, lon: 103.6131 },
   palembang: { lat: -2.9761, lon: 104.7754 },
+  'sumatera selatan': { lat: -3.3194, lon: 104.5908 },
+  sumsel: { lat: -3.3194, lon: 104.5908 },
   bengkulu: { lat: -3.8004, lon: 102.2655 },
   'bandar lampung': { lat: -5.45, lon: 105.2667 },
   lampung: { lat: -5.45, lon: 105.2667 },
+  bangka: { lat: -2.1, lon: 106.0 },
+  belitung: { lat: -2.75, lon: 107.7 },
+  pangkalpinang: { lat: -2.1333, lon: 106.1167 },
 
   // Kalimantan
+  'kalimantan barat': { lat: -0.0263, lon: 109.3425 },
+  kalbar: { lat: -0.0263, lon: 109.3425 },
   pontianak: { lat: -0.0263, lon: 109.3425 },
   singkawang: { lat: 0.9067, lon: 108.9867 },
+  'kalimantan tengah': { lat: -1.6815, lon: 113.3824 },
+  kalteng: { lat: -1.6815, lon: 113.3824 },
   palangkaraya: { lat: -2.2161, lon: 113.9139 },
+  'kalimantan selatan': { lat: -3.0926, lon: 115.2838 },
+  kalsel: { lat: -3.0926, lon: 115.2838 },
   banjarmasin: { lat: -3.3194, lon: 114.5908 },
   banjarbaru: { lat: -3.4406, lon: 114.8306 },
+  'kalimantan timur': { lat: 0.5387, lon: 116.4194 },
+  kaltim: { lat: 0.5387, lon: 116.4194 },
   balikpapan: { lat: -1.2379, lon: 116.8529 },
   samarinda: { lat: -0.5022, lon: 117.1536 },
-  nusantara: { lat: -0.9739, lon: 116.7089 },
-  ikn: { lat: -0.9739, lon: 116.7089 },
+  bontang: { lat: 0.1333, lon: 117.5 },
+  'kalimantan utara': { lat: 3.0731, lon: 116.0414 },
+  kaltara: { lat: 3.0731, lon: 116.0414 },
   tarakan: { lat: 3.3, lon: 117.6333 },
 
   // Sulawesi & Maluku & Papua
+  'sulawesi selatan': { lat: -3.6687, lon: 119.9741 },
+  sulsel: { lat: -3.6687, lon: 119.9741 },
   makassar: { lat: -5.1477, lon: 119.4327 },
+  parepare: { lat: -4.0167, lon: 119.6333 },
+  palopo: { lat: -2.9944, lon: 120.1972 },
+  'sulawesi utara': { lat: 0.6247, lon: 123.975 },
+  sulut: { lat: 0.6247, lon: 123.975 },
   manado: { lat: 1.4748, lon: 124.8428 },
+  bitung: { lat: 1.4404, lon: 125.1878 },
+  'sulawesi tengah': { lat: -1.43, lon: 121.4456 },
+  sulteng: { lat: -1.43, lon: 121.4456 },
   palu: { lat: -0.9003, lon: 119.8779 },
+  'sulawesi tenggara': { lat: -4.1449, lon: 122.1746 },
+  sultra: { lat: -4.1449, lon: 122.1746 },
   kendari: { lat: -3.9985, lon: 122.5126 },
   gorontalo: { lat: 0.5435, lon: 123.0568 },
+  'sulawesi barat': { lat: -2.8441, lon: 119.2321 },
+  sulbar: { lat: -2.8441, lon: 119.2321 },
   mamuju: { lat: -2.6738, lon: 118.887 },
   ambon: { lat: -3.6954, lon: 128.1814 },
   ternate: { lat: 0.7833, lon: 127.3667 },
@@ -186,6 +258,8 @@ const KNOWN_COORDINATES: Record<string, GeoCoordinates> = {
   manokwari: { lat: -0.8615, lon: 134.062 },
   sorong: { lat: -0.8762, lon: 131.2558 },
   merauke: { lat: -8.4932, lon: 140.4019 },
+  timika: { lat: -4.5467, lon: 136.8833 },
+  biak: { lat: -1.1833, lon: 136.0833 },
 
   // Global Hubs
   singapore: { lat: 1.3521, lon: 103.8198 },
@@ -215,6 +289,16 @@ const KNOWN_COORDINATES: Record<string, GeoCoordinates> = {
  */
 export function resolveCoordinates(rawLocation: string | null | undefined): GeoCoordinates | null {
   if (!rawLocation) return null;
+
+  // 0. Direct Coordinate string check (e.g. "-6.2088, 106.8456" or "lat: -6.2, lon: 106.8")
+  const coordMatch = rawLocation.match(/(-?\d+\.\d+)[,\s]+(-?\d+\.\d+)/);
+  if (coordMatch && coordMatch[1] && coordMatch[2]) {
+    const lat = parseFloat(coordMatch[1]);
+    const lon = parseFloat(coordMatch[2]);
+    if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+      return { lat, lon };
+    }
+  }
 
   const normalized = rawLocation
     .toLowerCase()

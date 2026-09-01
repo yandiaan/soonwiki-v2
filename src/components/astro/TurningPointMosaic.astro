@@ -38,7 +38,7 @@ const { highlights } = Astro.props;
               <div>
                 <strong>{item.profileName}</strong>
                 <span>
-                  {item.activity ?? 'Perjalanan'} · {getGenerationName(item.batchYear)}
+                  {item.activity ?? 'Perjalanan'} · {getGenerationName(item.generationKey)}
                 </span>
               </div>
               <a

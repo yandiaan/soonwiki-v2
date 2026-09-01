@@ -13,14 +13,14 @@
   let mapInstance: L.Map | null = $state(null);
   let markersLayer: L.LayerGroup | null = null;
 
-  let selectedGeneration = $state<number | 'all'>('all');
+  let selectedGeneration = $state<string | 'all'>('all');
   let searchQuery = $state('');
   let activePin = $state<GeoMemberPin | null>(null);
 
   // Filtered pins based on search and generation filter
   const filteredPins = $derived(
     pins.filter((pin) => {
-      const matchGen = selectedGeneration === 'all' || pin.batchYear === selectedGeneration;
+      const matchGen = selectedGeneration === 'all' || pin.generationKey === selectedGeneration;
       const query = searchQuery.trim().toLowerCase();
       const matchQuery =
         !query ||
@@ -108,7 +108,7 @@
         .map((p) => p[0]?.toUpperCase())
         .join('');
 
-      const genName = getGenerationName(pin.batchYear);
+      const genName = getGenerationName(pin.generationKey);
 
       // Custom HTML Marker Pin
       const iconHtml = `
@@ -270,8 +270,8 @@
         aria-label="Filter berdasarkan angkatan"
       >
         <option value="all">Semua Angkatan</option>
-        {#each SOON_GENERATIONS as gen (gen.year)}
-          <option value={gen.year}>{gen.name}</option>
+        {#each SOON_GENERATIONS as gen (gen.key)}
+          <option value={gen.key}>{gen.name}</option>
         {/each}
       </select>
 
@@ -346,7 +346,7 @@
             {/if}
           </div>
           <div class="drawer-info">
-            <span class="drawer-gen">{getGenerationName(activePin.batchYear)}</span>
+            <span class="drawer-gen">{getGenerationName(activePin.generationKey)}</span>
             <h4 class="drawer-name">{activePin.name}</h4>
             <p class="drawer-location">
               <svg

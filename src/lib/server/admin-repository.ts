@@ -21,7 +21,7 @@ export interface AdminProfileRow {
   id: string;
   name: string;
   slug: string;
-  batchYear: number;
+  generationKey: string;
   isPublished: boolean;
   ownerId: string;
   updatedAt: string;
@@ -70,7 +70,7 @@ export async function listAllProfilesForAdmin(
 ): Promise<AdminResult<AdminProfileRow[]>> {
   let query = client
     .from('profiles')
-    .select('id, name, slug, batch_year, is_published, owner_id, updated_at')
+    .select('id, name, slug, generation_key, is_published, owner_id, updated_at')
     .order('updated_at', { ascending: false })
     .limit(100);
 
@@ -90,7 +90,7 @@ export async function listAllProfilesForAdmin(
       id: row.id,
       name: row.name,
       slug: row.slug,
-      batchYear: row.batch_year,
+      generationKey: row.generation_key,
       isPublished: row.is_published,
       ownerId: row.owner_id,
       updatedAt: row.updated_at,

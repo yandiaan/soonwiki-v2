@@ -1335,7 +1335,7 @@ name
 slug
 photo_url
 
-batch_year
+generation_key
 
 bio
 location

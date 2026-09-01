@@ -14,7 +14,6 @@ const q = url.searchParams.get('q') ?? '';
 const field = url.searchParams.get('field') ?? '';
 const place = url.searchParams.get('place') ?? '';
 const batchParam = url.searchParams.get('batch') ?? '';
-const batch = batchParam ? Number.parseInt(batchParam, 10) : undefined;
 const pageParam = url.searchParams.get('page');
 const page = pageParam ? Math.max(1, Number.parseInt(pageParam, 10)) : 1;
 
@@ -22,7 +21,7 @@ const result = await searchPublishedProfiles(Astro, {
   ...(q && { query: q }),
   ...(field && { fieldSlug: field }),
   ...(place && { placeSlug: place }),
-  ...(batch !== undefined && Number.isFinite(batch) && { batchYear: batch }),
+  ...(batchParam && { generationKey: batchParam }),
   limit: PAGE_SIZE,
   offset: (page - 1) * PAGE_SIZE,
 });

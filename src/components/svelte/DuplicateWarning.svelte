@@ -20,7 +20,7 @@
     </p>
     <ul>
       {#each candidates as candidate (candidate.id)}
-        <li>{candidate.name} · {getGenerationName(candidate.batchYear)}</li>
+        <li>{candidate.name} · {getGenerationName(candidate.generationKey)}</li>
       {/each}
     </ul>
     <div class="duplicate-warning__actions">

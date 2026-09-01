@@ -13,7 +13,7 @@ const { profile } = Astro.props;
 const subtitle = [
   profile.fieldLabels[0] ?? profile.currentActivity,
   profile.currentPlaceName,
-  getGenerationName(profile.batchYear),
+  getGenerationName(profile.generationKey),
 ].filter((item): item is string => Boolean(item));
 ---
 
