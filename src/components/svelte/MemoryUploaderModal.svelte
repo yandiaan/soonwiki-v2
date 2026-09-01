@@ -110,7 +110,13 @@
       uploadStatus = 'ready';
     } catch (err) {
       uploadStatus = 'error';
-      uploadError = err instanceof Error ? err.message : 'Gagal mengunggah media.';
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.toLowerCase().includes('bucket not found')) {
+        uploadError =
+          'Storage bucket "memories" belum dibuat di Supabase. Silakan jalankan SQL migration atau buat bucket "memories" (Public: ON) di Supabase Dashboard.';
+      } else {
+        uploadError = msg || 'Gagal mengunggah media.';
+      }
     }
   }
 
@@ -145,7 +151,13 @@
       uploadStatus = 'ready';
     } catch (err) {
       uploadStatus = 'error';
-      uploadError = err instanceof Error ? err.message : 'Gagal mengunggah video.';
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.toLowerCase().includes('bucket not found')) {
+        uploadError =
+          'Storage bucket "memories" belum dibuat di Supabase. Silakan jalankan SQL migration atau buat bucket "memories" (Public: ON) di Supabase Dashboard.';
+      } else {
+        uploadError = msg || 'Gagal mengunggah video.';
+      }
     }
   }
 
