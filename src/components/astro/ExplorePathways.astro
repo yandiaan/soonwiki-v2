@@ -41,7 +41,22 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
         Lewat tempat
       </a>
     </nav>
-    <a class="explore-pathways__all" href={paths.explore()}>Jelajahi semua Soonies</a>
+    <a class="explore-pathways__all" href={paths.explore()}>
+      <span>Jelajahi semua</span>
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M5 12h14M12 5l7 7-7 7"></path>
+      </svg>
+    </a>
     <p class="explore-pathways__member">
       Punya cerita untuk dibagikan? <a href={paths.login()}>Masuk sebagai member</a>
     </p>
@@ -63,7 +78,8 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
 <style>
   .explore-pathways {
     padding: clamp(4.5rem, 9vw, 8rem) var(--page-gutter) 0;
-    background: var(--accent-soft);
+    background: var(--surface-muted);
+    border-top: 1px solid var(--line-soft);
   }
 
   .explore-pathways__content {
@@ -80,6 +96,7 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
     font-size: clamp(2.6rem, 5.5vw, 5.6rem);
     line-height: 0.98;
     letter-spacing: -0.04em;
+    color: var(--ink);
   }
 
   .explore-pathways__content > p:first-of-type {
@@ -111,7 +128,6 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
   input,
   button {
     min-height: 4.25rem;
-    border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent);
     border-radius: 0.75rem;
     font: inherit;
   }
@@ -119,23 +135,39 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
   input {
     min-width: 0;
     padding-inline: 1.25rem;
+    border: 1px solid var(--line-soft);
     background: var(--surface);
     color: var(--ink);
     font-size: 1.05rem;
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
   }
 
   button {
-    padding-inline: 1.5rem;
-    border-color: var(--accent);
-    background: var(--accent);
+    padding-inline: 1.75rem;
+    border: 1px solid var(--ink);
+    background: var(--ink);
     color: var(--surface);
     font-weight: 750;
     cursor: pointer;
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease,
+      transform 200ms var(--ease-out),
+      box-shadow 200ms ease;
   }
 
   button:hover {
-    background: var(--accent-strong);
+    background: var(--accent);
+    border-color: var(--accent);
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
   .explore-pathways__routes {
@@ -148,28 +180,60 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
 
   .explore-pathways__routes a {
     display: inline-flex;
-    min-height: 48px;
+    min-height: 52px;
     align-items: center;
     justify-content: center;
+    padding: 0.75rem 1.25rem;
+    border-radius: 9999px;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      border-color 200ms ease,
+      color 200ms ease,
+      transform 200ms var(--ease-out),
+      box-shadow 200ms ease;
+  }
+
+  .explore-pathways__routes a:hover {
+    border-color: var(--accent);
     color: var(--accent);
-    font-size: clamp(1rem, 2vw, 1.3rem);
-    font-weight: 750;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -4px rgb(0 0 0 / 0.08);
   }
 
   .explore-pathways__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     min-height: 48px;
-    margin-top: 1.5rem;
+    margin-top: 1.75rem;
     color: var(--accent);
     font-weight: 750;
+    text-decoration: none;
+    transition:
+      color 200ms ease,
+      transform 200ms var(--ease-out);
+  }
+
+  .explore-pathways__all:hover {
+    color: var(--accent-strong);
+    transform: translateX(4px);
   }
 
   .explore-pathways__member {
-    margin: 0.75rem 0 3rem;
+    margin: 1rem 0 3.5rem;
     color: var(--ink-soft);
+    font-size: 0.95rem;
   }
 
   .explore-pathways__member a {
     color: var(--accent);
+    font-weight: 700;
+    text-underline-offset: 3px;
   }
 
   .explore-pathways__people {

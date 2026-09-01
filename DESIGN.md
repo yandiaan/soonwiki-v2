@@ -14,18 +14,19 @@ utama; login member selalu sekunder.
 
 ## Palette
 
-| Token           | Nilai     | Peran                       |
-| --------------- | --------- | --------------------------- |
-| `--canvas`      | `#f4f5f1` | Latar cool off-white        |
-| `--surface`     | `#ffffff` | Permukaan dan input         |
-| `--ink`         | `#171918` | Teks dan bidang gelap       |
-| `--ink-soft`    | `#5d625e` | Teks pendukung              |
-| `--accent`      | `#2448d8` | Aksi utama dan tautan aktif |
-| `--accent-soft` | `#e3e9ff` | Closing discovery surface   |
-| `--line-soft`   | `#d5d9d3` | Hairline dan batas tenang   |
+| Token             | Nilai     | Peran                                      |
+| ----------------- | --------- | ------------------------------------------ |
+| `--canvas`        | `#f7f6f2` | Latar warm linen newsprint                 |
+| `--surface`       | `#ffffff` | Permukaan dan input                        |
+| `--surface-muted` | `#ecece4` | Bidang kontras penutup editorial           |
+| `--ink`           | `#121514` | Teks dan bidang gelap                      |
+| `--ink-soft`      | `#575e59` | Teks pendukung                             |
+| `--accent`        | `#23376e` | Aksen architectural indigo (non-bootstrap) |
+| `--accent-soft`   | `#edf1fa` | Aksen lembut pelapis porcelain             |
+| `--signal`        | `#c84428` | Aksen hangat terracotta / vermilion        |
+| `--line-soft`     | `#d8dbd3` | Hairline dan batas tenang                  |
 
-Royal blue adalah satu-satunya aksen dekoratif homepage. Warna semantic tetap boleh digunakan pada
-error, warning, dan success di permukaan operasional.
+Architectural indigo dan warm linen membentuk identitas visual editorial SoonWiki, menggantikan warna primer generik. Warna semantic tetap boleh digunakan pada error, warning, dan success di permukaan operasional.
 
 ## Type
 

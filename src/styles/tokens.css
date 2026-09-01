@@ -1,17 +1,22 @@
 :root {
-  --canvas: #f4f5f1;
+  /* Warm Editorial Canvas & Linen Paper */
+  --canvas: #f7f6f2;
   --surface: #ffffff;
-  --surface-muted: #e9ece6;
-  --ink: #171918;
-  --ink-soft: #5d625e;
-  --accent: #2448d8;
-  --accent-strong: #1833a8;
-  --accent-soft: #e3e9ff;
-  --line-soft: #d5d9d3;
+  --surface-muted: #ecece4;
+  --ink: #121514;
+  --ink-soft: #575e59;
+
+  /* Bespoke Architectural Indigo / Midnight Slate (Replaces generic Bootstrap royal blue) */
+  --accent: #23376e;
+  --accent-strong: #16244d;
+  --accent-soft: #edf1fa;
+  --accent-vibrant: #2e4488;
+
+  --line-soft: #d8dbd3;
   --paper: var(--canvas);
   --cobalt: var(--accent);
-  --signal: #b54332;
-  --sage: #cbd2c8;
+  --signal: #c84428;
+  --sage: #c5cdc2;
   --line: var(--line-soft);
   --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
   --page-gutter: clamp(1rem, 4vw, 4.5rem);
