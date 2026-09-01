@@ -63,6 +63,7 @@
     aria-label="Kisah lain dari SoonMates, gulir untuk melihat lebih banyak"
     tabindex="0"
     onkeydown={handleKeydown}
+    data-lenis-prevent
   >
     {@render children()}
   </div>
@@ -128,6 +129,9 @@
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
 
   .story-rail__track::-webkit-scrollbar {
