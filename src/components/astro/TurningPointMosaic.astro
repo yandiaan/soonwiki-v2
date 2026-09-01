@@ -1,4 +1,5 @@
 ---
+import { getGenerationName } from '@/lib/shared/generations';
 import { paths } from '@/lib/shared/paths';
 
 import type { TurningPointHighlight } from '@/lib/shared/public-models';
@@ -37,7 +38,7 @@ const { highlights } = Astro.props;
               <div>
                 <strong>{item.profileName}</strong>
                 <span>
-                  {item.activity ?? 'Perjalanan'} · Soon {item.batchYear}
+                  {item.activity ?? 'Perjalanan'} · {getGenerationName(item.batchYear)}
                 </span>
               </div>
               <a

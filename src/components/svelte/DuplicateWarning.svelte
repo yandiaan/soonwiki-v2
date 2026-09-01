@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getGenerationName } from '@/lib/shared/generations';
   import type { DuplicateCandidate } from '@/lib/server/member-repository';
 
   let {
@@ -15,11 +16,11 @@
 {#if candidates.length > 0}
   <div class="duplicate-warning" role="alertdialog" aria-labelledby="duplicate-warning-title">
     <p id="duplicate-warning-title">
-      Ada {candidates.length} profil dengan nama dan batch mirip. Apakah salah satunya kamu?
+      Ada {candidates.length} profil dengan nama dan generasi mirip. Apakah salah satunya kamu?
     </p>
     <ul>
       {#each candidates as candidate (candidate.id)}
-        <li>{candidate.name} · Soon {candidate.batchYear}</li>
+        <li>{candidate.name} · {getGenerationName(candidate.batchYear)}</li>
       {/each}
     </ul>
     <div class="duplicate-warning__actions">

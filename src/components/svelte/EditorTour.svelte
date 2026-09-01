@@ -33,9 +33,9 @@
       tab: 'identity',
       badge: 'Langkah 2 dari 7',
       icon: 'tag',
-      title: 'Nama & Angkatan SOON',
+      title: 'Nama & Generasi SOON',
       description:
-        'Tulis nama panggilan akrab dan tahun angkatan SOON-mu. Masukkan juga peran atau kesibukan yang lagi kamu jalani saat ini.',
+        'Tulis nama panggilan akrab dan pilih nama Generasi SOON-mu (misal: Gen.SuperTeam, Gen.Osida, Gen.Beta). Masukkan juga kesibukan yang lagi kamu jalani saat ini.',
       tip: 'Ini kartu pengenal utamamu agar sesama SoonMates mudah menemukan dan mengenali kamu.',
       placement: 'bottom',
     },

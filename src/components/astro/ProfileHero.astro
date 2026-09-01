@@ -1,6 +1,7 @@
 ---
 import MetadataStrip from '@/components/astro/MetadataStrip.astro';
 import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import { getGenerationName } from '@/lib/shared/generations';
 
 import type { ProfileDetail } from '@/lib/shared/public-models';
 
@@ -11,7 +12,7 @@ interface Props {
 const { profile } = Astro.props;
 
 const metadata = [
-  `Soon ${profile.batchYear}`,
+  getGenerationName(profile.batchYear),
   profile.currentActivity,
   profile.currentPlaceName,
 ].filter((item): item is string => Boolean(item));

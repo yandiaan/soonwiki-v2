@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { SOON_GENERATIONS } from '@/lib/shared/generations';
   import { paths } from '@/lib/shared/paths';
 
   let {
@@ -31,16 +32,15 @@
       />
     </div>
     <div class="explore-filters__field explore-filters__batch">
-      <label for="filter-batch">Angkatan (Soon)</label>
-      <input
-        id="filter-batch"
-        type="number"
-        name="batch"
-        value={batch}
-        placeholder="Contoh: 2021"
-        min="2000"
-        max="2100"
-      />
+      <label for="filter-batch">Generasi SOON</label>
+      <select id="filter-batch" name="batch">
+        <option value="">Semua Generasi</option>
+        {#each SOON_GENERATIONS as gen (gen.year)}
+          <option value={String(gen.year)} selected={batch === String(gen.year)}>
+            {gen.name}
+          </option>
+        {/each}
+      </select>
     </div>
     <div class="explore-filters__actions">
       <button type="submit" class="explore-filters__submit">Terapkan</button>
@@ -77,7 +77,8 @@
     color: var(--ink-soft);
   }
 
-  input {
+  input,
+  select {
     min-height: 44px;
     padding-inline: 0.85rem;
     border: 1px solid var(--line-soft);
@@ -88,13 +89,15 @@
     font-size: 0.95rem;
   }
 
-  input:focus-visible {
+  input:focus-visible,
+  select:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
   }
 
-  .explore-filters__batch input {
-    width: 9rem;
+  .explore-filters__batch select {
+    width: 12rem;
+    cursor: pointer;
   }
 
   .explore-filters__actions {

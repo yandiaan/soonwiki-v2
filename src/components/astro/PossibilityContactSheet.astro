@@ -1,6 +1,7 @@
 ---
 import PortraitFrame from '@/components/astro/PortraitFrame.astro';
 import StoryRail from '@/components/svelte/StoryRail.svelte';
+import { getGenerationName } from '@/lib/shared/generations';
 import { paths } from '@/lib/shared/paths';
 
 import type { ProfileCard } from '@/lib/shared/public-models';
@@ -14,14 +15,15 @@ const { profiles } = Astro.props;
 
 {
   profiles.length > 0 && (
-    <section class="contact-sheet" aria-labelledby="contact-sheet-title">
-      <div class="contact-sheet__heading">
-        <h2 id="contact-sheet-title">Banyak cara untuk menjalani hidup.</h2>
-        <p>Temukan cerita lewat manusia, bidang, angkatan, dan tempat.</p>
-        <a href={paths.explore()}>Lihat semua</a>
-      </div>
-      <StoryRail client:load count={profiles.length}>
-        <ul class="contact-sheet__rail">
+    <section class="contact-sheet" aria-labelledby="contact-sheet-title" data-reveal>
+      <header class="contact-sheet__header">
+        <h2 id="contact-sheet-title">Lembar Kemungkinan</h2>
+        <p>
+          Sekilas fragmen perjalanan, karya, dan pilihan hidup SoonMates dari berbagai angkatan.
+        </p>
+      </header>
+      <StoryRail client:idle count={profiles.length}>
+        <ul class="contact-sheet__strip">
           {profiles.map((profile, index) => (
             <li class={`contact-sheet__item--variant-${index % 3}`}>
               <a href={paths.profile(profile.slug)}>
@@ -34,7 +36,7 @@ const { profiles } = Astro.props;
                   <strong>{profile.name}</strong>
                   <span>
                     {profile.fieldLabels[0] ?? profile.currentActivity ?? 'Perjalanan'}
-                    {`, Soon ${profile.batchYear}`}
+                    {`, ${getGenerationName(profile.batchYear)}`}
                   </span>
                 </span>
               </a>

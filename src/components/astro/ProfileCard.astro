@@ -1,5 +1,6 @@
 ---
 import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import { getGenerationName } from '@/lib/shared/generations';
 import { paths } from '@/lib/shared/paths';
 
 import type { ProfileCard as ProfileCardModel } from '@/lib/shared/public-models';
@@ -12,7 +13,7 @@ const { profile } = Astro.props;
 const subtitle = [
   profile.fieldLabels[0] ?? profile.currentActivity,
   profile.currentPlaceName,
-  `Soon ${profile.batchYear}`,
+  getGenerationName(profile.batchYear),
 ].filter((item): item is string => Boolean(item));
 ---
 

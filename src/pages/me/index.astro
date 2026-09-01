@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getMemberSession } from '@/lib/server/session';
 import { loadOwnProfile } from '@/lib/server/member-repository';
 import { createServerSupabase } from '@/lib/supabase/server';
+import { getGenerationName } from '@/lib/shared/generations';
 import { paths, publicStorageUrl } from '@/lib/shared/paths';
 
 const session = await getMemberSession(Astro);
@@ -59,7 +60,7 @@ const { profile, journeys, fieldIds, proudMoments } = result.data;
           <div class="me-profile-info">
             <div class="me-name-row">
               <h2>{profile.name}</h2>
-              <span class="me-batch">Soon {profile.batchYear}</span>
+              <span class="me-batch">{getGenerationName(profile.batchYear)}</span>
             </div>
 
             {

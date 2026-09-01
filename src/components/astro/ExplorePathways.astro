@@ -25,14 +25,14 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
           id="home-search"
           type="search"
           name="q"
-          placeholder="Cari nama, bidang, angkatan, atau tempat"
+          placeholder="Cari nama, bidang, generasi, atau tempat"
         />
         <button type="submit">Cari</button>
       </div>
     </form>
     <nav class="explore-pathways__routes" aria-label="Cara menjelajahi SoonWiki">
       <a href={paths.explore()}>Lewat bidang</a>
-      <a href={firstBatch ? paths.batch(firstBatch) : paths.explore()}>Lewat angkatan</a>
+      <a href={firstBatch ? paths.batch(firstBatch) : paths.explore()}>Lewat generasi</a>
       <a
         href={firstPlace?.currentPlaceSlug
           ? paths.place(firstPlace.currentPlaceSlug)

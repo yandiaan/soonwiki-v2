@@ -1,5 +1,6 @@
 ---
 import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import { getGenerationName } from '@/lib/shared/generations';
 import { paths } from '@/lib/shared/paths';
 
 import type { ProfileDetail } from '@/lib/shared/public-models';
@@ -23,7 +24,7 @@ function toLead(value: string | null, fallback: string) {
 
 const lead = toLead(source, `Perjalanan ${profile.name} dari SOON.`);
 const metadata = [
-  `Soon ${profile.batchYear}`,
+  getGenerationName(profile.batchYear),
   profile.fieldLabels[0],
   profile.currentPlaceName,
 ].filter((item): item is string => Boolean(item));

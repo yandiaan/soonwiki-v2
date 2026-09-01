@@ -6,6 +6,7 @@
   import MediaUploader from '@/components/svelte/MediaUploader.svelte';
   import ProudMomentEditor from '@/components/svelte/ProudMomentEditor.svelte';
   import { clearDraft, loadDraft, saveDraft } from '@/lib/browser/local-draft';
+  import { SOON_GENERATIONS, formatGenerationBadge } from '@/lib/shared/generations';
   import { publicStorageUrl } from '@/lib/shared/paths';
   import { profileInputSchema } from '@/lib/shared/profile-schema';
   import {
@@ -535,17 +536,32 @@
             </div>
 
             <div class="field field--required">
-              <label for="profile-batch">Angkatan SOON (Tahun) <span class="req">*</span></label>
-              <input
-                id="profile-batch"
-                type="number"
-                bind:value={form.batchYear}
-                placeholder="Contoh: 2021"
-                min="2000"
-                max="2100"
-                required
-              />
-              <span class="field-hint">Tahun angkatanmu di program SOON.</span>
+              <label for="profile-batch">Angkatan / Generasi SOON <span class="req">*</span></label>
+              <div class="select-box-wrap">
+                <select id="profile-batch" bind:value={form.batchYear} required>
+                  <option value="" disabled selected={!form.batchYear}
+                    >Pilih Angkatan / Generasi SOON…</option
+                  >
+                  {#each SOON_GENERATIONS as gen (gen.year)}
+                    <option value={String(gen.year)}>{gen.name}</option>
+                  {/each}
+                </select>
+                <svg
+                  class="select-arrow-icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+              <span class="field-hint">Pilih nama angkatan / generasi program SOON kamu.</span>
             </div>
 
             <div class="field">
@@ -862,7 +878,9 @@
           <div class="card-name-row">
             <h3 class="card-name">{form.name || 'Nama SoonMates'}</h3>
             {#if form.batchYear}
-              <span class="batch-badge">Soon {form.batchYear}</span>
+              <span class="batch-badge"
+                >{formatGenerationBadge(Number.parseInt(form.batchYear, 10))}</span
+              >
             {/if}
           </div>
 
@@ -1291,7 +1309,8 @@
   }
 
   .field input,
-  .field textarea {
+  .field textarea,
+  .select-box-wrap select {
     min-height: 46px;
     padding: 0.7rem 0.95rem;
     border: 1px solid var(--line-soft);
@@ -1305,8 +1324,32 @@
       box-shadow 150ms ease;
   }
 
+  .select-box-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .select-box-wrap select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  .select-arrow-icon {
+    position: absolute;
+    right: 1rem;
+    pointer-events: none;
+    color: var(--ink-soft);
+  }
+
   .field input:focus,
-  .field textarea:focus {
+  .field textarea:focus,
+  .select-box-wrap select:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
