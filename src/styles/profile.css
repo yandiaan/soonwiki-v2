@@ -1,24 +1,76 @@
 .profile {
-  max-width: 52rem;
+  max-width: 54rem;
   margin-inline: auto;
   padding-inline: var(--page-gutter);
-  padding-block-end: 6rem;
+  padding-block: 1rem 6rem;
+  position: relative;
 }
 
-.profile__social {
+/* Connect Card */
+.profile__connect-card {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 2rem 0;
-  padding: 0;
-  list-style: none;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-block: 3rem 2rem;
+  padding: clamp(1.75rem, 4vw, 2.5rem);
+  border-radius: 1.5rem;
+  background: linear-gradient(
+    135deg,
+    var(--surface) 0%,
+    color-mix(in srgb, var(--accent) 5%, var(--surface)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line-soft));
+  box-shadow:
+    0 16px 36px -12px rgba(18, 21, 20, 0.06),
+    0 4px 12px -2px rgba(18, 21, 20, 0.02);
 }
 
-.profile__social a {
+.profile__connect-header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.profile__connect-tag {
   display: inline-flex;
   align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.profile__connect-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.5vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.profile__connect-desc {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+.profile__connect-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.connect-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   min-height: 44px;
-  padding: 0.5rem 1.25rem;
+  padding: 0.55rem 1.35rem;
   border-radius: 9999px;
   background: var(--surface);
   border: 1px solid var(--line-soft);
@@ -27,22 +79,36 @@
   color: var(--ink);
   text-decoration: none;
   transition:
-    background-color 180ms var(--ease-out),
-    border-color 180ms var(--ease-out),
-    color 180ms var(--ease-out);
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
-.profile__social a:hover {
-  background: var(--surface-muted);
-  color: var(--accent);
+.connect-link:hover {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+  transform: translateY(-2px);
 }
 
-.profile__social a:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
+.connect-link--primary {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
 }
 
+.connect-link--primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, black);
+  color: #ffffff;
+}
+
+/* Report Section */
 .profile__report {
-  padding-block: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 2rem;
   border-top: 1px solid var(--line-soft);
+  margin-top: 2rem;
 }

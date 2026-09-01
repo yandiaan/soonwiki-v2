@@ -17,7 +17,7 @@
           entry.target.toggleAttribute('data-active', entry.isIntersecting);
         }
       },
-      { threshold: 0.5 },
+      { threshold: 0.35 },
     );
 
     items.forEach((item) => observer.observe(item));
@@ -32,12 +32,20 @@
 
 <style>
   .journey-timeline :global([data-journey-entry]) {
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
+    opacity: 0.85;
+    transition:
+      opacity 280ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .journey-timeline :global([data-active]) {
+  .journey-timeline :global([data-journey-entry][data-active]) {
     opacity: 1;
+  }
+
+  .journey-timeline :global([data-journey-entry][data-active] .journey-node__dot) {
+    background: var(--accent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 30%, transparent);
+    transform: scale(1.15);
   }
 
   @media (prefers-reduced-motion: reduce) {

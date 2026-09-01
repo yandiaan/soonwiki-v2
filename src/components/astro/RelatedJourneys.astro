@@ -10,9 +10,31 @@ interface Props {
 const { profiles } = Astro.props;
 ---
 
-<section class="related-journeys" aria-labelledby="related-journeys-title">
-  <h2 id="related-journeys-title">Perjalanan lain yang mungkin menarik</h2>
-  <ul class="related-journeys__grid">
+<section class="related-journeys" aria-labelledby="related-journeys-title" data-reveal>
+  <header class="related-journeys__header">
+    <div class="related-badge">
+      <svg
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      <span>Eksplorasi Komunitas</span>
+    </div>
+    <h2 id="related-journeys-title">Jelajahi Profil SoonMates Lainnya</h2>
+  </header>
+
+  <ul class="related-journeys__grid" data-reveal-group>
     {
       profiles.map((profile) => (
         <li>
@@ -26,21 +48,39 @@ const { profiles } = Astro.props;
 <style>
   .related-journeys {
     display: grid;
-    gap: 1.5rem;
-    padding-block: 2.5rem 4rem;
+    gap: 1.75rem;
+    padding-block: 3rem 4.5rem;
     border-top: 1px solid var(--line-soft);
+    margin-top: 2rem;
+  }
+
+  .related-journeys__header {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .related-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   h2 {
     margin: 0;
-    font-size: clamp(1.4rem, 4vw, 2rem);
-    font-weight: 650;
-    letter-spacing: -0.025em;
+    font-size: clamp(1.8rem, 4vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
   }
 
   .related-journeys__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
     gap: 2rem 1.5rem;
     margin: 0;
     padding: 0;

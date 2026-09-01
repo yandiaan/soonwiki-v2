@@ -10,35 +10,80 @@ interface Props {
 const { moments } = Astro.props;
 ---
 
-<section class="proud-moment-gallery" aria-labelledby="proud-moment-gallery-title">
-  <h2 id="proud-moment-gallery-title">Hal yang dibanggakan</h2>
-  <ul class="proud-moment-gallery__items">
+<section class="proud-moments" aria-labelledby="proud-moments-title" data-reveal>
+  <header class="proud-moments__header">
+    <div class="proud-badge">
+      <svg
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polygon
+          points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+        ></polygon>
+      </svg>
+      <span>Pencapaian & Jejak Karya</span>
+    </div>
+    <h2 id="proud-moments-title">Hal yang Dibanggakan</h2>
+  </header>
+
+  <ul class="proud-moments__grid" data-reveal-group>
     {
       moments.map((moment) => {
         const imageUrl = moment.imagePath
           ? publicStorageUrl('proud-moments', moment.imagePath)
           : null;
-        const caption = [moment.placeName, moment.year ? String(moment.year) : null].filter(
-          (part): part is string => Boolean(part),
-        );
 
         return (
-          <li>
+          <li class="proud-card">
             {imageUrl && (
-              <figure class="proud-moment-gallery__figure">
+              <div class="proud-card__media">
                 <img src={imageUrl} alt={moment.title} loading="lazy" decoding="async" />
-              </figure>
+              </div>
             )}
-            <h3>{moment.title}</h3>
-            {moment.description && <p>{moment.description}</p>}
-            {caption.length > 0 && (
-              <p class="proud-moment-gallery__caption">{caption.join(' · ')}</p>
-            )}
-            {moment.externalUrl && (
-              <a href={moment.externalUrl} target="_blank" rel="noreferrer">
-                Lihat selengkapnya
-              </a>
-            )}
+
+            <div class="proud-card__body">
+              <div class="proud-card__meta">
+                {moment.year && <span class="meta-pill">{moment.year}</span>}
+                {moment.placeName && <span class="meta-place">{moment.placeName}</span>}
+              </div>
+
+              <h3 class="proud-card__title">{moment.title}</h3>
+
+              {moment.description && <p class="proud-card__desc">{moment.description}</p>}
+
+              {moment.externalUrl && (
+                <a
+                  href={moment.externalUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="proud-card__link"
+                  aria-label={`Buka tautan ${moment.title}`}
+                >
+                  <span>Lihat Selengkapnya</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="7 7 17 7 17 17" />
+                  </svg>
+                </a>
+              )}
+            </div>
           </li>
         );
       })
@@ -47,70 +92,150 @@ const { moments } = Astro.props;
 </section>
 
 <style>
-  .proud-moment-gallery {
+  .proud-moments {
     display: grid;
-    gap: 1.5rem;
+    gap: 1.75rem;
     padding-block: 2.5rem;
-    border-top: 1px solid var(--line-soft);
+    margin-block: 1rem;
+  }
+
+  .proud-moments__header {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .proud-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   h2 {
     margin: 0;
-    font-size: clamp(1.4rem, 4vw, 2rem);
-    font-weight: 650;
-    letter-spacing: -0.025em;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
   }
 
-  .proud-moment-gallery__items {
+  .proud-moments__grid {
     display: grid;
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: 1.5rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .proud-moment-gallery__items li {
-    display: grid;
-    gap: 0.6rem;
+  .proud-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    overflow: hidden;
+    box-shadow:
+      0 10px 24px -8px rgba(18, 21, 20, 0.05),
+      0 2px 6px -2px rgba(18, 21, 20, 0.02);
+    transition:
+      transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .proud-moment-gallery__figure {
-    margin: 0;
-    border-radius: 0.75rem;
+  .proud-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--line-soft));
+    box-shadow:
+      0 20px 40px -12px rgba(18, 21, 20, 0.1),
+      0 4px 12px -2px rgba(18, 21, 20, 0.04);
+  }
+
+  .proud-card__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
     overflow: hidden;
     background: var(--surface-muted);
   }
 
-  .proud-moment-gallery__figure img {
+  .proud-card__media img {
     width: 100%;
-    max-height: 24rem;
+    height: 100%;
     object-fit: cover;
+    transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .proud-moment-gallery__items h3 {
-    margin: 0;
-    font-size: 1.25rem;
+  .proud-card:hover .proud-card__media img {
+    transform: scale(1.04);
+  }
+
+  .proud-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.4rem;
+    flex: 1;
+  }
+
+  .proud-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .meta-pill {
+    padding: 0.15rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  .meta-place {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .proud-card__title {
+    margin: 0.2rem 0 0;
+    font-size: 1.22rem;
     font-weight: 700;
+    color: var(--ink);
+    line-height: 1.35;
   }
 
-  .proud-moment-gallery__caption {
+  .proud-card__desc {
     margin: 0;
     color: var(--ink-soft);
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    flex: 1;
   }
 
-  .proud-moment-gallery__items a {
+  .proud-card__link {
     display: inline-flex;
     align-items: center;
-    width: fit-content;
-    min-height: 44px;
-    font-weight: 750;
+    gap: 0.35rem;
+    align-self: flex-start;
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
     color: var(--accent);
     text-decoration: none;
+    transition: gap 150ms ease;
   }
 
-  .proud-moment-gallery__items a:hover {
+  .proud-card__link:hover {
+    gap: 0.55rem;
     text-decoration: underline;
   }
 </style>

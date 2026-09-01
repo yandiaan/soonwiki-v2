@@ -1,7 +1,8 @@
 ---
-import MetadataStrip from '@/components/astro/MetadataStrip.astro';
 import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import ShareProfileButton from '@/components/svelte/ShareProfileButton.svelte';
 import { getGenerationName } from '@/lib/shared/generations';
+import { paths } from '@/lib/shared/paths';
 
 import type { ProfileDetail } from '@/lib/shared/public-models';
 
@@ -11,26 +12,222 @@ interface Props {
 
 const { profile } = Astro.props;
 
-const metadata = [
-  getGenerationName(profile.generationKey),
-  profile.currentActivity,
-  profile.currentPlaceName,
-].filter((item): item is string => Boolean(item));
+const generationName = getGenerationName(profile.generationKey);
+
+const socialLinks = [
+  profile.linkedinUrl && {
+    href: profile.linkedinUrl,
+    label: 'LinkedIn',
+    type: 'linkedin',
+  },
+  profile.instagramUrl && {
+    href: profile.instagramUrl,
+    label: 'Instagram',
+    type: 'instagram',
+  },
+  profile.websiteUrl && {
+    href: profile.websiteUrl,
+    label: 'Situs Web',
+    type: 'website',
+  },
+].filter(
+  (link): link is { href: string; label: string; type: 'linkedin' | 'instagram' | 'website' } =>
+    Boolean(link),
+);
 ---
 
-<header class="profile-hero">
-  <div class="profile-hero__media">
-    <PortraitFrame
-      photoPath={profile.photoPath}
-      name={profile.name}
-      loading="eager"
-      transitionKey={`profile-${profile.id}`}
-    />
-  </div>
-  <div class="profile-hero__body">
-    <h1>{profile.name}</h1>
-    <MetadataStrip items={metadata} />
-    {profile.bio && <p class="profile-hero__bio">{profile.bio}</p>}
+<header class="profile-hero" data-hero-glass>
+  <!-- Top Navigation Bar -->
+  <nav class="profile-hero__nav" aria-label="Navigasi Profil">
+    <a href={paths.explore()} class="profile-hero__back-link">
+      <svg
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Kembali ke Direktori</span>
+    </a>
+    <span class="profile-hero__nav-badge">{generationName}</span>
+  </nav>
+
+  <div class="profile-hero__main">
+    <!-- Portrait Frame with Glow Backdrop -->
+    <div class="profile-hero__media-wrapper">
+      <div class="profile-hero__glow" aria-hidden="true"></div>
+      <div class="profile-hero__media">
+        <PortraitFrame
+          photoPath={profile.photoPath}
+          name={profile.name}
+          loading="eager"
+          transitionKey={`profile-${profile.id}`}
+        />
+      </div>
+    </div>
+
+    <!-- Editorial Profile Info -->
+    <div class="profile-hero__content">
+      <div class="profile-hero__pills">
+        <span class="pill pill--gen">{generationName}</span>
+        {
+          profile.location && (
+            <span class="pill pill--location">
+              <svg
+                viewBox="0 0 24 24"
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>{profile.location}</span>
+            </span>
+          )
+        }
+      </div>
+
+      <h1 class="profile-hero__name">{profile.name}</h1>
+
+      {
+        (profile.currentActivity || profile.currentPlaceName) && (
+          <div class="profile-hero__role">
+            <svg
+              class="role-icon"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+            </svg>
+            <div class="role-text">
+              {profile.currentActivity && (
+                <span class="role-activity">{profile.currentActivity}</span>
+              )}
+              {profile.currentPlaceName && (
+                <span class="role-place">
+                  {profile.currentActivity ? 'di ' : ''}
+                  <strong>{profile.currentPlaceName}</strong>
+                </span>
+              )}
+            </div>
+          </div>
+        )
+      }
+
+      {profile.bio && <p class="profile-hero__bio">{profile.bio}</p>}
+
+      <!-- Expertise Field Pills -->
+      {
+        profile.fieldLabels.length > 0 && (
+          <div class="profile-hero__fields" aria-label="Bidang Keahlian">
+            <span class="fields-label">Fokus:</span>
+            <div class="fields-list">
+              {profile.fieldLabels.map((field) => (
+                <span class="field-pill">{field}</span>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      <!-- Social & Share Action Bar -->
+      <div class="profile-hero__actions">
+        {
+          socialLinks.length > 0 && (
+            <div class="social-list">
+              {socialLinks.map((link) => (
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="social-btn"
+                  aria-label={link.label}
+                  title={link.label}
+                >
+                  {link.type === 'linkedin' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                      <rect x="2" y="9" width="4" height="12" />
+                      <circle cx="4" cy="4" r="2" />
+                    </svg>
+                  )}
+                  {link.type === 'instagram' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                    </svg>
+                  )}
+                  {link.type === 'website' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                  )}
+                  <span>{link.label}</span>
+                </a>
+              ))}
+            </div>
+          )
+        }
+
+        <div class="share-wrapper">
+          <ShareProfileButton client:idle title={profile.name} name={profile.name} />
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -38,42 +235,267 @@ const metadata = [
   .profile-hero {
     display: grid;
     gap: 2rem;
-    padding-block: 2rem 3rem;
+    padding-block: 1.5rem 3.5rem;
+    position: relative;
   }
 
-  .profile-hero__media {
-    max-width: 18rem;
-    border-radius: 1rem;
-    overflow: hidden;
+  /* Top Nav */
+  .profile-hero__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line-soft);
   }
 
-  .profile-hero__body {
-    display: grid;
-    align-content: start;
-    gap: 1.25rem;
-  }
-
-  .profile-hero__body h1 {
-    margin: 0;
-    font-size: clamp(2.5rem, 6vw, 4rem);
+  .profile-hero__back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.88rem;
     font-weight: 650;
-    line-height: 0.96;
-    letter-spacing: -0.035em;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      transform 150ms ease;
   }
 
-  .profile-hero__bio {
-    max-width: 48ch;
-    margin: 0;
-    color: var(--ink-soft);
-    font-size: 1.15rem;
-    line-height: 1.6;
+  .profile-hero__back-link:hover {
+    color: var(--ink);
+    transform: translateX(-2px);
+  }
+
+  .profile-hero__nav-badge {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--accent-soft);
+  }
+
+  /* Main Grid */
+  .profile-hero__main {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
   }
 
   @media (min-width: 768px) {
-    .profile-hero {
-      grid-template-columns: 16rem 1fr;
-      align-items: start;
-      gap: 3rem;
+    .profile-hero__main {
+      grid-template-columns: minmax(14rem, 18rem) 1fr;
+      gap: 3.5rem;
     }
+  }
+
+  /* Media & Glow */
+  .profile-hero__media-wrapper {
+    position: relative;
+    max-width: 18rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .profile-hero__glow {
+    position: absolute;
+    inset: -10%;
+    border-radius: 2rem;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 18%, transparent) 0%,
+      transparent 70%
+    );
+    filter: blur(24px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .profile-hero__media {
+    position: relative;
+    z-index: 1;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow:
+      0 20px 40px -12px rgba(18, 21, 20, 0.12),
+      0 0 0 1px var(--line-soft);
+    transition:
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .profile-hero__media:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow:
+      0 24px 48px -12px rgba(18, 21, 20, 0.16),
+      0 0 0 1px var(--accent);
+  }
+
+  /* Content Body */
+  .profile-hero__content {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+  }
+
+  /* Pills */
+  .profile-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .pill--gen {
+    background: var(--ink);
+    color: #ffffff;
+    letter-spacing: 0.02em;
+  }
+
+  .pill--location {
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    border: 1px solid var(--line-soft);
+  }
+
+  /* Name */
+  .profile-hero__name {
+    margin: 0;
+    font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+
+  /* Role / Place */
+  .profile-hero__role {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  .role-icon {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    color: var(--accent);
+  }
+
+  .role-activity {
+    font-weight: 650;
+    color: var(--ink);
+  }
+
+  .role-place {
+    color: var(--ink-soft);
+  }
+
+  .role-place strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* Bio */
+  .profile-hero__bio {
+    margin: 0;
+    max-width: 52ch;
+    color: var(--ink-soft);
+    font-size: 1.12rem;
+    line-height: 1.65;
+  }
+
+  /* Expertise Fields */
+  .profile-hero__fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
+  }
+
+  .fields-label {
+    font-size: 0.8rem;
+    font-weight: 750;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fields-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .field-pill {
+    display: inline-flex;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--surface-muted);
+    border: 1px solid var(--line-soft);
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  /* Actions & Social */
+  .profile-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .social-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 42px;
+    padding: 0.5rem 1.15rem;
+    border-radius: 9999px;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    font-size: 0.88rem;
+    font-weight: 650;
+    color: var(--ink);
+    text-decoration: none;
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .social-btn:hover {
+    background: var(--surface-muted);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
   }
 </style>

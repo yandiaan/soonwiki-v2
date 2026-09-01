@@ -7,75 +7,178 @@ interface Props {
 }
 
 const { label, story, frameNumber, variant = 'default' } = Astro.props;
+
+const isTurningPoint =
+  label.toLowerCase().includes('turning') ||
+  label.toLowerCase().includes('titik balik') ||
+  variant === 'pullquote';
+
+const isArahSekarang = label.toLowerCase().includes('arah') || label.toLowerCase().includes('kini');
 ---
 
-<article class={`story-chapter story-chapter--${variant}`} data-story-chapter>
-  {frameNumber && <p class="frame-number">{frameNumber}</p>}
-  <p class="label">{label}</p>
-  {
-    variant === 'pullquote' ? (
-      <blockquote class="story-chapter__quote">
-        <span class="story-chapter__mark" aria-hidden="true">
-          “
-        </span>
-        {story}
-      </blockquote>
-    ) : (
-      <p class="story">{story}</p>
-    )
-  }
+<article
+  class={`story-chapter ${isTurningPoint ? 'story-chapter--highlight' : ''}`}
+  data-reveal
+  aria-labelledby={`story-chapter-${label.toLowerCase().replace(/\s+/g, '-')}`}
+>
+  <header class="story-chapter__header">
+    <div class="story-chapter__badge">
+      {
+        isTurningPoint ? (
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          </svg>
+        ) : isArahSekarang ? (
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+          </svg>
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+        )
+      }
+      <h2
+        id={`story-chapter-${label.toLowerCase().replace(/\s+/g, '-')}`}
+        class="story-chapter__title"
+      >
+        {label}
+      </h2>
+    </div>
+    {frameNumber && <span class="story-chapter__frame-number">{frameNumber}</span>}
+  </header>
+
+  <div class="story-chapter__body">
+    {
+      isTurningPoint ? (
+        <blockquote class="story-chapter__quote">
+          <p class="story-text">{story}</p>
+        </blockquote>
+      ) : (
+        <p class="story-text">{story}</p>
+      )
+    }
+  </div>
 </article>
 
 <style>
   .story-chapter {
     display: grid;
-    gap: 0.75rem;
-    padding-block: 2rem;
-    border-top: 1px solid var(--line-soft);
+    gap: 1.25rem;
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    border-radius: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    margin-block: 1.75rem;
+    box-shadow:
+      0 10px 28px -10px rgba(18, 21, 20, 0.05),
+      0 2px 6px -2px rgba(18, 21, 20, 0.02);
+    transition:
+      transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .story-chapter--pullquote {
-    padding-block: 2.5rem;
+  .story-chapter:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--line-soft));
+    box-shadow:
+      0 16px 36px -12px rgba(18, 21, 20, 0.08),
+      0 4px 12px -2px rgba(18, 21, 20, 0.03);
   }
 
-  .frame-number {
-    margin: 0;
+  .story-chapter--highlight {
+    background: linear-gradient(
+      145deg,
+      var(--surface) 0%,
+      color-mix(in srgb, var(--accent) 4%, var(--surface)) 100%
+    );
+    border-left: 4px solid var(--accent);
+  }
+
+  .story-chapter__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .story-chapter__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--accent);
+  }
+
+  .story-chapter__title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .story-chapter__frame-number {
     font-size: 0.75rem;
     font-weight: 750;
-    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
   }
 
-  .label {
-    margin: 0;
-    color: var(--accent);
-    font-size: 0.85rem;
-    font-weight: 750;
-  }
-
-  .story {
-    margin: 0;
-    max-width: 54ch;
-    font-size: 1.15rem;
-    line-height: 1.65;
-    color: var(--ink);
+  .story-chapter__body {
+    position: relative;
   }
 
   .story-chapter__quote {
-    max-width: 44rem;
     margin: 0;
-    font-size: clamp(1.75rem, 5vw, 2.75rem);
-    font-weight: 650;
-    line-height: 1.2;
-    letter-spacing: -0.025em;
-    color: var(--ink);
+    padding: 0;
+    font-style: normal;
   }
 
-  .story-chapter__mark {
-    display: block;
-    margin-block-end: -0.2em;
-    color: var(--accent);
-    font-size: clamp(3rem, 8vw, 4.5rem);
-    line-height: 1;
+  .story-text {
+    margin: 0;
+    color: var(--ink);
+    font-size: clamp(1.05rem, 2.2vw, 1.22rem);
+    line-height: 1.75;
+    font-weight: 450;
+    max-width: 58ch;
+  }
+
+  .story-chapter--highlight .story-text {
+    font-weight: 500;
+    color: var(--ink);
   }
 </style>
