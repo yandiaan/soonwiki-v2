@@ -14,12 +14,23 @@ const result = await getHomeStoryData(Astro);
 
 const chapters = result.ok
   ? [
-      { label: 'Sejak SOON', story: result.data.featured.sinceSoonStory, frameNumber: '002' },
-      { label: 'Turning point', story: result.data.featured.turningPointStory, frameNumber: '003' },
+      {
+        label: 'Sejak SOON',
+        story: result.data.featured.sinceSoonStory,
+        frameNumber: '002',
+        variant: 'default' as const,
+      },
+      {
+        label: 'Turning point',
+        story: result.data.featured.turningPointStory,
+        frameNumber: '003',
+        variant: 'pullquote' as const,
+      },
       {
         label: 'Arah sekarang',
         story: result.data.featured.currentDirectionStory,
         frameNumber: '004',
+        variant: 'default' as const,
       },
     ].filter((chapter): chapter is typeof chapter & { story: string } => Boolean(chapter.story))
   : [];
@@ -44,11 +55,18 @@ const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : unde
                   label={chapter.label}
                   story={chapter.story}
                   frameNumber={chapter.frameNumber}
+                  variant={chapter.variant}
                 />
               ))}
             </div>
           )}
-          {firstProudMoment && <ProudMomentFrame moment={firstProudMoment} />}
+          {firstProudMoment && (
+            <ProudMomentFrame
+              moment={firstProudMoment}
+              profileSlug={result.data.featured.slug}
+              profileName={result.data.featured.name}
+            />
+          )}
           <PossibilityContactSheet profiles={result.data.contactSheet} />
           <ExplorePathways story={result.data} />
         </>

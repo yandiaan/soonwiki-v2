@@ -20,7 +20,7 @@ const { profiles } = Astro.props;
       <StoryRail client:load count={profiles.length}>
         <ul class="contact-sheet__rail">
           {profiles.map((profile, index) => (
-            <li>
+            <li class={`contact-sheet__item--variant-${index % 3}`}>
               <a href={paths.profile(profile.slug)}>
                 <PortraitFrame
                   photoPath={profile.photoPath}
@@ -69,8 +69,16 @@ const { profiles } = Astro.props;
 
   .contact-sheet__rail li {
     flex: 0 0 auto;
-    width: min(60vw, 14rem);
+    width: min(52vw, 11.5rem);
     scroll-snap-align: start;
+  }
+
+  .contact-sheet__rail li.contact-sheet__item--variant-1 {
+    width: min(65vw, 15rem);
+  }
+
+  .contact-sheet__rail li.contact-sheet__item--variant-2 {
+    width: min(46vw, 9.5rem);
   }
 
   .contact-sheet__rail a {

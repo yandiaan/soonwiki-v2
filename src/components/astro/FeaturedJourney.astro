@@ -23,19 +23,23 @@ const metadata = [
 
 <section class="featured-journey" aria-labelledby="featured-journey-title">
   <p class="frame-number">CERITA / 001</p>
-  <PortraitFrame
-    photoPath={profile.photoPath}
-    name={profile.name}
-    caption={`${profile.name} · Soon ${profile.batchYear}`}
-    loading="eager"
-    transitionKey={`profile-${profile.id}`}
-  />
-  <div class="featured-journey__body">
-    <h1 id="featured-journey-title">{headline ?? `Perjalanan ${profile.name} dari SOON.`}</h1>
-    <MetadataStrip items={metadata} />
-    <a class="featured-journey__link" href={paths.profile(profile.slug)}>
-      Baca perjalanan {profile.name}
-    </a>
+  <div class="featured-journey__grid">
+    <div class="featured-journey__media">
+      <PortraitFrame
+        photoPath={profile.photoPath}
+        name={profile.name}
+        caption={`${profile.name} · Soon ${profile.batchYear}`}
+        loading="eager"
+        transitionKey={`profile-${profile.id}`}
+      />
+    </div>
+    <div class="featured-journey__body">
+      <h1 id="featured-journey-title">{headline ?? `Perjalanan ${profile.name} dari SOON.`}</h1>
+      <MetadataStrip items={metadata} />
+      <a class="featured-journey__link" href={paths.profile(profile.slug)}>
+        Baca perjalanan {profile.name}
+      </a>
+    </div>
   </div>
 </section>
 
@@ -54,9 +58,30 @@ const metadata = [
     letter-spacing: 0.08em;
   }
 
+  .featured-journey__grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .featured-journey__media {
+    max-width: 22rem;
+  }
+
   .featured-journey__body {
     display: grid;
     gap: 0.75rem;
+  }
+
+  @media (min-width: 900px) {
+    .featured-journey__grid {
+      grid-template-columns: minmax(16rem, 38%) 1fr;
+      align-items: end;
+      gap: 2.5rem;
+    }
+
+    .featured-journey__media {
+      max-width: none;
+    }
   }
 
   .featured-journey__body h1 {

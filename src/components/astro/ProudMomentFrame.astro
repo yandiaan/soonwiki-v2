@@ -1,13 +1,15 @@
 ---
-import { publicStorageUrl } from '@/lib/shared/paths';
+import { paths, publicStorageUrl } from '@/lib/shared/paths';
 
 import type { ProudMoment } from '@/lib/shared/public-models';
 
 interface Props {
   moment: ProudMoment;
+  profileSlug?: string;
+  profileName?: string;
 }
 
-const { moment } = Astro.props;
+const { moment, profileSlug, profileName } = Astro.props;
 const imageUrl = moment.imagePath ? publicStorageUrl('proud-moments', moment.imagePath) : null;
 const captionParts = [moment.placeName, moment.year ? String(moment.year) : null].filter(
   (part): part is string => Boolean(part),
@@ -16,55 +18,89 @@ const captionParts = [moment.placeName, moment.year ? String(moment.year) : null
 
 <section class="proud-moment" aria-labelledby="proud-moment-title">
   <p class="frame-number">HAL YANG DIBANGGAKAN</p>
-  {
-    imageUrl && (
-      <figure class="proud-moment__figure">
-        <img src={imageUrl} alt={moment.title} loading="lazy" decoding="async" />
-      </figure>
-    )
-  }
-  <h2 id="proud-moment-title">{moment.title}</h2>
-  {moment.description && <p class="proud-moment__description">{moment.description}</p>}
-  {captionParts.length > 0 && <p class="proud-moment__caption">{captionParts.join(' · ')}</p>}
-  {
-    moment.externalUrl && (
-      <a href={moment.externalUrl} target="_blank" rel="noreferrer">
-        Lihat selengkapnya
-      </a>
-    )
-  }
+  <div class="proud-moment__frame">
+    {
+      imageUrl && (
+        <img
+          class="proud-moment__image"
+          src={imageUrl}
+          alt={moment.title}
+          loading="lazy"
+          decoding="async"
+        />
+      )
+    }
+    <div class="proud-moment__overlay">
+      <h2 id="proud-moment-title">{moment.title}</h2>
+      {moment.description && <p class="proud-moment__description">{moment.description}</p>}
+      {captionParts.length > 0 && <p class="proud-moment__caption">{captionParts.join(' · ')}</p>}
+      <div class="proud-moment__actions">
+        {
+          moment.externalUrl && (
+            <a href={moment.externalUrl} target="_blank" rel="noreferrer">
+              Lihat selengkapnya
+            </a>
+          )
+        }
+        {
+          profileSlug && profileName && (
+            <a href={paths.profile(profileSlug)}>Baca perjalanan {profileName}</a>
+          )
+        }
+      </div>
+    </div>
+  </div>
 </section>
 
 <style>
   .proud-moment {
-    display: grid;
-    gap: 0.75rem;
     padding-block: 1.5rem;
     border-top: 2px solid var(--ink);
   }
 
   .frame-number {
-    margin: 0;
+    margin: 0 0 0.75rem;
     color: var(--cobalt);
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.08em;
   }
 
-  .proud-moment__figure {
-    margin: 0;
-    border: 2px solid var(--ink);
+  .proud-moment__frame {
+    position: relative;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    overflow: hidden;
+    border-block: 2px solid var(--ink);
   }
 
-  .proud-moment__figure img {
+  .proud-moment__image {
+    display: block;
     width: 100%;
-    max-height: 24rem;
+    max-height: 34rem;
     object-fit: cover;
   }
 
+  .proud-moment__overlay {
+    position: relative;
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.5rem var(--page-gutter);
+  }
+
+  .proud-moment__frame:has(.proud-moment__image) .proud-moment__overlay {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    background: color-mix(in srgb, var(--ink) 82%, transparent);
+    color: var(--paper);
+  }
+
   h2 {
+    max-width: 30ch;
     margin: 0;
-    font-size: clamp(1.5rem, 5vw, 2.25rem);
+    font-size: clamp(1.75rem, 6vw, 3rem);
+    line-height: 1.1;
   }
 
   .proud-moment__description {
@@ -79,11 +115,27 @@ const captionParts = [moment.placeName, moment.year ? String(moment.year) : null
     font-weight: 700;
   }
 
-  a {
+  .proud-moment__frame:has(.proud-moment__image) .proud-moment__caption {
+    color: var(--paper);
+    opacity: 0.85;
+  }
+
+  .proud-moment__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .proud-moment__actions a {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
     font-weight: 700;
     color: var(--cobalt);
+  }
+
+  .proud-moment__frame:has(.proud-moment__image) .proud-moment__actions a {
+    color: var(--paper);
+    text-decoration-color: var(--signal);
   }
 </style>
