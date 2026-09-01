@@ -1,5 +1,4 @@
 ---
-import MetadataStrip from '@/components/astro/MetadataStrip.astro';
 import PortraitFrame from '@/components/astro/PortraitFrame.astro';
 import { paths } from '@/lib/shared/paths';
 
@@ -10,31 +9,69 @@ interface Props {
 }
 
 const { profile } = Astro.props;
-const metadata = [profile.currentActivity, profile.currentPlaceName].filter(
-  (item): item is string => Boolean(item),
-);
+const subtitle = [
+  profile.fieldLabels[0] ?? profile.currentActivity,
+  profile.currentPlaceName,
+  `Soon ${profile.batchYear}`,
+].filter((item): item is string => Boolean(item));
 ---
 
 <a class="profile-card" href={paths.profile(profile.slug)}>
-  <PortraitFrame
-    photoPath={profile.photoPath}
-    name={profile.name}
-    caption={`${profile.name} · Soon ${profile.batchYear}`}
-    transitionKey={`profile-${profile.id}`}
-  />
-  <MetadataStrip items={metadata} />
+  <div class="profile-card__media">
+    <PortraitFrame
+      photoPath={profile.photoPath}
+      name={profile.name}
+      transitionKey={`profile-${profile.id}`}
+    />
+  </div>
+  <div class="profile-card__info">
+    <strong>{profile.name}</strong>
+    {subtitle.length > 0 && <span>{subtitle.join(' · ')}</span>}
+  </div>
 </a>
 
 <style>
   .profile-card {
     display: grid;
-    gap: 0.5rem;
-    color: inherit;
+    gap: 0.75rem;
+    color: var(--ink);
     text-decoration: none;
+    transition: transform 180ms var(--ease-out);
+  }
+
+  .profile-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .profile-card:hover strong {
+    color: var(--accent);
+  }
+
+  .profile-card__media {
+    overflow: hidden;
+    border-radius: 0.75rem;
+  }
+
+  .profile-card__info {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .profile-card__info strong {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .profile-card__info span {
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    line-height: 1.4;
   }
 
   .profile-card:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
+    border-radius: 0.75rem;
   }
 </style>

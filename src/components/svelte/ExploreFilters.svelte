@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { paths } from '@/lib/shared/paths';
+
   let {
     query = '',
     batch = '',
     field = '',
     place = '',
   }: { query?: string; batch?: string; field?: string; place?: string } = $props();
+
+  const hasFilters = $derived(Boolean(query || batch || field || place));
 </script>
 
 <form method="get" action="/explore" class="explore-filters">
@@ -14,45 +18,74 @@
   {#if place}
     <input type="hidden" name="place" value={place} />
   {/if}
-  <label>
-    <span>Cari</span>
-    <input
-      type="search"
-      name="q"
-      value={query}
-      placeholder="Cari nama, tempat, atau hal yang ditekuni"
-    />
-  </label>
-  <label>
-    <span>Batch</span>
-    <input type="number" name="batch" value={batch} min="2000" max="2100" />
-  </label>
-  <button type="submit">Terapkan</button>
+
+  <div class="explore-filters__inputs">
+    <div class="explore-filters__field explore-filters__search">
+      <label for="filter-query">Pencarian</label>
+      <input
+        id="filter-query"
+        type="search"
+        name="q"
+        value={query}
+        placeholder="Cari nama, bidang, atau tempat…"
+      />
+    </div>
+    <div class="explore-filters__field explore-filters__batch">
+      <label for="filter-batch">Angkatan (Soon)</label>
+      <input
+        id="filter-batch"
+        type="number"
+        name="batch"
+        value={batch}
+        placeholder="Contoh: 2021"
+        min="2000"
+        max="2100"
+      />
+    </div>
+    <div class="explore-filters__actions">
+      <button type="submit" class="explore-filters__submit">Terapkan</button>
+      {#if hasFilters}
+        <a href={paths.explore()} class="explore-filters__reset">Reset filter</a>
+      {/if}
+    </div>
+  </div>
 </form>
 
 <style>
   .explore-filters {
-    display: flex;
-    flex-wrap: wrap;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+  }
+
+  .explore-filters__inputs {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
     align-items: end;
     gap: 1rem;
-    padding-block: 1rem;
-    border-block: 2px solid var(--ink);
+  }
+
+  .explore-filters__field {
+    display: grid;
+    gap: 0.35rem;
   }
 
   label {
-    display: grid;
-    gap: 0.25rem;
     font-size: 0.8rem;
     font-weight: 700;
+    color: var(--ink-soft);
   }
 
   input {
     min-height: 44px;
-    padding-inline: 0.75rem;
-    border: 2px solid var(--ink);
-    background: var(--paper);
+    padding-inline: 0.85rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 0.5rem;
+    background: var(--canvas);
     color: var(--ink);
+    font: inherit;
+    font-size: 0.95rem;
   }
 
   input:focus-visible {
@@ -60,17 +93,70 @@
     box-shadow: var(--focus-ring);
   }
 
-  button {
-    min-height: 44px;
-    padding-inline: 1.25rem;
-    border: 2px solid var(--ink);
-    background: var(--ink);
-    color: var(--paper);
-    font-weight: 700;
+  .explore-filters__batch input {
+    width: 9rem;
   }
 
-  button:focus-visible {
+  .explore-filters__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .explore-filters__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding-inline: 1.25rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: var(--accent);
+    color: var(--surface);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background-color 180ms var(--ease-out);
+  }
+
+  .explore-filters__submit:hover {
+    background: var(--accent-strong);
+  }
+
+  .explore-filters__submit:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
+  }
+
+  .explore-filters__reset {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.75rem;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .explore-filters__reset:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .explore-filters__inputs {
+      grid-template-columns: 1fr;
+    }
+
+    .explore-filters__batch input {
+      width: 100%;
+    }
+
+    .explore-filters__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 </style>

@@ -47,8 +47,8 @@ const photoUrl = photoPath ? publicStorageUrl('profile-photos', photoPath) : nul
     margin: 0;
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    border: 2px solid var(--ink);
-    background: var(--sage);
+    border-radius: 0.75rem;
+    background: var(--surface-muted);
   }
 
   .portrait-frame img {
@@ -64,29 +64,33 @@ const photoUrl = photoPath ? publicStorageUrl('profile-photos', photoPath) : nul
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    font-weight: 800;
-    color: var(--ink);
+    font-weight: 750;
+    color: var(--ink-soft);
+    background: var(--surface-muted);
   }
 
   .frame-number {
     position: absolute;
     top: 0.5rem;
     left: 0.5rem;
-    padding: 0.15rem 0.4rem;
-    background: var(--paper);
-    color: var(--cobalt);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.375rem;
+    background: color-mix(in srgb, var(--ink) 80%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--surface);
     font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
+    font-weight: 750;
+    letter-spacing: 0.04em;
   }
 
   figcaption {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    padding: 0.5rem 0.6rem;
-    background: color-mix(in srgb, var(--ink) 78%, transparent);
-    color: var(--paper);
+    padding: 0.6rem 0.75rem;
+    background: linear-gradient(0deg, rgb(10 12 11 / 0.82) 0%, transparent 100%);
+    color: var(--surface);
     font-size: 0.75rem;
+    font-weight: 600;
   }
 </style>

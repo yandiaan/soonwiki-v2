@@ -18,14 +18,14 @@ const metadata = [
 ---
 
 <header class="profile-hero">
-  <p class="frame-number">PROFIL</p>
-  <PortraitFrame
-    photoPath={profile.photoPath}
-    name={profile.name}
-    caption={`${profile.name} · Soon ${profile.batchYear}`}
-    loading="eager"
-    transitionKey={`profile-${profile.id}`}
-  />
+  <div class="profile-hero__media">
+    <PortraitFrame
+      photoPath={profile.photoPath}
+      name={profile.name}
+      loading="eager"
+      transitionKey={`profile-${profile.id}`}
+    />
+  </div>
   <div class="profile-hero__body">
     <h1>{profile.name}</h1>
     <MetadataStrip items={metadata} />
@@ -36,33 +36,43 @@ const metadata = [
 <style>
   .profile-hero {
     display: grid;
-    gap: 1rem;
-    padding-block: 1.5rem;
+    gap: 2rem;
+    padding-block: 2rem 3rem;
   }
 
-  .frame-number {
-    margin: 0;
-    color: var(--cobalt);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+  .profile-hero__media {
+    max-width: 18rem;
+    border-radius: 1rem;
+    overflow: hidden;
   }
 
   .profile-hero__body {
     display: grid;
-    gap: 0.75rem;
+    align-content: start;
+    gap: 1.25rem;
   }
 
   .profile-hero__body h1 {
     margin: 0;
-    font-size: clamp(2rem, 7vw, 3.5rem);
-    line-height: 1.05;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 650;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
   }
 
   .profile-hero__bio {
-    max-width: 60ch;
+    max-width: 48ch;
     margin: 0;
-    font-size: 1.05rem;
-    line-height: 1.5;
+    color: var(--ink-soft);
+    font-size: 1.15rem;
+    line-height: 1.6;
+  }
+
+  @media (min-width: 768px) {
+    .profile-hero {
+      grid-template-columns: 16rem 1fr;
+      align-items: start;
+      gap: 3rem;
+    }
   }
 </style>

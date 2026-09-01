@@ -27,11 +27,13 @@ const { name, profiles } = result.data;
   canonical={new URL(`/field/${slug}`, Astro.url)}
 >
   <main id="main-content" class="collection">
-    <p class="frame-number">HAL YANG DITEKUNI</p>
-    <h1>{name}</h1>
-    <p class="collection__intro">
-      Soonies yang menekuni {name} di berbagai peran, tempat, dan tahap perjalanan.
-    </p>
+    <header class="collection__header">
+      <p class="collection__tag">Hal yang ditekuni</p>
+      <h1>{name}</h1>
+      <p class="collection__intro">
+        Soonies yang menekuni {name} di berbagai peran, tempat, dan tahap perjalanan.
+      </p>
+    </header>
     {
       profiles.length === 0 ? (
         <EmptyState
@@ -52,18 +54,3 @@ const { name, profiles } = result.data;
     }
   </main>
 </BaseLayout>
-
-<style>
-  .frame-number {
-    margin: 1.5rem 0 0;
-    color: var(--cobalt);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-  }
-
-  h1 {
-    margin: 0.25rem 0 0;
-    font-size: clamp(2rem, 6vw, 3rem);
-  }
-</style>

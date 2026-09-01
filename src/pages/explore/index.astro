@@ -50,8 +50,12 @@ function buildQuery(overrides: Record<string, string | number | undefined>): str
   canonical={new URL('/explore', Astro.url)}
 >
   <main id="main-content" class="explore">
-    <p class="frame-number">JELAJAHI / SOON</p>
-    <h1>Jelajahi Soonies</h1>
+    <header class="explore__header">
+      <h1>Jelajahi Soonies</h1>
+      <p class="explore__subtitle">
+        Temukan perjalanan alumni dan member SOON berdasarkan nama, bidang, angkatan, atau tempat.
+      </p>
+    </header>
     <ExploreFilters client:load query={q} batch={batchParam} field={field} place={place} />
     {
       profiles.length === 0 ? (
@@ -81,18 +85,3 @@ function buildQuery(overrides: Record<string, string | number | undefined>): str
     </nav>
   </main>
 </BaseLayout>
-
-<style>
-  .frame-number {
-    margin: 1.5rem 0 0;
-    color: var(--cobalt);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-  }
-
-  h1 {
-    margin: 0.25rem 0 0;
-    font-size: clamp(2rem, 6vw, 3rem);
-  }
-</style>

@@ -1,61 +1,101 @@
 .admin {
-  max-width: 60rem;
+  max-width: var(--content-max);
   margin-inline: auto;
-  padding-inline: var(--page-gutter);
-  padding-block-end: 4rem;
+  padding: clamp(2.5rem, 6vw, 4.5rem) var(--page-gutter) 6rem;
+}
+
+.admin h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
 }
 
 .admin__nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-block: 1rem 2rem;
+  gap: 0.5rem;
+  margin-block: 1.5rem 2.5rem;
 }
 
 .admin__nav a {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding-inline: 1rem;
-  border: 2px solid var(--ink);
+  min-height: 40px;
+  padding-inline: 1.15rem;
+  border-radius: 9999px;
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.9rem;
   font-weight: 700;
   text-decoration: none;
+  transition:
+    background-color 180ms var(--ease-out),
+    color 180ms var(--ease-out);
+}
+
+.admin__nav a:hover {
+  background: var(--surface-muted);
+  color: var(--ink);
 }
 
 .admin__nav a[aria-current='page'] {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
 }
 
 .admin__cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: 1rem;
-  margin-block: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1.25rem;
+  margin-block: 2rem;
 }
 
 .admin__card {
-  padding: 1rem;
-  border: 2px solid var(--ink);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
 }
 
 .admin__card strong {
   display: block;
-  font-size: 2rem;
+  margin-top: 0.5rem;
+  font-size: 2.25rem;
+  font-weight: 750;
+  color: var(--accent);
 }
 
 .admin table {
   width: 100%;
-  margin-block: 1rem;
+  margin-block: 1.5rem;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  font-size: 0.9rem;
+  overflow: hidden;
 }
 
-.admin th,
-.admin td {
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--ink);
+.admin th {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--surface-muted);
+  font-weight: 700;
+  color: var(--ink);
   text-align: left;
+}
+
+.admin td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--line-soft);
+  text-align: left;
+}
+
+.admin tr:last-child td {
+  border-bottom: none;
 }
 
 .admin form.inline {
@@ -63,59 +103,82 @@
 }
 
 .admin button {
-  min-height: 36px;
-  padding-inline: 0.75rem;
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  min-height: 38px;
+  padding-inline: 0.85rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
   color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
   font-weight: 700;
+  cursor: pointer;
+  transition: background-color 180ms var(--ease-out);
+}
+
+.admin button:hover {
+  background: var(--surface-muted);
 }
 
 .admin__search {
   display: flex;
-  gap: 0.5rem;
-  margin-block: 1rem;
+  gap: 0.75rem;
+  margin-block: 1.5rem;
 }
 
 .admin__search input {
   flex: 1;
   min-height: 44px;
-  padding-inline: 0.75rem;
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  padding-inline: 0.85rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0.5rem;
+  background: var(--surface);
   color: var(--ink);
+  font: inherit;
 }
 
 .admin__search button {
   min-height: 44px;
-  padding-inline: 1rem;
-  background: var(--ink);
-  color: var(--paper);
+  padding-inline: 1.25rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 750;
+}
+
+.admin__search button:hover {
+  background: var(--accent-strong);
 }
 
 .admin__merge-form {
   display: flex;
   flex-wrap: wrap;
   align-items: end;
-  gap: 0.75rem;
-  margin-block: 1rem;
-  padding: 1rem;
-  border: 2px solid var(--ink);
+  gap: 1rem;
+  margin-block: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
 }
 
 .admin__merge-form label {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.35rem;
   font-size: 0.85rem;
   font-weight: 700;
+  color: var(--ink-soft);
 }
 
 .admin__merge-form select {
   min-height: 44px;
-  padding-inline: 0.5rem;
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  padding-inline: 0.75rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0.5rem;
+  background: var(--canvas);
   color: var(--ink);
+  font: inherit;
 }
 
 [role='alert'] {
@@ -124,6 +187,6 @@
 }
 
 [role='status'] {
-  color: var(--cobalt);
+  color: var(--accent);
   font-weight: 700;
 }
