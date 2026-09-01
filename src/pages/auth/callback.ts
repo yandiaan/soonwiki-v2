@@ -57,11 +57,15 @@ export const GET: APIRoute = async (context) => {
     return context.redirect('/me/edit?welcome=1');
   }
 
-  const { data: member } = await supabase
+  const { data: member, error: memberError } = await supabase
     .from('members')
     .select('role, status')
     .eq('user_id', data.session.user.id)
     .maybeSingle();
+
+  if (memberError) {
+    console.error('[auth/callback] Error querying member status:', memberError);
+  }
 
   if (member?.status === 'active') {
     if (member.role === 'admin') {
