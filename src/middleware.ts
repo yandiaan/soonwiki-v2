@@ -14,7 +14,7 @@ const CONTENT_SECURITY_POLICY = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' https: data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co https://accounts.google.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
+  "connect-src 'self' https://*.supabase.co https://accounts.google.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
   "frame-ancestors 'none'",
   "base-uri 'self'",
 ].join('; ');
