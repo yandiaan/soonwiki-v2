@@ -8,7 +8,7 @@ export const POST: APIRoute = async (context) => {
   const form = await context.request.formData();
   const mode = form.get('mode') === 'join' ? 'join' : 'login';
   const invitationToken = form.get('invitationToken');
-  const siteUrl = import.meta.env.PUBLIC_SITE_URL;
+  const siteUrl = context.url.origin || import.meta.env.PUBLIC_SITE_URL || 'http://localhost:4321';
 
   if (mode === 'join') {
     if (typeof invitationToken !== 'string' || invitationToken.length === 0) {
