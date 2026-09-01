@@ -1,0 +1,17 @@
+---
+import ErrorState from '@/components/astro/ErrorState.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Halaman tidak ditemukan"
+  description="Halaman yang kamu cari tidak ditemukan di SoonWiki."
+>
+  <ErrorState
+    code="404"
+    title="Halaman tidak ditemukan"
+    description="Tautan ini mungkin sudah tidak berlaku, salah ketik, atau kontennya belum terbit."
+    actionHref="/"
+    actionLabel="Kembali ke beranda"
+  />
+</BaseLayout>

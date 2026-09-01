@@ -1,0 +1,14 @@
+---
+import ErrorState from '@/components/astro/ErrorState.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Terjadi kendala" description="SoonWiki sedang mengalami kendala sementara.">
+  <ErrorState
+    code="500"
+    title="Terjadi kendala di sisi kami"
+    description="Silakan muat ulang halaman ini dalam beberapa saat. Kalau masih terjadi, beri tahu pengelola SOON."
+    actionHref="/"
+    actionLabel="Kembali ke beranda"
+  />
+</BaseLayout>
