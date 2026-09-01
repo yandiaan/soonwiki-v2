@@ -11,7 +11,7 @@ const message = Astro.url.searchParams.get('message');
   description="Masuk ke SoonWiki untuk mengelola perjalanan dan kisah kamu."
 >
   <main id="main-content" class="login-layout">
-    <!-- Left Column: Editorial Atmospheric Showcase -->
+    <!-- Left Column: Editorial Showcase (Seamless Dark Surface) -->
     <aside class="login-showcase" aria-hidden="true">
       <div class="login-showcase__ambient">
         <div class="showcase-orb showcase-orb--1"></div>
@@ -19,11 +19,6 @@ const message = Astro.url.searchParams.get('message');
       </div>
 
       <div class="login-showcase__content" data-reveal>
-        <div class="showcase-badge">
-          <span class="showcase-badge__dot"></span>
-          <span>SOONWIKI · ARSIP ALUMNI</span>
-        </div>
-
         <blockquote class="showcase-quote">
           <p>
             “Banyak cara untuk menjalani hidup. Setiap pilihan dan titik balik Soonies layak dicatat
@@ -58,7 +53,7 @@ const message = Astro.url.searchParams.get('message');
       </div>
     </aside>
 
-    <!-- Right Column: Minimalist Vault Form -->
+    <!-- Right Column: Direct-on-Surface Minimalist Form -->
     <section class="login-panel" aria-labelledby="login-title">
       <header class="login-panel__top">
         <a href={paths.home()} class="login-back-btn">
@@ -80,8 +75,8 @@ const message = Astro.url.searchParams.get('message');
       </header>
 
       <div class="login-panel__center">
-        <div class="login-form-card" data-reveal>
-          <div class="login-form-card__header">
+        <div class="login-surface-form" data-reveal>
+          <div class="login-header">
             <span class="login-tag">Ruang Khusus Soonies</span>
             <h1 id="login-title">Masuk ke SoonWiki</h1>
             <p class="login-subtitle">
@@ -111,11 +106,11 @@ const message = Astro.url.searchParams.get('message');
             )
           }
 
-          <div class="login-form-card__action">
+          <div class="login-action">
             <JoinWithGoogle client:load mode="login" />
           </div>
 
-          <div class="login-form-card__perks">
+          <div class="login-perks">
             <div class="login-perk">
               <svg
                 viewBox="0 0 24 24"
@@ -166,7 +161,7 @@ const message = Astro.url.searchParams.get('message');
             </div>
           </div>
 
-          <footer class="login-form-card__footer">
+          <footer class="login-footer">
             <p class="invite-notice">
               Belum punya akses? SoonWiki adalah arsip terkurasi. Hubungi koordinator angkatan SOON
               untuk mendapatkan tautan undangan.
@@ -182,18 +177,17 @@ const message = Astro.url.searchParams.get('message');
   .login-layout {
     display: grid;
     min-height: calc(100svh - 4.5rem);
-    background: var(--canvas);
+    background: var(--surface);
   }
 
-  /* Left Showcase Panel (Editorial Dark with Motion Blur Orbs) */
+  /* Left Showcase Panel (Seamless Dark Editorial Surface) */
   .login-showcase {
     position: relative;
     display: none;
     overflow: hidden;
     background: var(--ink);
     color: var(--surface);
-    padding: clamp(3rem, 6vw, 5rem);
-    border-right: 1px solid var(--line-soft);
+    padding: clamp(3.5rem, 7vw, 6rem);
   }
 
   .login-showcase__ambient {
@@ -206,24 +200,24 @@ const message = Astro.url.searchParams.get('message');
   .showcase-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.35;
+    filter: blur(90px);
+    opacity: 0.38;
     mix-blend-mode: screen;
   }
 
   .showcase-orb--1 {
     top: -10%;
     left: -10%;
-    width: 32rem;
-    height: 32rem;
+    width: 34rem;
+    height: 34rem;
     background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
   }
 
   .showcase-orb--2 {
     bottom: -15%;
     right: -10%;
-    width: 36rem;
-    height: 36rem;
+    width: 38rem;
+    height: 38rem;
     background: radial-gradient(circle, #2a4365 0%, transparent 70%);
   }
 
@@ -241,10 +235,11 @@ const message = Astro.url.searchParams.get('message');
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.4rem 0.9rem;
+    padding: 0.4rem 0.95rem;
     border-radius: 9999px;
     background: color-mix(in srgb, var(--surface) 10%, transparent);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid color-mix(in srgb, var(--surface) 16%, transparent);
     font-size: 0.75rem;
     font-weight: 750;
@@ -261,16 +256,16 @@ const message = Astro.url.searchParams.get('message');
   }
 
   .showcase-quote {
-    margin: 4rem 0;
+    margin: 4.5rem 0;
     padding: 0;
   }
 
   .showcase-quote p {
     margin: 0;
-    font-size: clamp(1.6rem, 2.8vw, 2.35rem);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
     font-weight: 550;
-    line-height: 1.28;
-    letter-spacing: -0.025em;
+    line-height: 1.25;
+    letter-spacing: -0.03em;
     color: var(--surface);
   }
 
@@ -279,7 +274,7 @@ const message = Astro.url.searchParams.get('message');
     align-items: center;
     gap: 1.25rem;
     padding-top: 2rem;
-    border-top: 1px solid color-mix(in srgb, var(--surface) 16%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--surface) 14%, transparent);
   }
 
   .showcase-avatars {
@@ -288,8 +283,8 @@ const message = Astro.url.searchParams.get('message');
   }
 
   .showcase-avatars .avatar {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 2px solid var(--ink);
     object-fit: cover;
@@ -304,8 +299,8 @@ const message = Astro.url.searchParams.get('message');
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 2px solid var(--ink);
     background: color-mix(in srgb, var(--surface) 18%, transparent);
@@ -325,13 +320,14 @@ const message = Astro.url.searchParams.get('message');
     color: color-mix(in srgb, var(--surface) 65%, transparent);
   }
 
-  /* Right Login Panel */
+  /* Right Direct-on-Surface Panel */
   .login-panel {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: clamp(1.5rem, 4vw, 3.5rem);
+    padding: clamp(2rem, 5vw, 4.5rem);
+    background: var(--surface);
   }
 
   .login-panel__top {
@@ -362,25 +358,19 @@ const message = Astro.url.searchParams.get('message');
     align-items: center;
     justify-content: center;
     flex: 1;
-    padding-block: 2.5rem;
+    padding-block: 3rem;
   }
 
-  .login-form-card {
+  /* Direct on surface - no card container box */
+  .login-surface-form {
     display: grid;
-    gap: 1.75rem;
-    width: min(100%, 26.5rem);
-    padding: clamp(2rem, 4vw, 2.75rem);
-    border-radius: 1.25rem;
-    border: 1px solid var(--line-soft);
-    background: var(--surface);
-    box-shadow:
-      0 20px 48px -12px rgb(0 0 0 / 0.06),
-      0 4px 16px -2px rgb(0 0 0 / 0.02);
+    gap: 2rem;
+    width: min(100%, 26rem);
   }
 
-  .login-form-card__header {
+  .login-header {
     display: grid;
-    gap: 0.6rem;
+    gap: 0.75rem;
   }
 
   .login-tag {
@@ -393,18 +383,18 @@ const message = Astro.url.searchParams.get('message');
 
   h1 {
     margin: 0;
-    font-size: clamp(1.8rem, 3.5vw, 2.2rem);
+    font-size: clamp(2.1rem, 4vw, 2.65rem);
     font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
     color: var(--ink);
   }
 
   .login-subtitle {
     margin: 0;
     color: var(--ink-soft);
-    font-size: 0.92rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
+    line-height: 1.55;
   }
 
   .login-alert {
@@ -426,23 +416,23 @@ const message = Astro.url.searchParams.get('message');
     margin-top: 0.1rem;
   }
 
-  .login-form-card__action {
+  .login-action {
     padding-top: 0.25rem;
   }
 
-  .login-form-card__perks {
+  .login-perks {
     display: grid;
-    gap: 0.65rem;
-    padding-top: 1.25rem;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
     border-top: 1px solid var(--line-soft);
   }
 
   .login-perk {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.75rem;
     color: var(--ink-soft);
-    font-size: 0.84rem;
+    font-size: 0.86rem;
     font-weight: 600;
   }
 
@@ -451,20 +441,20 @@ const message = Astro.url.searchParams.get('message');
     color: var(--accent);
   }
 
-  .login-form-card__footer {
-    padding-top: 0.5rem;
+  .login-footer {
+    padding-top: 0.75rem;
   }
 
   .invite-notice {
     margin: 0;
     color: var(--ink-soft);
-    font-size: 0.8rem;
-    line-height: 1.5;
+    font-size: 0.82rem;
+    line-height: 1.55;
   }
 
   @media (min-width: 960px) {
     .login-layout {
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 1.15fr 1fr;
     }
 
     .login-showcase {
