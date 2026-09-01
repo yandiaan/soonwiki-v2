@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { publicStorageUrl } from '@/lib/shared/paths';
+  import { mediaStreamUrl, publicStorageUrl } from '@/lib/shared/paths';
 
   let {
     mediaPath,
@@ -14,7 +14,10 @@
     onClose: () => void;
   } = $props();
 
-  const url = publicStorageUrl('memories', mediaPath);
+  const url =
+    mediaType === 'video'
+      ? mediaStreamUrl('memories', mediaPath)
+      : publicStorageUrl('memories', mediaPath);
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {

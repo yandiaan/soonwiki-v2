@@ -1,7 +1,7 @@
 <script lang="ts">
   import { compressImageToWebP } from '@/lib/browser/image-compression';
   import { SOON_GENERATIONS } from '@/lib/shared/generations';
-  import { paths, publicStorageUrl } from '@/lib/shared/paths';
+  import { mediaStreamUrl, paths, publicStorageUrl } from '@/lib/shared/paths';
   import { createBrowserSupabase } from '@/lib/supabase/browser';
 
   let {
@@ -147,7 +147,10 @@
       }
 
       mediaPath = path;
-      previewUrl = publicStorageUrl('memories', path);
+      previewUrl =
+        mediaType === 'video'
+          ? mediaStreamUrl('memories', path)
+          : publicStorageUrl('memories', path);
       uploadStatus = 'ready';
     } catch (err) {
       uploadStatus = 'error';

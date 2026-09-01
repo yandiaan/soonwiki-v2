@@ -2,7 +2,7 @@
   import MemoryMediaLightbox from '@/components/svelte/MemoryMediaLightbox.svelte';
   import MemoryUploaderModal from '@/components/svelte/MemoryUploaderModal.svelte';
   import { SOON_GENERATIONS, getGenerationName } from '@/lib/shared/generations';
-  import { paths, publicStorageUrl } from '@/lib/shared/paths';
+  import { mediaStreamUrl, paths, publicStorageUrl } from '@/lib/shared/paths';
   import type { MemoryCard } from '@/lib/shared/memory-models';
 
   let {
@@ -242,7 +242,10 @@
   {:else}
     <div class="memories-grid">
       {#each filteredMemories as memory (memory.id)}
-        {@const mediaUrl = publicStorageUrl('memories', memory.mediaPath)}
+        {@const mediaUrl =
+          memory.mediaType === 'video'
+            ? mediaStreamUrl('memories', memory.mediaPath)
+            : publicStorageUrl('memories', memory.mediaPath)}
         {@const authorAvatar = memory.author.photoPath
           ? publicStorageUrl('profile-photos', memory.author.photoPath)
           : null}

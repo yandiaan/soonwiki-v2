@@ -5,7 +5,7 @@ import ShareProfileButton from '@/components/svelte/ShareProfileButton.svelte';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getMemoryDetail } from '@/lib/server/memory-repository';
 import { getGenerationName } from '@/lib/shared/generations';
-import { paths, publicStorageUrl } from '@/lib/shared/paths';
+import { mediaStreamUrl, paths, publicStorageUrl } from '@/lib/shared/paths';
 import { createServerSupabase } from '@/lib/supabase/server';
 
 const { id } = Astro.params;
@@ -22,7 +22,10 @@ if (!result.ok || !result.data) {
 }
 
 const memory = result.data;
-const mediaUrl = publicStorageUrl('memories', memory.mediaPath);
+const mediaUrl =
+  memory.mediaType === 'video'
+    ? mediaStreamUrl('memories', memory.mediaPath)
+    : publicStorageUrl('memories', memory.mediaPath);
 const authorAvatar = memory.author.photoPath
   ? publicStorageUrl('profile-photos', memory.author.photoPath)
   : null;
@@ -307,6 +310,9 @@ const formattedDate = new Intl.DateTimeFormat('id-ID', {
     align-items: center;
     justify-content: center;
     max-height: 540px;
+    isolation: isolate;
+    transform: translateZ(0);
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
   }
 
   .media-element {

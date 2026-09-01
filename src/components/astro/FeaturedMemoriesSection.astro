@@ -1,7 +1,7 @@
 ---
 import { getGenerationName } from '@/lib/shared/generations';
 import type { MemoryCard } from '@/lib/shared/memory-models';
-import { paths, publicStorageUrl } from '@/lib/shared/paths';
+import { mediaStreamUrl, paths, publicStorageUrl } from '@/lib/shared/paths';
 
 interface Props {
   memories: MemoryCard[];
@@ -29,7 +29,10 @@ const displayMemories = memories.slice(0, 4);
 
       <div class="featured-memories__grid" data-reveal-group>
         {displayMemories.map((memory) => {
-          const mediaUrl = publicStorageUrl('memories', memory.mediaPath);
+          const mediaUrl =
+            memory.mediaType === 'video'
+              ? mediaStreamUrl('memories', memory.mediaPath)
+              : publicStorageUrl('memories', memory.mediaPath);
           const authorPhoto = memory.author?.photoPath
             ? publicStorageUrl('profile-photos', memory.author.photoPath)
             : null;

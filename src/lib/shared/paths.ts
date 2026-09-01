@@ -41,3 +41,13 @@ export function publicStorageUrl(
   const base = (import.meta.env.PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
   return `${base}/storage/v1/object/public/${bucket}/${path}`;
 }
+
+export function mediaStreamUrl(
+  bucket: 'memories' | 'profile-photos' | 'proud-moments',
+  path: string,
+): string {
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/')) {
+    return path;
+  }
+  return `/api/media/stream?bucket=${bucket}&path=${encodeURIComponent(path)}`;
+}
