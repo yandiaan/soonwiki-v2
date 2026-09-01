@@ -1,0 +1,11 @@
+:root {
+  --paper: #f1ebdd;
+  --ink: #161616;
+  --cobalt: #2045b8;
+  --signal: #eb5428;
+  --sage: #9eae98;
+  --line: color-mix(in srgb, var(--ink) 72%, transparent);
+  --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --page-gutter: clamp(1rem, 4vw, 4rem);
+  --focus-ring: 0 0 0 3px var(--paper), 0 0 0 6px var(--cobalt);
+}

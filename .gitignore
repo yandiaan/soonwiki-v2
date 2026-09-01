@@ -1,1 +1,8 @@
 .superpowers/
+.env
+.env.*
+!.env.example
+.astro/
+.supabase/
+dist/
+node_modules/
