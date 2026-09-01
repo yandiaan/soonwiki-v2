@@ -17,7 +17,6 @@ const CONTENT_SECURITY_POLICY = [
   "connect-src 'self' https://*.supabase.co https://accounts.google.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
-  "form-action 'self' https://accounts.google.com",
 ].join('; ');
 
 export const onRequest = defineMiddleware(async (context, next) => {
