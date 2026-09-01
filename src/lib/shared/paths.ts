@@ -25,6 +25,9 @@ export const navigationLinks: NavigationLink[] = [
 ];
 
 export function publicStorageUrl(bucket: 'profile-photos' | 'proud-moments', path: string): string {
-  const base = import.meta.env.PUBLIC_SUPABASE_URL.replace(/\/$/, '');
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/')) {
+    return path;
+  }
+  const base = (import.meta.env.PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
   return `${base}/storage/v1/object/public/${bucket}/${path}`;
 }

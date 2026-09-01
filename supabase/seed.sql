@@ -64,7 +64,7 @@ values
     '00000000-0000-0000-0000-000000000001',
     'Nadia Pramesti',
     'nadia-pramesti',
-    null,
+    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
     2019,
     'Membangun infrastruktur perangkat lunak terbuka untuk komunitas dan inisiatif sipil.',
     'Bandung, Jawa Barat',
@@ -85,7 +85,7 @@ values
     '00000000-0000-0000-0000-000000000002',
     'Rian Mahendra',
     'rian-mahendra',
-    null,
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
     2018,
     'Pembuat film dokumenter dan jurnalis visual yang fokus pada isu krisis iklim dan ruang hidup masyarakat pesisir.',
     'Makassar, Sulawesi Selatan',
@@ -106,7 +106,7 @@ values
     '00000000-0000-0000-0000-000000000003',
     'Siti Nurhaliza',
     'siti-nurhaliza',
-    null,
+    'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80',
     2021,
     'Penggerak kedaulatan pangan perkotaan dan rantai pasok pertanian organik berkeadilan.',
     'Yogyakarta',
@@ -127,7 +127,7 @@ values
     '00000000-0000-0000-0000-000000000004',
     'Bima Arya',
     'bima-arya',
-    null,
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
     2020,
     'Mendedikasikan diri dalam perencanaan tata kota ramah warga, trotoar aman, dan integrasi angkutan umum.',
     'Surabaya, Jawa Timur',
@@ -148,7 +148,7 @@ values
     '00000000-0000-0000-0000-000000000005',
     'Farhan Akbar',
     'farhan-akbar',
-    null,
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
     2022,
     'Merancang produk digital yang inklusif dan dapat diakses dengan mudah oleh semua orang tanpa terkecuali.',
     'Jakarta Selatan',
@@ -169,7 +169,7 @@ values
     '00000000-0000-0000-0000-000000000006',
     'Clarissa Utami',
     'clarissa-utami',
-    null,
+    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
     2023,
     'Membangun ruang aman belajar dan mendengarkan cerita anak-anak di pelosok kepulauan.',
     'Kepulauan Riau',
@@ -188,6 +188,7 @@ values
 on conflict (id) do update set
   name = excluded.name,
   slug = excluded.slug,
+  photo_path = excluded.photo_path,
   bio = excluded.bio,
   location = excluded.location,
   current_activity = excluded.current_activity,
@@ -298,7 +299,7 @@ values
     'Platform keterbukaan informasi publik tingkat desa yang berhasil diimplementasikan di 40 desa di Jawa Barat, mempermudah transparansi APBDes dan penyaluran bantuan sosial.',
     (select id from public.places where slug = 'yayasan-teknologi-terbuka-indonesia'),
     2023,
-    null,
+    'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
     'https://example.org/tekno-terbuka/desa-mandiri'
   ),
   (
@@ -308,7 +309,7 @@ values
     'Film dokumenter investigatif selama 14 bulan yang memotret perjuangan masyarakat adat pesisir mempertahankan ruang hidup mereka dari ancaman reklamasi tambang.',
     (select id from public.places where slug = 'studio-cerita-nusantara'),
     2022,
-    null,
+    'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
     'https://example.org/cerita-nusantara/napas-pesisir'
   ),
   (
@@ -318,7 +319,7 @@ values
     'Membangun sistem distribusi berbasis komunitas yang berhasil memangkas 4 rantai tengkulak dan meningkatkan margin pendapatan keluarga petani hingga 35%.',
     (select id from public.places where slug = 'kebun-kolektif-mandiri'),
     2024,
-    null,
+    'https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=1200&q=80',
     'https://example.org/kebun-kolektif/dampak'
   ),
   (
@@ -328,7 +329,7 @@ values
     'Buku panduan desain digital yang membahas kontras, screen reader hierarchy, dan navigasi keyboard yang telah diunduh lebih dari 5.000 desainer di Indonesia.',
     (select id from public.places where slug = 'kolektif-desain-inklusif'),
     2023,
-    null,
+    'https://images.unsplash.com/photo-1581291518655-9523c932edcf?auto=format&fit=crop&w=1200&q=80',
     'https://example.org/desain-inklusif/panduan'
   )
 on conflict (id) do update set

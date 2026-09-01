@@ -6,11 +6,8 @@ import type { APIContext } from 'astro';
 type ServerSupabaseContext = Pick<APIContext, 'request' | 'cookies'>;
 
 export function createServerSupabase(context: ServerSupabaseContext) {
-  const url = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL || '';
-  const key =
-    import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    process.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    '';
+  const url = import.meta.env.PUBLIC_SUPABASE_URL || '';
+  const key = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
 
   return createServerClient<Database>(url, key, {
     cookies: {
