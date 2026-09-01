@@ -15,11 +15,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "astro check",
-    "db:start": "supabase start",
-    "db:stop": "supabase stop",
-    "db:reset": "supabase db reset",
-    "db:lint": "supabase db lint --local --level warning",
-    "db:types": "supabase gen types typescript --local > src/types/database.ts"
+    "db:push": "supabase db push --linked",
+    "db:lint": "supabase db lint --linked --level warning",
+    "db:types": "supabase gen types typescript --linked > src/types/database.ts"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.4",

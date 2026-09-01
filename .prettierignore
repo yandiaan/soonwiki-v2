@@ -6,4 +6,5 @@ docs/
 node_modules/
 pnpm-lock.yaml
 src/types/database.ts
+supabase/.temp/
 PRODUCT.md
