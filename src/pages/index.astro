@@ -1,5 +1,30 @@
 ---
+import EmptyState from '@/components/astro/EmptyState.astro';
+import ExplorePathways from '@/components/astro/ExplorePathways.astro';
+import FeaturedJourney from '@/components/astro/FeaturedJourney.astro';
+import PossibilityContactSheet from '@/components/astro/PossibilityContactSheet.astro';
+import ProudMomentFrame from '@/components/astro/ProudMomentFrame.astro';
+import StoryChapter from '@/components/astro/StoryChapter.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getHomeStoryData } from '@/lib/server/public-repository';
+import { paths } from '@/lib/shared/paths';
+import '@/styles/home.css';
+
+const result = await getHomeStoryData(Astro);
+
+const chapters = result.ok
+  ? [
+      { label: 'Sejak SOON', story: result.data.featured.sinceSoonStory, frameNumber: '002' },
+      { label: 'Turning point', story: result.data.featured.turningPointStory, frameNumber: '003' },
+      {
+        label: 'Arah sekarang',
+        story: result.data.featured.currentDirectionStory,
+        frameNumber: '004',
+      },
+    ].filter((chapter): chapter is typeof chapter & { story: string } => Boolean(chapter.story))
+  : [];
+
+const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : undefined;
 ---
 
 <BaseLayout
@@ -7,65 +32,34 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
   description="Arsip hidup perjalanan member dan alumni SOON."
   canonical={new URL('/', Astro.url)}
 >
-  <main id="main-content" class="foundation">
-    <header class="masthead">
-      <strong>SOONWIKI</strong>
-      <span>FROM SOON, EVERYWHERE.</span>
-    </header>
-    <section class="intro" aria-labelledby="intro-title">
-      <p class="frame-number">ARCHIVE / 001</p>
-      <h1 id="intro-title">Banyak jalan tumbuh dari SOON.</h1>
-      <p>
-        SoonWiki sedang dibangun sebagai arsip hidup tentang perjalanan, turning point, dan hal yang
-        dibanggakan oleh member serta alumni SOON.
-      </p>
-    </section>
+  <main id="main-content" class="home">
+    {
+      result.ok ? (
+        <>
+          <FeaturedJourney profile={result.data.featured} />
+          {chapters.length > 0 && (
+            <div class="home__chapters">
+              {chapters.map((chapter) => (
+                <StoryChapter
+                  label={chapter.label}
+                  story={chapter.story}
+                  frameNumber={chapter.frameNumber}
+                />
+              ))}
+            </div>
+          )}
+          {firstProudMoment && <ProudMomentFrame moment={firstProudMoment} />}
+          <PossibilityContactSheet profiles={result.data.contactSheet} />
+          <ExplorePathways story={result.data} />
+        </>
+      ) : (
+        <EmptyState
+          title="Belum ada kisah yang terbit"
+          description="SoonWiki baru saja dimulai. Begitu member pertama menerbitkan profilnya, kisah mereka akan tampil di sini."
+          actionHref={paths.login()}
+          actionLabel="Masuk sebagai member"
+        />
+      )
+    }
   </main>
 </BaseLayout>
-
-<style>
-  .foundation {
-    min-height: 100vh;
-    padding: var(--page-gutter);
-  }
-
-  .masthead {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-block: 0.75rem;
-    border-block: 2px solid var(--ink);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-  }
-
-  .intro {
-    display: grid;
-    align-content: end;
-    min-height: min(76vh, 48rem);
-    max-width: 72rem;
-    padding-block: clamp(4rem, 14vw, 10rem) 2rem;
-  }
-
-  .frame-number {
-    color: var(--cobalt);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-  }
-
-  h1 {
-    max-width: 10ch;
-    margin: 0;
-    font-size: clamp(3rem, 11vw, 8.5rem);
-    line-height: 0.88;
-    letter-spacing: -0.07em;
-  }
-
-  .intro > p:last-child {
-    max-width: 40rem;
-    margin: 2rem 0 0;
-    font-size: clamp(1rem, 2vw, 1.35rem);
-    line-height: 1.55;
-  }
-</style>

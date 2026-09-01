@@ -1,0 +1,89 @@
+---
+import { publicStorageUrl } from '@/lib/shared/paths';
+
+import type { ProudMoment } from '@/lib/shared/public-models';
+
+interface Props {
+  moment: ProudMoment;
+}
+
+const { moment } = Astro.props;
+const imageUrl = moment.imagePath ? publicStorageUrl('proud-moments', moment.imagePath) : null;
+const captionParts = [moment.placeName, moment.year ? String(moment.year) : null].filter(
+  (part): part is string => Boolean(part),
+);
+---
+
+<section class="proud-moment" aria-labelledby="proud-moment-title">
+  <p class="frame-number">HAL YANG DIBANGGAKAN</p>
+  {
+    imageUrl && (
+      <figure class="proud-moment__figure">
+        <img src={imageUrl} alt={moment.title} loading="lazy" decoding="async" />
+      </figure>
+    )
+  }
+  <h2 id="proud-moment-title">{moment.title}</h2>
+  {moment.description && <p class="proud-moment__description">{moment.description}</p>}
+  {captionParts.length > 0 && <p class="proud-moment__caption">{captionParts.join(' · ')}</p>}
+  {
+    moment.externalUrl && (
+      <a href={moment.externalUrl} target="_blank" rel="noreferrer">
+        Lihat selengkapnya
+      </a>
+    )
+  }
+</section>
+
+<style>
+  .proud-moment {
+    display: grid;
+    gap: 0.75rem;
+    padding-block: 1.5rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .proud-moment__figure {
+    margin: 0;
+    border: 2px solid var(--ink);
+  }
+
+  .proud-moment__figure img {
+    width: 100%;
+    max-height: 24rem;
+    object-fit: cover;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 5vw, 2.25rem);
+  }
+
+  .proud-moment__description {
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .proud-moment__caption {
+    margin: 0;
+    color: var(--signal);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 700;
+    color: var(--cobalt);
+  }
+</style>

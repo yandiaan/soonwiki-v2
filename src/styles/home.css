@@ -1,0 +1,10 @@
+.home {
+  max-width: 40rem;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+  padding-block-end: 4rem;
+}
+
+.home__chapters {
+  display: grid;
+}

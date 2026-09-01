@@ -1,0 +1,79 @@
+---
+import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import StoryRail from '@/components/svelte/StoryRail.svelte';
+import { paths } from '@/lib/shared/paths';
+
+import type { ProfileCard } from '@/lib/shared/public-models';
+
+interface Props {
+  profiles: ProfileCard[];
+}
+
+const { profiles } = Astro.props;
+---
+
+{
+  profiles.length > 0 && (
+    <section class="contact-sheet" aria-labelledby="contact-sheet-title">
+      <p class="frame-number">BANYAK JALAN LAIN</p>
+      <h2 id="contact-sheet-title">Kisah lain dari Soonies</h2>
+      <StoryRail client:load count={profiles.length}>
+        <ul class="contact-sheet__rail">
+          {profiles.map((profile, index) => (
+            <li>
+              <a href={paths.profile(profile.slug)}>
+                <PortraitFrame
+                  photoPath={profile.photoPath}
+                  name={profile.name}
+                  frameNumber={String(index + 2).padStart(3, '0')}
+                  caption={`${profile.name} · Soon ${profile.batchYear}`}
+                  transitionKey={`profile-${profile.id}`}
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </StoryRail>
+    </section>
+  )
+}
+
+<style>
+  .contact-sheet {
+    display: grid;
+    gap: 0.75rem;
+    padding-block: 1.5rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .contact-sheet__rail {
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-sheet__rail li {
+    flex: 0 0 auto;
+    width: min(60vw, 14rem);
+    scroll-snap-align: start;
+  }
+
+  .contact-sheet__rail a {
+    display: block;
+  }
+</style>

@@ -205,11 +205,16 @@ export async function getHomeStoryData(
     .order('updated_at', { ascending: false })
     .limit(12);
 
+  const { count } = await supabase
+    .from('published_profile_cards')
+    .select('id', { count: 'exact', head: true });
+
   return {
     ok: true,
     data: {
       featured: featuredResult.data,
       contactSheet: (contactSheetRows ?? []).map(toProfileCard),
+      totalPublishedProfiles: count ?? 0,
     },
   };
 }

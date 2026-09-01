@@ -57,6 +57,7 @@ export interface ProfileDetail {
 export interface HomeStory {
   featured: ProfileDetail;
   contactSheet: ProfileCard[];
+  totalPublishedProfiles: number;
 }
 
 export interface ExploreResult {

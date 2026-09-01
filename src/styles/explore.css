@@ -1,0 +1,35 @@
+.explore {
+  max-width: 60rem;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+  padding-block-end: 4rem;
+}
+
+.explore__results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.explore__results a {
+  display: grid;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.explore__pagination {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.explore__pagination a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  color: var(--cobalt);
+}

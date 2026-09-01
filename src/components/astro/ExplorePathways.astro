@@ -1,0 +1,111 @@
+---
+import { paths } from '@/lib/shared/paths';
+
+import type { HomeStory } from '@/lib/shared/public-models';
+
+interface Props {
+  story: HomeStory;
+}
+
+const { story } = Astro.props;
+
+const summaries = [story.featured, ...story.contactSheet].map((profile) => ({
+  batchYear: profile.batchYear,
+  placeName: profile.currentPlaceName,
+  placeSlug: profile.currentPlaceSlug,
+}));
+
+const batchYears = Array.from(new Set(summaries.map((item) => item.batchYear))).sort(
+  (a, b) => b - a,
+);
+
+const places = Array.from(
+  new Map(
+    summaries
+      .filter((item): item is typeof item & { placeSlug: string; placeName: string } =>
+        Boolean(item.placeSlug && item.placeName),
+      )
+      .map((item) => [item.placeSlug, item.placeName]),
+  ).entries(),
+).slice(0, 6);
+---
+
+<section class="explore-pathways" aria-labelledby="explore-pathways-title">
+  <p class="frame-number">JELAJAHI SOONWIKI</p>
+  <h2 id="explore-pathways-title">Banyak jalan untuk dijelajahi</h2>
+  <p>
+    {story.totalPublishedProfiles} kisah Soonies sudah terbit di SoonWiki. Masuk lewat batch atau tempat,
+    atau jelajahi semuanya.
+  </p>
+  <ul class="explore-pathways__chips">
+    {
+      batchYears.map((year) => (
+        <li>
+          <a href={paths.batch(year)}>Soon {year}</a>
+        </li>
+      ))
+    }
+    {
+      places.map(([slug, name]) => (
+        <li>
+          <a href={paths.place(slug)}>{name}</a>
+        </li>
+      ))
+    }
+  </ul>
+  <a class="explore-pathways__cta" href={paths.explore()}>Jelajahi semua Soonies</a>
+</section>
+
+<style>
+  .explore-pathways {
+    display: grid;
+    gap: 0.75rem;
+    padding-block: 1.5rem 3rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .explore-pathways__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .explore-pathways__chips a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 1rem;
+    border: 2px solid var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .explore-pathways__chips a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .explore-pathways__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 800;
+    color: var(--signal);
+  }
+</style>

@@ -1,0 +1,76 @@
+---
+import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import MetadataStrip from '@/components/astro/MetadataStrip.astro';
+import { paths } from '@/lib/shared/paths';
+
+import type { ProfileDetail } from '@/lib/shared/public-models';
+
+interface Props {
+  profile: ProfileDetail;
+}
+
+const { profile } = Astro.props;
+
+const headline =
+  profile.turningPointStory ?? profile.sinceSoonStory ?? profile.currentDirectionStory;
+
+const metadata = [
+  `Soon ${profile.batchYear}`,
+  profile.currentActivity,
+  profile.currentPlaceName,
+].filter((item): item is string => Boolean(item));
+---
+
+<section class="featured-journey" aria-labelledby="featured-journey-title">
+  <p class="frame-number">CERITA / 001</p>
+  <PortraitFrame
+    photoPath={profile.photoPath}
+    name={profile.name}
+    caption={`${profile.name} · Soon ${profile.batchYear}`}
+    loading="eager"
+    transitionKey={`profile-${profile.id}`}
+  />
+  <div class="featured-journey__body">
+    <h1 id="featured-journey-title">{headline ?? `Perjalanan ${profile.name} dari SOON.`}</h1>
+    <MetadataStrip items={metadata} />
+    <a class="featured-journey__link" href={paths.profile(profile.slug)}>
+      Baca perjalanan {profile.name}
+    </a>
+  </div>
+</section>
+
+<style>
+  .featured-journey {
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.5rem;
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .featured-journey__body {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .featured-journey__body h1 {
+    max-width: 18ch;
+    margin: 0;
+    font-size: clamp(2rem, 8vw, 4rem);
+    line-height: 1.05;
+  }
+
+  .featured-journey__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 700;
+    color: var(--cobalt);
+  }
+</style>

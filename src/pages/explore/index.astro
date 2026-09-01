@@ -1,0 +1,110 @@
+---
+import EmptyState from '@/components/astro/EmptyState.astro';
+import MetadataStrip from '@/components/astro/MetadataStrip.astro';
+import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import ExploreFilters from '@/components/svelte/ExploreFilters.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { searchPublishedProfiles } from '@/lib/server/public-repository';
+import { paths } from '@/lib/shared/paths';
+import '@/styles/explore.css';
+
+const PAGE_SIZE = 20;
+
+const url = Astro.url;
+const q = url.searchParams.get('q') ?? '';
+const field = url.searchParams.get('field') ?? '';
+const place = url.searchParams.get('place') ?? '';
+const batchParam = url.searchParams.get('batch') ?? '';
+const batch = batchParam ? Number.parseInt(batchParam, 10) : undefined;
+const pageParam = url.searchParams.get('page');
+const page = pageParam ? Math.max(1, Number.parseInt(pageParam, 10)) : 1;
+
+const result = await searchPublishedProfiles(Astro, {
+  ...(q && { query: q }),
+  ...(field && { fieldSlug: field }),
+  ...(place && { placeSlug: place }),
+  ...(batch !== undefined && Number.isFinite(batch) && { batchYear: batch }),
+  limit: PAGE_SIZE,
+  offset: (page - 1) * PAGE_SIZE,
+});
+
+const profiles = result.ok ? result.data.profiles : [];
+const hasNextPage = profiles.length === PAGE_SIZE;
+
+function buildQuery(overrides: Record<string, string | number | undefined>): string {
+  const params = new URLSearchParams();
+  const source = { q, field, place, batch: batchParam, ...overrides };
+
+  for (const [key, value] of Object.entries(source)) {
+    if (value !== undefined && value !== '') {
+      params.set(key, String(value));
+    }
+  }
+
+  return params.toString();
+}
+---
+
+<BaseLayout
+  title="Jelajahi"
+  description="Jelajahi perjalanan Soonies berdasarkan nama, tempat, hal yang ditekuni, atau batch."
+  canonical={new URL('/explore', Astro.url)}
+>
+  <main id="main-content" class="explore">
+    <p class="frame-number">JELAJAHI / SOON</p>
+    <h1>Jelajahi Soonies</h1>
+    <ExploreFilters client:load query={q} batch={batchParam} field={field} place={place} />
+    {
+      profiles.length === 0 ? (
+        <EmptyState
+          title="Belum ada hasil"
+          description="Coba kata kunci lain, atau lihat semua Soonies tanpa filter."
+          actionHref={paths.explore()}
+          actionLabel="Lihat semua Soonies"
+        />
+      ) : (
+        <ul class="explore__results">
+          {profiles.map((profile) => (
+            <li>
+              <a href={paths.profile(profile.slug)}>
+                <PortraitFrame
+                  photoPath={profile.photoPath}
+                  name={profile.name}
+                  caption={`${profile.name} · Soon ${profile.batchYear}`}
+                />
+                <MetadataStrip
+                  items={[profile.currentActivity, profile.currentPlaceName].filter(
+                    (item): item is string => Boolean(item),
+                  )}
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <nav class="explore__pagination" aria-label="Navigasi halaman hasil">
+      {page > 1 && <a href={`${paths.explore()}?${buildQuery({ page: page - 1 })}`}>Sebelumnya</a>}
+      {
+        hasNextPage && (
+          <a href={`${paths.explore()}?${buildQuery({ page: page + 1 })}`}>Berikutnya</a>
+        )
+      }
+    </nav>
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

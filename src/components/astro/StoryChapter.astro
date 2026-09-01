@@ -1,0 +1,48 @@
+---
+interface Props {
+  label: string;
+  story: string;
+  frameNumber?: string;
+}
+
+const { label, story, frameNumber } = Astro.props;
+---
+
+<article class="story-chapter" data-story-chapter>
+  {frameNumber && <p class="frame-number">{frameNumber}</p>}
+  <p class="label">{label}</p>
+  <p class="story">{story}</p>
+</article>
+
+<style>
+  .story-chapter {
+    display: grid;
+    gap: 0.5rem;
+    padding-block: 1.25rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .label {
+    margin: 0;
+    color: var(--signal);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .story {
+    margin: 0;
+    max-width: 60ch;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+</style>
