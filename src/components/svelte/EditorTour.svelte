@@ -3,11 +3,13 @@
 
   export type TabKey = 'identity' | 'story' | 'journey' | 'moments' | 'links';
 
+  export type TourIcon = 'camera' | 'tag' | 'pen' | 'timeline' | 'trophy' | 'globe' | 'sparkle';
+
   export interface TourStep {
     selector: string;
     tab?: TabKey;
     badge: string;
-    icon: string;
+    icon: TourIcon;
     title: string;
     description: string;
     tip: string;
@@ -19,76 +21,76 @@
       selector: '[data-tour="photo-upload"]',
       tab: 'identity',
       badge: 'Langkah 1 dari 7',
-      icon: '📸',
+      icon: 'camera',
       title: 'Pasang Foto Portrait Terbaikmu',
       description:
-        'Foto 1:1 dengan senyum ramah paling mantap di sini! Format JPG, PNG, atau WebP otomatis dikompresi agar cepat diakses.',
-      tip: '💡 Boleh foto formal santai atau candid dokumenter yang mencerminkan dirimu.',
+        'Foto 1:1 dengan senyum ramah paling mantap di sini. Format JPG, PNG, atau WebP otomatis dikompresi agar cepat diakses.',
+      tip: 'Boleh foto formal santai atau candid dokumenter yang mencerminkan dirimu.',
       placement: 'bottom',
     },
     {
       selector: '[data-tour="identity-fields"]',
       tab: 'identity',
       badge: 'Langkah 2 dari 7',
-      icon: '🏷️',
+      icon: 'tag',
       title: 'Nama & Angkatan SOON',
       description:
         'Tulis nama panggilan akrab dan tahun angkatan SOON-mu. Masukkan juga peran atau kesibukan yang lagi kamu jalani saat ini.',
-      tip: '💡 Ini kartu pengenal utamamu agar sesama SoonMates mudah menemukan dan mengenali kamu.',
+      tip: 'Ini kartu pengenal utamamu agar sesama SoonMates mudah menemukan dan mengenali kamu.',
       placement: 'bottom',
     },
     {
       selector: '[data-tour="story-prompts"]',
       tab: 'story',
       badge: 'Langkah 3 dari 7',
-      icon: '✍️',
+      icon: 'pen',
       title: 'Ceritakan Titik Balik & Refleksi',
       description:
-        'Gak usah kaku kayak nulis CV! Tulis santai tentang perubahan cara pandangmu sejak di SOON dan keputusan penting yang mengubah arah hidupmu.',
-      tip: '💡 Cerita yang autentik dan apa adanya selalu jadi yang paling berkesan.',
+        'Gak usah kaku kayak nulis CV. Tulis santai tentang perubahan cara pandangmu sejak di SOON dan keputusan penting yang mengubah arah hidupmu.',
+      tip: 'Cerita yang autentik dan apa adanya selalu jadi yang paling berkesan.',
       placement: 'bottom',
     },
     {
       selector: '[data-tour="journey-section"]',
       tab: 'journey',
       badge: 'Langkah 4 dari 7',
-      icon: '🛤️',
+      icon: 'timeline',
       title: 'Rangkai Jejak Perjalananmu',
       description:
         'Pernah magang, ganti karir, bikin startup, atau lanjut studi? Susun babak-babak hidupmu di sini. Gunakan tombol naik/turun untuk merapikan urutan kronologi.',
-      tip: '💡 Satu per satu aja, gak harus langsung semua terisi sekarang.',
+      tip: 'Satu per satu aja, gak harus langsung semua terisi sekarang.',
       placement: 'bottom',
     },
     {
       selector: '[data-tour="moments-section"]',
       tab: 'moments',
       badge: 'Langkah 5 dari 7',
-      icon: '🏆',
+      icon: 'trophy',
       title: 'Showcase Karya & Kebanggaan',
       description:
-        'Pernah rilis karya, proyek open-source, buku, atau inisiatif sosial? Upload foto dokumentasinya dan cantumkan link portofoliomu di sini!',
-      tip: '💡 Setiap karya berharga dan bisa jadi inspirasi bagi adik tingkat dan rekan alumni.',
+        'Pernah rilis karya, proyek open-source, buku, atau inisiatif sosial? Upload foto dokumentasinya dan cantumkan link portofoliomu di sini.',
+      tip: 'Setiap karya berharga dan bisa jadi inspirasi bagi adik tingkat dan rekan alumni.',
       placement: 'bottom',
     },
     {
       selector: '[data-tour="links-section"]',
       tab: 'links',
       badge: 'Langkah 6 dari 7',
-      icon: '🌐',
+      icon: 'globe',
       title: 'Bidang, Tautan & Publikasi',
       description:
-        'Pilih bidang yang kamu tekuni, pasang link LinkedIn/Instagram, lalu nyalakan toggle "Terbit ke Publik" agar profilmu tayang di direktori SoonWiki!',
-      tip: '💡 Profil yang terbit akan masuk ke penelusuran publik SoonWiki.',
+        'Pilih bidang yang kamu tekuni, pasang link LinkedIn/Instagram, lalu nyalakan toggle "Terbit ke Publik" agar profilmu tayang di direktori SoonWiki.',
+      tip: 'Profil yang terbit akan masuk ke penelusuran publik SoonWiki.',
       placement: 'bottom',
     },
     {
       selector: '[data-tour="live-preview"]',
       badge: 'Langkah 7 dari 7',
-      icon: '✨',
+      icon: 'sparkle',
       title: 'Live Preview Real-Time & Auto-Save',
       description:
-        'Setiap huruf yang kamu ketik langsung berubah jadi kartu profil keren di panel ini! Drafmu otomatis aman tersimpan di browser.',
-      tip: '💡 Kapan pun siap, klik "Simpan Profil" di bar bawah atau tekan tombol shortcut Ctrl+S / Cmd+S.',
+        'Setiap huruf yang kamu ketik langsung berubah jadi kartu profil keren di panel ini. Drafmu otomatis aman tersimpan di browser.',
+      tip: 'Kapan pun siap, klik "Simpan Profil" di bar bawah atau tekan tombol shortcut Ctrl+S / Cmd+S.',
       placement: 'left',
     },
   ];
@@ -325,17 +327,161 @@
           onclick={handleClose}
           aria-label="Tutup panduan tur"
         >
-          ✕
+          <svg
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
       </div>
 
       <div class="popover-body">
         <div class="popover-title-row">
-          <span class="popover-icon">{currentStep.icon}</span>
+          <span class="popover-icon">
+            {#if currentStep.icon === 'camera'}
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            {:else if currentStep.icon === 'tag'}
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+                />
+                <line x1="7" y1="7" x2="7.01" y2="7" />
+              </svg>
+            {:else if currentStep.icon === 'pen'}
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg>
+            {:else if currentStep.icon === 'timeline'}
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            {:else if currentStep.icon === 'trophy'}
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M4 22h16" />
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34" />
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2z" />
+              </svg>
+            {:else if currentStep.icon === 'globe'}
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <path
+                  d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                />
+              </svg>
+            {:else if currentStep.icon === 'sparkle'}
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"
+                />
+              </svg>
+            {/if}
+          </span>
           <h3 id="spotlight-title" class="popover-title">{currentStep.title}</h3>
         </div>
         <p class="popover-desc">{currentStep.description}</p>
         <div class="popover-tip">
+          <div class="tip-header-row">
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"
+              />
+              <path d="M9 18h6" />
+              <path d="M10 22h4" />
+            </svg>
+            <span class="tip-label">Tips</span>
+          </div>
           <p>{currentStep.tip}</p>
         </div>
       </div>
@@ -355,13 +501,41 @@
 
         <div class="popover-nav-buttons">
           {#if stepIndex > 0}
-            <button type="button" class="btn-popover-back" onclick={handlePrev}> ← Kembali </button>
+            <button type="button" class="btn-popover-back" onclick={handlePrev}>
+              <svg
+                viewBox="0 0 24 24"
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+              <span>Kembali</span>
+            </button>
           {:else}
             <button type="button" class="btn-popover-skip" onclick={handleClose}> Lewati </button>
           {/if}
 
           <button type="button" class="btn-popover-next" onclick={handleNext}>
-            {stepIndex === TOUR_STEPS.length - 1 ? 'Mulai Mengisi! 🚀' : 'Lanjut →'}
+            <span>{stepIndex === TOUR_STEPS.length - 1 ? 'Mulai Mengisi' : 'Lanjut'}</span>
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </button>
         </div>
       </div>
@@ -485,13 +659,20 @@
   }
 
   .popover-icon {
-    font-size: 1.35rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 0.6rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
   }
 
   .popover-title {
     margin: 0;
-    font-size: 1.12rem;
+    font-size: 1.05rem;
     font-weight: 750;
     letter-spacing: -0.02em;
     color: var(--ink);
@@ -506,10 +687,26 @@
   }
 
   .popover-tip {
+    display: grid;
+    gap: 0.35rem;
     padding: 0.65rem 0.85rem;
     border-radius: 0.65rem;
     background: color-mix(in srgb, var(--accent-soft) 60%, var(--surface));
     border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .tip-header-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--accent);
+  }
+
+  .tip-label {
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .popover-tip p {
@@ -562,6 +759,9 @@
 
   .btn-popover-back,
   .btn-popover-skip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
     padding: 0.45rem 0.8rem;
     border-radius: 0.55rem;
     border: 1px solid var(--line-soft);
@@ -582,6 +782,9 @@
   }
 
   .btn-popover-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     padding: 0.5rem 1rem;
     border-radius: 0.6rem;
     border: none;

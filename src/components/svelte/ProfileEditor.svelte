@@ -364,7 +364,24 @@
             onclick={() => (showTour = true)}
             aria-label="Buka panduan tur pengisian"
           >
-            <span>💡 Panduan Tur</span>
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"
+              />
+              <path d="M9 18h6" />
+              <path d="M10 22h4" />
+            </svg>
+            <span>Panduan Tur</span>
           </button>
           <button
             type="button"
@@ -795,7 +812,6 @@
     <div class="preview-sticky-card" data-tour="live-preview">
       <div class="preview-header">
         <div class="preview-badge-live">
-          <span class="live-dot"></span>
           <span>Live Preview</span>
         </div>
         {#if showMobilePreview}
@@ -805,7 +821,20 @@
             onclick={() => (showMobilePreview = false)}
             aria-label="Tutup pratinjau"
           >
-            ✕
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         {/if}
       </div>
@@ -848,7 +877,23 @@
           {/if}
 
           {#if form.location}
-            <p class="card-location">📍 {form.location}</p>
+            <p class="card-location">
+              <svg
+                viewBox="0 0 24 24"
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>{form.location}</span>
+            </p>
           {/if}
 
           {#if form.bio}
@@ -871,7 +916,8 @@
 
         <div class="card-status-bar">
           <span class="status-indicator" class:is-published={form.isPublished}>
-            {form.isPublished ? '● Terbit ke Publik' : '○ Draf Privat'}
+            <span class="status-pip" class:is-live={form.isPublished}></span>
+            <span>{form.isPublished ? 'Terbit ke Publik' : 'Draf Privat'}</span>
           </span>
           {#if slug}
             <a href={`/people/${slug}`} target="_blank" rel="noreferrer" class="public-link">
@@ -930,7 +976,10 @@
         </svg>
         <span class="text-error">{errorMessage}</span>
       {:else if saveState === 'dirty'}
-        <span class="text-dirty">● Ada perubahan (tersimpan di draf)</span>
+        <span class="text-dirty">
+          <span class="status-pip is-dirty"></span>
+          Ada perubahan (tersimpan di draf)
+        </span>
       {:else}
         <span class="text-idle">Otomatis tersimpan sebagai draf</span>
       {/if}
@@ -1561,6 +1610,9 @@
     margin: 0;
     font-size: 0.8rem;
     color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 
   .card-bio {
@@ -1611,10 +1663,29 @@
   .status-indicator {
     font-weight: 750;
     color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .status-indicator.is-published {
     color: #1e6e38;
+  }
+
+  .status-pip {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line-strong, #9ca3af);
+    display: inline-block;
+  }
+
+  .status-pip.is-live {
+    background: #16a34a;
+  }
+
+  .status-pip.is-dirty {
+    background: var(--accent);
   }
 
   .public-link {

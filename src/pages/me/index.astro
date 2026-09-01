@@ -72,7 +72,27 @@ const { profile, journeys, fieldIds, proudMoments } = result.data;
               )
             }
 
-            {profile.location && <p class="me-loc">📍 {profile.location}</p>}
+            {
+              profile.location && (
+                <p class="me-loc">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>{profile.location}</span>
+                </p>
+              )
+            }
 
             <div class="me-badge-status" class:is-published={profile.isPublished}>
               <span class="status-dot"></span>
@@ -273,6 +293,9 @@ const { profile, journeys, fieldIds, proudMoments } = result.data;
     margin: 0;
     font-size: 0.85rem;
     color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 
   .me-badge-status {
