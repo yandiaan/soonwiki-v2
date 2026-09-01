@@ -1,0 +1,125 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import {
+  listAllFieldsForAdmin,
+  listAllPlacesForAdmin,
+  mergeFields,
+  mergePlaces,
+} from '@/lib/server/admin-repository';
+import { getMemberSession } from '@/lib/server/session';
+import { createServerSupabase } from '@/lib/supabase/server';
+import '@/styles/admin.css';
+
+const session = await getMemberSession(Astro);
+
+if (!session || session.member?.role !== 'admin' || session.member.status !== 'active') {
+  return new Response('Halaman tidak ditemukan.', { status: 404 });
+}
+
+const supabase = createServerSupabase(Astro);
+let actionMessage = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const type = form.get('type');
+  const sourceId = String(form.get('sourceId') ?? '');
+  const targetId = String(form.get('targetId') ?? '');
+
+  if (sourceId && targetId) {
+    if (type === 'field') {
+      const result = await mergeFields(supabase, sourceId, targetId);
+      actionMessage = result.ok
+        ? `Berhasil menggabungkan hal yang ditekuni (${result.data.profilesAffected} profil terpengaruh).`
+        : 'Gagal menggabungkan hal yang ditekuni.';
+    } else if (type === 'place') {
+      const result = await mergePlaces(supabase, sourceId, targetId);
+      actionMessage = result.ok
+        ? `Berhasil menggabungkan tempat (${result.data.profilesAffected} profil terpengaruh).`
+        : 'Gagal menggabungkan tempat.';
+    }
+  }
+}
+
+const [fields, places] = await Promise.all([
+  listAllFieldsForAdmin(supabase),
+  listAllPlacesForAdmin(supabase),
+]);
+
+const navLinks = [
+  { href: '/admin', label: 'Dashboard' },
+  { href: '/admin/people', label: 'Orang' },
+  { href: '/admin/content', label: 'Konten' },
+  { href: '/admin/taxonomy', label: 'Taksonomi' },
+  { href: '/admin/reports', label: 'Laporan' },
+  { href: '/admin/invitations', label: 'Undangan' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title="Admin · Taksonomi" description="Kelola hal yang ditekuni dan tempat.">
+  <main id="main-content" class="admin">
+    <p class="frame-number">ADMIN</p>
+    <h1>Taksonomi</h1>
+    <nav class="admin__nav" aria-label="Navigasi admin">
+      {
+        navLinks.map((link) => (
+          <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    {actionMessage && <p role="status">{actionMessage}</p>}
+
+    <h2>Gabungkan hal yang ditekuni</h2>
+    <form class="admin__merge-form" method="post">
+      <input type="hidden" name="type" value="field" />
+      <label>
+        <span>Dari (akan dihapus)</span>
+        <select name="sourceId" required>
+          {fields.map((field) => <option value={field.id}>{field.name}</option>)}
+        </select>
+      </label>
+      <label>
+        <span>Ke</span>
+        <select name="targetId" required>
+          {fields.map((field) => <option value={field.id}>{field.name}</option>)}
+        </select>
+      </label>
+      <button type="submit">Gabungkan</button>
+    </form>
+
+    <h2>Gabungkan tempat</h2>
+    <form class="admin__merge-form" method="post">
+      <input type="hidden" name="type" value="place" />
+      <label>
+        <span>Dari (akan dihapus)</span>
+        <select name="sourceId" required>
+          {places.map((place) => <option value={place.id}>{place.name}</option>)}
+        </select>
+      </label>
+      <label>
+        <span>Ke</span>
+        <select name="targetId" required>
+          {places.map((place) => <option value={place.id}>{place.name}</option>)}
+        </select>
+      </label>
+      <button type="submit">Gabungkan</button>
+    </form>
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

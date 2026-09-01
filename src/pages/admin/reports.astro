@@ -1,0 +1,59 @@
+---
+import AdminReportQueue from '@/components/svelte/AdminReportQueue.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { listReports } from '@/lib/server/admin-repository';
+import { getMemberSession } from '@/lib/server/session';
+import { createServerSupabase } from '@/lib/supabase/server';
+import '@/styles/admin.css';
+
+const session = await getMemberSession(Astro);
+
+if (!session || session.member?.role !== 'admin' || session.member.status !== 'active') {
+  return new Response('Halaman tidak ditemukan.', { status: 404 });
+}
+
+const supabase = createServerSupabase(Astro);
+const reports = await listReports(supabase);
+
+const navLinks = [
+  { href: '/admin', label: 'Dashboard' },
+  { href: '/admin/people', label: 'Orang' },
+  { href: '/admin/content', label: 'Konten' },
+  { href: '/admin/taxonomy', label: 'Taksonomi' },
+  { href: '/admin/reports', label: 'Laporan' },
+  { href: '/admin/invitations', label: 'Undangan' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title="Admin · Laporan" description="Tinjau laporan komunitas SoonWiki.">
+  <main id="main-content" class="admin">
+    <p class="frame-number">ADMIN</p>
+    <h1>Laporan</h1>
+    <nav class="admin__nav" aria-label="Navigasi admin">
+      {
+        navLinks.map((link) => (
+          <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <AdminReportQueue client:load reports={reports} adminUserId={session.user.id} />
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

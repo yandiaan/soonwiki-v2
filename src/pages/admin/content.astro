@@ -1,0 +1,106 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import {
+  deleteJourneyEntryAsAdmin,
+  deleteProudMomentAsAdmin,
+  listRecentContent,
+} from '@/lib/server/admin-repository';
+import { getMemberSession } from '@/lib/server/session';
+import { createServerSupabase } from '@/lib/supabase/server';
+import '@/styles/admin.css';
+
+const session = await getMemberSession(Astro);
+
+if (!session || session.member?.role !== 'admin' || session.member.status !== 'active') {
+  return new Response('Halaman tidak ditemukan.', { status: 404 });
+}
+
+const supabase = createServerSupabase(Astro);
+let actionMessage = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const kind = form.get('kind');
+  const id = String(form.get('id') ?? '');
+
+  if (id) {
+    const result =
+      kind === 'journey_entry'
+        ? await deleteJourneyEntryAsAdmin(supabase, id)
+        : await deleteProudMomentAsAdmin(supabase, id);
+    actionMessage = result.ok ? 'Konten dihapus.' : 'Gagal menghapus konten.';
+  }
+}
+
+const content = await listRecentContent(supabase);
+
+const navLinks = [
+  { href: '/admin', label: 'Dashboard' },
+  { href: '/admin/people', label: 'Orang' },
+  { href: '/admin/content', label: 'Konten' },
+  { href: '/admin/taxonomy', label: 'Taksonomi' },
+  { href: '/admin/reports', label: 'Laporan' },
+  { href: '/admin/invitations', label: 'Undangan' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title="Admin · Konten" description="Moderasi perjalanan dan hal yang dibanggakan.">
+  <main id="main-content" class="admin">
+    <p class="frame-number">ADMIN</p>
+    <h1>Konten</h1>
+    <nav class="admin__nav" aria-label="Navigasi admin">
+      {
+        navLinks.map((link) => (
+          <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    {actionMessage && <p role="status">{actionMessage}</p>}
+    <table>
+      <thead>
+        <tr>
+          <th>Jenis</th>
+          <th>Judul</th>
+          <th>Pemilik profil</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          content.map((item) => (
+            <tr>
+              <td>{item.kind === 'journey_entry' ? 'Perjalanan' : 'Hal yang dibanggakan'}</td>
+              <td>{item.title}</td>
+              <td>{item.profileName}</td>
+              <td>
+                <form class="inline" method="post">
+                  <input type="hidden" name="kind" value={item.kind} />
+                  <input type="hidden" name="id" value={item.id} />
+                  <button type="submit">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

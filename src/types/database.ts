@@ -595,6 +595,20 @@ export type Database = {
       immutable_unaccent: { Args: { value: string }; Returns: string }
       is_active_member: { Args: never; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
+      merge_fields: {
+        Args: { source_id: string; target_id: string }
+        Returns: {
+          profiles_affected: number
+        }[]
+      }
+      merge_places: {
+        Args: { source_id: string; target_id: string }
+        Returns: {
+          journeys_affected: number
+          profiles_affected: number
+          proud_moments_affected: number
+        }[]
+      }
       normalize_slug_source: { Args: { value: string }; Returns: string }
       replace_own_journey_entries: {
         Args: { entries: Json; profile_id: string }
@@ -664,6 +678,10 @@ export type Database = {
           attempt_token: string
           expires_at: string
         }[]
+      }
+      transfer_profile_owner: {
+        Args: { new_owner_id: string; profile_id: string }
+        Returns: undefined
       }
     }
     Enums: {

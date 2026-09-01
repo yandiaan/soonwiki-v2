@@ -5,6 +5,7 @@ import ProfileHero from '@/components/astro/ProfileHero.astro';
 import ProudMomentGallery from '@/components/astro/ProudMomentGallery.astro';
 import RelatedJourneys from '@/components/astro/RelatedJourneys.astro';
 import StoryChapter from '@/components/astro/StoryChapter.astro';
+import ReportDialog from '@/components/svelte/ReportDialog.svelte';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getProfileBySlug } from '@/lib/server/public-repository';
 import { publicStorageUrl } from '@/lib/shared/paths';
@@ -69,5 +70,8 @@ const image = profile.photoPath ? publicStorageUrl('profile-photos', profile.pho
       )
     }
     {profile.relatedProfiles.length > 0 && <RelatedJourneys profiles={profile.relatedProfiles} />}
+    <div class="profile__report">
+      <ReportDialog client:visible profileId={profile.id} />
+    </div>
   </main>
 </BaseLayout>

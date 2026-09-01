@@ -1,0 +1,134 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import {
+  deleteProfileAsAdmin,
+  listAllProfilesForAdmin,
+  setProfilePublished,
+  transferProfileOwner,
+} from '@/lib/server/admin-repository';
+import { getMemberSession } from '@/lib/server/session';
+import { createServerSupabase } from '@/lib/supabase/server';
+import '@/styles/admin.css';
+
+const session = await getMemberSession(Astro);
+
+if (!session || session.member?.role !== 'admin' || session.member.status !== 'active') {
+  return new Response('Halaman tidak ditemukan.', { status: 404 });
+}
+
+const supabase = createServerSupabase(Astro);
+let actionMessage = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const action = form.get('action');
+  const profileId = String(form.get('profileId') ?? '');
+
+  if (action === 'toggle-publish' && profileId) {
+    const nextState = form.get('nextState') === 'true';
+    const result = await setProfilePublished(supabase, profileId, nextState);
+    actionMessage = result.ok ? 'Status publikasi diperbarui.' : 'Gagal memperbarui status.';
+  } else if (action === 'delete' && profileId) {
+    const result = await deleteProfileAsAdmin(supabase, profileId);
+    actionMessage = result.ok ? 'Profil dihapus.' : 'Gagal menghapus profil.';
+  } else if (action === 'transfer' && profileId) {
+    const newOwnerId = String(form.get('newOwnerId') ?? '');
+    const result = await transferProfileOwner(supabase, profileId, newOwnerId);
+    actionMessage = result.ok ? 'Kepemilikan dipindahkan.' : 'Gagal memindahkan kepemilikan.';
+  }
+}
+
+const search = Astro.url.searchParams.get('q') ?? '';
+const profilesResult = await listAllProfilesForAdmin(supabase, search || undefined);
+const profiles = profilesResult.ok ? profilesResult.data : [];
+
+const navLinks = [
+  { href: '/admin', label: 'Dashboard' },
+  { href: '/admin/people', label: 'Orang' },
+  { href: '/admin/content', label: 'Konten' },
+  { href: '/admin/taxonomy', label: 'Taksonomi' },
+  { href: '/admin/reports', label: 'Laporan' },
+  { href: '/admin/invitations', label: 'Undangan' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title="Admin · Orang" description="Kelola profil member SoonWiki.">
+  <main id="main-content" class="admin">
+    <p class="frame-number">ADMIN</p>
+    <h1>Orang</h1>
+    <nav class="admin__nav" aria-label="Navigasi admin">
+      {
+        navLinks.map((link) => (
+          <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    {actionMessage && <p role="status">{actionMessage}</p>}
+    <form class="admin__search" method="get">
+      <input type="search" name="q" value={search} placeholder="Cari nama" />
+      <button type="submit">Cari</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Batch</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          profiles.map((profile) => (
+            <tr>
+              <td>
+                <a href={`/people/${profile.slug}`}>{profile.name}</a>
+              </td>
+              <td>{profile.batchYear}</td>
+              <td>{profile.isPublished ? 'Terbit' : 'Draf'}</td>
+              <td>
+                <form class="inline" method="post">
+                  <input type="hidden" name="action" value="toggle-publish" />
+                  <input type="hidden" name="profileId" value={profile.id} />
+                  <input type="hidden" name="nextState" value={String(!profile.isPublished)} />
+                  <button type="submit">
+                    {profile.isPublished ? 'Batalkan terbit' : 'Terbitkan'}
+                  </button>
+                </form>
+                <form class="inline" method="post">
+                  <input type="hidden" name="action" value="delete" />
+                  <input type="hidden" name="profileId" value={profile.id} />
+                  <button type="submit">Hapus</button>
+                </form>
+                <form class="inline" method="post">
+                  <input type="hidden" name="action" value="transfer" />
+                  <input type="hidden" name="profileId" value={profile.id} />
+                  <input type="text" name="newOwnerId" placeholder="user_id pemilik baru" />
+                  <button type="submit">Pindahkan</button>
+                </form>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>
