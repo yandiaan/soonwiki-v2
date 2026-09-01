@@ -340,3 +340,99 @@ on conflict (id) do update set
   year = excluded.year,
   image_path = excluded.image_path,
   external_url = excluded.external_url;
+
+-- 8. Memories (Galeri Kenangan)
+insert into public.memories (
+  id, author_id, title, story, generation_key, media_type, media_path, media_aspect_ratio,
+  memory_year, location_tag, is_published, created_at
+)
+values
+  (
+    '60000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000001',
+    'Malam Refleksi & Api Unggun Gathering Nasional SOON',
+    'Momen di mana kami semua berkumpul melingkari api unggun di Lembang, saling berbagi keresahan, air mata, dan harapan besar setelah berbulan-bulan berproses bersama. Suasana malam itu membuktikan bahwa ikatan di SOON melampaui sekadar rekan kerja atau rekan belajar.',
+    'superteam',
+    'image',
+    'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1200&q=80',
+    '16/10',
+    2023,
+    'Lembang, Bandung',
+    true,
+    now() - interval '90 days'
+  ),
+  (
+    '60000000-0000-0000-0000-000000000002',
+    '00000000-0000-0000-0000-000000000002',
+    'Hackathon 48 Jam & Demo Karya Proyek Akhir',
+    'Foto ini diambil tepat pukul 04:00 subuh saat kami menyelesaikan sprint terakhir sebelum demo day di hadapan para mentor. Secangkir kopi dingin dan layar penuh baris kode menjadi saksi lahirnya solusi yang kini bermanfaat luas.',
+    'sobat-skawan',
+    'image',
+    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
+    '16/10',
+    2024,
+    'Coworking Space Jakarta',
+    true,
+    now() - interval '45 days'
+  ),
+  (
+    '60000000-0000-0000-0000-000000000003',
+    '00000000-0000-0000-0000-000000000003',
+    'Wisuda Akbar & Pelukan Terakhir di Kampus',
+    'Hari kelulusan yang penuh haru. Mengenakan toga bersama rekan-rekan seperjuangan setelah melewati perjalanan panjang yang penuh tantangan. Kami berjanji untuk terus saling mendukung di mana pun jalan hidup membawa kami.',
+    'beta',
+    'image',
+    'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+    '4/3',
+    2022,
+    'Auditorium Utama',
+    true,
+    now() - interval '180 days'
+  )
+on conflict (id) do update set
+  title = excluded.title,
+  story = excluded.story,
+  generation_key = excluded.generation_key,
+  media_path = excluded.media_path,
+  location_tag = excluded.location_tag;
+
+-- 9. Memory Comments
+insert into public.memory_comments (
+  id, memory_id, author_id, content, created_at
+)
+values
+  (
+    '70000000-0000-0000-0000-000000000001',
+    '60000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000002',
+    'Masih ingat banget waktu itu udara dingin banget tapi hati hangat karena cerita-cerita kalian semua. Kangen masa ini!',
+    now() - interval '85 days'
+  ),
+  (
+    '70000000-0000-0000-0000-000000000002',
+    '60000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000003',
+    'Momen terbaik sepanjang di SOON. Semoga kita bisa adakan gathering seperti ini lagi ya!',
+    now() - interval '80 days'
+  ),
+  (
+    '70000000-0000-0000-0000-000000000003',
+    '60000000-0000-0000-0000-000000000002',
+    '00000000-0000-0000-0000-000000000001',
+    'Perjuangan subuh yang sangat berharga! Bangga sekali bisa satu tim dengan kalian.',
+    now() - interval '40 days'
+  )
+on conflict (id) do update set content = excluded.content;
+
+-- 10. Memory Reactions
+insert into public.memory_reactions (
+  id, memory_id, user_id, reaction_type, created_at
+)
+values
+  ('80000000-0000-0000-0000-000000000001', '60000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'heart', now()),
+  ('80000000-0000-0000-0000-000000000002', '60000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'nostalgic', now()),
+  ('80000000-0000-0000-0000-000000000003', '60000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000003', 'sparkle', now()),
+  ('80000000-0000-0000-0000-000000000004', '60000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'proud', now()),
+  ('80000000-0000-0000-0000-000000000005', '60000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', 'heart', now())
+on conflict (id) do nothing;
+

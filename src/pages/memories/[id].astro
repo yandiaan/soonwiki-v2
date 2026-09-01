@@ -1,0 +1,457 @@
+---
+import MemoryCommentsFeed from '@/components/svelte/MemoryCommentsFeed.svelte';
+import MemoryReactions from '@/components/svelte/MemoryReactions.svelte';
+import ShareProfileButton from '@/components/svelte/ShareProfileButton.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getMemoryDetail } from '@/lib/server/memory-repository';
+import { getGenerationName } from '@/lib/shared/generations';
+import { paths, publicStorageUrl } from '@/lib/shared/paths';
+import { createServerSupabase } from '@/lib/supabase/server';
+
+const { id } = Astro.params;
+
+if (!id) {
+  return new Response('Kenangan tidak ditemukan.', { status: 404 });
+}
+
+const supabase = createServerSupabase(Astro);
+const result = await getMemoryDetail(supabase, id);
+
+if (!result.ok || !result.data) {
+  return new Response('Kenangan tidak ditemukan.', { status: 404 });
+}
+
+const memory = result.data;
+const mediaUrl = publicStorageUrl('memories', memory.mediaPath);
+const authorAvatar = memory.author.photoPath
+  ? publicStorageUrl('profile-photos', memory.author.photoPath)
+  : null;
+const initials = memory.author.name
+  .split(' ')
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((p) => p[0]?.toUpperCase())
+  .join('');
+
+const generationName = getGenerationName(memory.generationKey);
+
+const formattedDate = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(new Date(memory.createdAt));
+---
+
+<BaseLayout
+  title={`${memory.title} · Galeri Kenangan SOON`}
+  description={memory.story.slice(0, 160)}
+  canonical={new URL(`/memories/${memory.id}`, Astro.url)}
+  {...memory.mediaType === 'image' ? { image: mediaUrl } : {}}
+>
+  <main id="main-content" class="memory-detail-page">
+    <!-- Top Navigation -->
+    <nav class="detail-nav" aria-label="Navigasi Galeri">
+      <a href={paths.memories()} class="back-link">
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Kembali ke Galeri Kenangan</span>
+      </a>
+
+      <div class="nav-actions">
+        <ShareProfileButton client:idle title={memory.title} name="Kenangan SOON" />
+      </div>
+    </nav>
+
+    <!-- Main Detail Article -->
+    <article class="memory-article" data-hero-glass>
+      <!-- Media Showcase Frame -->
+      <div class="media-frame">
+        {
+          memory.mediaType === 'video' ? (
+            <video src={mediaUrl} controls playsinline class="media-element" />
+          ) : (
+            <img src={mediaUrl} alt={memory.title} class="media-element" loading="eager" />
+          )
+        }
+      </div>
+
+      <!-- Header & Metadata -->
+      <header class="memory-header">
+        <div class="memory-tags">
+          <span class="tag tag--gen">{generationName}</span>
+          {memory.memoryYear && <span class="tag tag--year">Tahun {memory.memoryYear}</span>}
+          {
+            memory.locationTag && (
+              <span class="tag tag--loc">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="13"
+                  height="13"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span>{memory.locationTag}</span>
+              </span>
+            )
+          }
+        </div>
+
+        <h1 class="memory-title">{memory.title}</h1>
+
+        <!-- Author Bar -->
+        <div class="author-bar">
+          <div class="author-left">
+            <div class="author-avatar">
+              {
+                authorAvatar ? (
+                  <img src={authorAvatar} alt={memory.author.name} />
+                ) : (
+                  <span class="avatar-initials">{initials}</span>
+                )
+              }
+            </div>
+            <div class="author-details">
+              {
+                memory.author.slug ? (
+                  <a href={paths.profile(memory.author.slug)} class="author-name-link">
+                    {memory.author.name}
+                  </a>
+                ) : (
+                  <span class="author-name">{memory.author.name}</span>
+                )
+              }
+              <span class="publish-date">Dibagikan pada {formattedDate}</span>
+            </div>
+          </div>
+
+          {
+            memory.canModerate && (
+              <button
+                type="button"
+                id="btn-delete-memory"
+                class="btn-delete"
+                data-memory-id={memory.id}
+                title="Hapus kenangan ini"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                <span>Hapus</span>
+              </button>
+            )
+          }
+        </div>
+      </header>
+
+      <!-- Narrative Story -->
+      <div class="memory-narrative">
+        <p class="story-paragraph">{memory.story}</p>
+      </div>
+
+      <!-- Reactions Bar Island -->
+      <div class="reactions-wrapper">
+        <MemoryReactions client:load memoryId={memory.id} initialReactions={memory.reactions} />
+      </div>
+
+      <!-- Comments Thread Island -->
+      <div class="comments-wrapper">
+        <MemoryCommentsFeed
+          client:load
+          memoryId={memory.id}
+          initialComments={memory.comments}
+          canModerate={memory.canModerate}
+        />
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<script>
+  const deleteBtn = document.getElementById('btn-delete-memory');
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', async () => {
+      const memoryId = deleteBtn.getAttribute('data-memory-id');
+      if (!memoryId) return;
+
+      const confirmed = window.confirm(
+        'Apakah kamu yakin ingin menghapus kenangan ini? Tindakan ini tidak dapat dibatalkan.',
+      );
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`/api/memories/${memoryId}`, {
+          method: 'DELETE',
+        });
+
+        if (res.ok) {
+          window.location.href = '/memories';
+        } else {
+          alert('Gagal menghapus kenangan.');
+        }
+      } catch {
+        alert('Terjadi kesalahan jaringan.');
+      }
+    });
+  }
+</script>
+
+<style>
+  .memory-detail-page {
+    max-width: 56rem;
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+    padding-block: 1.5rem 6rem;
+  }
+
+  .detail-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.88rem;
+    font-weight: 650;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .back-link:hover {
+    color: var(--ink);
+    transform: translateX(-2px);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  /* Article */
+  .memory-article {
+    display: grid;
+    gap: 2rem;
+    padding-top: 2rem;
+  }
+
+  /* Media Frame */
+  .media-frame {
+    width: 100%;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: #000000;
+    box-shadow:
+      0 20px 48px -12px rgba(18, 21, 20, 0.15),
+      0 0 0 1px var(--line-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 540px;
+  }
+
+  .media-element {
+    width: 100%;
+    max-height: 540px;
+    object-fit: contain;
+  }
+
+  /* Header */
+  .memory-header {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .memory-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .tag--gen {
+    background: var(--ink);
+    color: #ffffff;
+  }
+
+  .tag--year {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .tag--loc {
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    border: 1px solid var(--line-soft);
+  }
+
+  .memory-title {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 750;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+
+  /* Author Bar */
+  .author-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-block: 1px solid var(--line-soft);
+  }
+
+  .author-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .author-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--surface-muted);
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+  }
+
+  .author-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-initials {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .author-details {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .author-name-link {
+    font-size: 0.98rem;
+    font-weight: 750;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .author-name-link:hover {
+    color: var(--accent);
+  }
+
+  .author-name {
+    font-size: 0.98rem;
+    font-weight: 750;
+    color: var(--ink);
+  }
+
+  .publish-date {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+
+  .btn-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 36px;
+    padding: 0 0.9rem;
+    border-radius: 9999px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+  }
+
+  .btn-delete:hover {
+    background: #fee2e2;
+  }
+
+  /* Story Narrative */
+  .memory-narrative {
+    padding-block: 0.5rem 1.5rem;
+  }
+
+  .story-paragraph {
+    margin: 0;
+    color: var(--ink);
+    font-size: clamp(1.1rem, 2.2vw, 1.25rem);
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  .reactions-wrapper {
+    padding-block: 0.5rem;
+  }
+
+  .comments-wrapper {
+    padding-top: 0.5rem;
+  }
+</style>

@@ -2,6 +2,8 @@ export const paths = {
   home: () => '/',
   about: () => '/#tentang',
   explore: () => '/explore',
+  memories: () => '/memories',
+  memoryDetail: (id: string) => `/memories/${id}`,
   profile: (slug: string) => `/people/${slug}`,
   field: (slug: string) => `/field/${slug}`,
   batch: (generationKey: string) => `/batch/${generationKey}`,
@@ -24,11 +26,15 @@ export interface NavigationLink {
 export const navigationLinks: NavigationLink[] = [
   { href: paths.home(), label: 'Beranda' },
   { href: paths.explore(), label: 'Jelajahi' },
+  { href: paths.memories(), label: 'Kenangan' },
   { href: paths.about(), label: 'Tentang' },
   { href: paths.login(), label: 'Masuk' },
 ];
 
-export function publicStorageUrl(bucket: 'profile-photos' | 'proud-moments', path: string): string {
+export function publicStorageUrl(
+  bucket: 'profile-photos' | 'proud-moments' | 'memories',
+  path: string,
+): string {
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/')) {
     return path;
   }

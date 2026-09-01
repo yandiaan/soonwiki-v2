@@ -28,6 +28,12 @@
             match: (p: string) => p === '/explore' || p.startsWith('/explore'),
           },
           {
+            href: paths.memories(),
+            label: 'Kenangan',
+            icon: 'memories',
+            match: (p: string) => p === '/memories' || p.startsWith('/memories'),
+          },
+          {
             href: paths.admin(),
             label: 'Admin',
             icon: 'admin',
@@ -56,6 +62,12 @@
           match: (p: string) => p === '/explore' || p.startsWith('/explore'),
         },
         {
+          href: paths.memories(),
+          label: 'Kenangan',
+          icon: 'memories',
+          match: (p: string) => p === '/memories' || p.startsWith('/memories'),
+        },
+        {
           href: paths.feedback(),
           label: 'Masukan',
           icon: 'feedback',
@@ -82,6 +94,12 @@
         label: 'Jelajahi',
         icon: 'explore',
         match: (p: string) => p === '/explore' || p.startsWith('/explore'),
+      },
+      {
+        href: paths.memories(),
+        label: 'Kenangan',
+        icon: 'memories',
+        match: (p: string) => p === '/memories' || p.startsWith('/memories'),
       },
       {
         href: paths.about(),
@@ -160,6 +178,23 @@
                   fill={isActive ? 'var(--accent-soft)' : 'none'}
                 />
                 <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+              </svg>
+            {:else if item.icon === 'memories'}
+              <!-- Memory Gallery / Photo Album -->
+              <svg
+                class="dock-icon"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.85"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
               </svg>
             {:else if item.icon === 'about'}
               <!-- Open Editorial Storybook / Archive Journal -->
@@ -252,42 +287,34 @@
     }
 
     .mobile-dock__capsule {
-      position: relative;
       pointer-events: auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      width: min(100%, 22.5rem);
-      padding: 0.28rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: color-mix(in srgb, var(--surface) 86%, transparent);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
       border-radius: 9999px;
-      background: color-mix(in srgb, var(--surface) 88%, var(--canvas));
-      backdrop-filter: blur(28px) saturate(1.8);
-      -webkit-backdrop-filter: blur(28px) saturate(1.8);
-      border: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+      padding: 0.35rem 0.4rem;
       box-shadow:
-        0 20px 48px -10px rgb(18 21 20 / 0.16),
-        0 4px 14px -2px rgb(18 21 20 / 0.05),
-        inset 0 1px 1px 0 rgb(255 255 255 / 0.95);
-      user-select: none;
+        0 16px 36px -8px rgba(18, 21, 20, 0.22),
+        0 0 0 1px color-mix(in srgb, var(--surface) 60%, transparent) inset;
+      max-width: 100%;
     }
 
-    /* Sliding Active Indicator Pill */
     .mobile-active-pill {
       position: absolute;
-      top: 0.28rem;
-      bottom: 0.28rem;
-      left: 0.28rem;
-      width: calc((100% - 0.56rem) / 4);
+      left: 0.4rem;
+      top: 0.35rem;
+      bottom: 0.35rem;
+      width: calc((100% - 0.8rem) / 5);
       border-radius: 9999px;
-      background: var(--surface);
-      border: 1px solid color-mix(in srgb, var(--ink) 6%, transparent);
-      box-shadow:
-        0 3px 12px -2px rgb(18 21 20 / 0.12),
-        0 1px 3px 0 rgb(18 21 20 / 0.04),
-        inset 0 1px 0 rgb(255 255 255 / 1);
+      background: var(--ink);
+      box-shadow: 0 4px 14px rgba(18, 21, 20, 0.25);
       pointer-events: none;
+      transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 1;
-      transition: transform 360ms cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform;
     }
 
     .dock-item {
@@ -297,59 +324,46 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.15rem;
-      min-height: 48px;
-      padding: 0.35rem 0.2rem;
-      border-radius: 9999px;
-      color: var(--ink-soft);
+      gap: 0.18rem;
+      padding: 0.4rem 0.65rem;
+      min-width: 48px;
       text-decoration: none;
+      color: var(--ink-soft);
+      border-radius: 9999px;
       transition:
-        color 200ms ease,
-        transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
-      -webkit-tap-highlight-color: transparent;
+        color 220ms ease,
+        transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .dock-item:active {
       transform: scale(0.92);
     }
 
+    .dock-item.is-active {
+      color: #ffffff;
+    }
+
     .dock-icon-wrapper {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
+      line-height: 1;
     }
 
     .dock-icon {
-      transition:
-        transform 250ms cubic-bezier(0.16, 1, 0.3, 1),
-        color 200ms ease;
-    }
-
-    .dock-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      line-height: 1;
-      transition:
-        color 200ms ease,
-        font-weight 200ms ease;
-    }
-
-    /* Active States */
-    .dock-item.is-active {
-      color: var(--ink);
+      transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .dock-item.is-active .dock-icon {
-      color: var(--accent);
-      transform: scale(1.08) translateY(-1px);
+      transform: scale(1.1);
     }
 
-    .dock-item.is-active .dock-label {
-      color: var(--ink);
+    .dock-label {
+      font-size: 0.65rem;
       font-weight: 750;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      text-transform: capitalize;
     }
   }
 </style>
