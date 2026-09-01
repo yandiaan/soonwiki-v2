@@ -1,5 +1,6 @@
 <script lang="ts">
   import DuplicateWarning from '@/components/svelte/DuplicateWarning.svelte';
+  import EditorTour from '@/components/svelte/EditorTour.svelte';
   import FieldPicker from '@/components/svelte/FieldPicker.svelte';
   import JourneyEditor from '@/components/svelte/JourneyEditor.svelte';
   import MediaUploader from '@/components/svelte/MediaUploader.svelte';
@@ -114,6 +115,7 @@
   let duplicateConfirmed = $state(false);
   let showDraftBanner = $state(false);
   let showMobilePreview = $state(false);
+  let showTour = $state(false);
 
   let mounted = false;
   let draftTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -343,6 +345,8 @@
   onDismiss={dismissDuplicate}
 />
 
+<EditorTour bind:isOpen={showTour} onTabChange={(tab) => (currentTab = tab)} />
+
 <div class="editor-layout">
   <!-- Main Editing Studio -->
   <div class="editor-main">
@@ -353,25 +357,35 @@
           <span class="completion-title">Kelengkapan Profil</span>
           <span class="completion-value">{completionStats.score}% Selesai</span>
         </div>
-        <button
-          type="button"
-          class="preview-toggle-btn"
-          onclick={() => (showMobilePreview = !showMobilePreview)}
-          aria-label="Toggle pratinjau profil"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
+        <div class="completion-actions">
+          <button
+            type="button"
+            class="tour-trigger-btn"
+            onclick={() => (showTour = true)}
+            aria-label="Buka panduan tur pengisian"
           >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          <span>{showMobilePreview ? 'Tutup Pratinjau' : 'Lihat Pratinjau'}</span>
-        </button>
+            <span>💡 Panduan Tur</span>
+          </button>
+          <button
+            type="button"
+            class="preview-toggle-btn"
+            onclick={() => (showMobilePreview = !showMobilePreview)}
+            aria-label="Toggle pratinjau profil"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <span>{showMobilePreview ? 'Tutup Pratinjau' : 'Lihat Pratinjau'}</span>
+          </button>
+        </div>
       </div>
       <div class="progress-bar-track">
         <div
@@ -1029,18 +1043,52 @@
     color: var(--accent);
   }
 
+  .completion-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tour-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 750;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      transform 150ms var(--ease-out);
+  }
+
+  .tour-trigger-btn:hover {
+    background: var(--accent);
+    color: var(--surface);
+    transform: translateY(-1px);
+  }
+
   .preview-toggle-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 0.75rem;
-    border-radius: 0.5rem;
+    border-radius: 0.55rem;
     border: 1px solid var(--line-soft);
     background: var(--canvas);
     color: var(--ink);
     font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
+    transition: background-color 150ms ease;
+  }
+
+  .preview-toggle-btn:hover {
+    background: var(--surface-muted);
   }
 
   @media (min-width: 1024px) {
