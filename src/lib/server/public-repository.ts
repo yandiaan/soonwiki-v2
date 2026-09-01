@@ -325,3 +325,12 @@ export async function getPlaceCollection(
 
   return { ok: true, data: { name: place.name, profiles: (data ?? []).map(toProfileCard) } };
 }
+
+export async function getRandomProfileSlug(context: ServerContext): Promise<string | null> {
+  const supabase = createServerSupabase(context);
+  const { data } = await supabase.from('published_profile_cards').select('slug').limit(40);
+
+  if (!data || data.length === 0) return null;
+  const randomIndex = Math.floor(Math.random() * data.length);
+  return data[randomIndex]?.slug ?? null;
+}

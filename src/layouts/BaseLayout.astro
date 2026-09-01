@@ -5,7 +5,6 @@ import '@/styles/global.css';
 import MobileNavigation from '@/components/svelte/MobileNavigation.svelte';
 import SiteFooter from '@/components/astro/SiteFooter.astro';
 import SiteHeader from '@/components/astro/SiteHeader.astro';
-import { navigationLinks } from '@/lib/shared/paths';
 
 interface Props {
   title: string;
@@ -95,7 +94,7 @@ const ogImageAlt = imageAlt || `SoonWiki — ${fullTitle}`;
     <SiteHeader currentPath={currentPath} />
     <slot />
     <SiteFooter />
-    <MobileNavigation client:load links={navigationLinks} currentPath={currentPath} />
+    <MobileNavigation client:load currentPath={currentPath} />
 
     <script>
       import { initScrollReveals } from '@/lib/browser/motion-effects';

@@ -1,81 +1,361 @@
 ---
-import { navigationLinks, paths } from '@/lib/shared/paths';
+import { paths } from '@/lib/shared/paths';
 
 interface Props {
   currentPath: string;
 }
 
 const { currentPath } = Astro.props;
+
+const navItems = [
+  { href: paths.home(), label: 'Beranda' },
+  { href: paths.explore(), label: 'Jelajahi' },
+  { href: paths.about(), label: 'Tentang' },
+];
 ---
 
-<header class="site-header">
-  <a class="brand" href={paths.home()}>SoonWiki</a>
-  <nav aria-label="Navigasi utama" class="desktop-nav">
-    <ul>
-      {
-        navigationLinks.map((link) => (
-          <li>
-            <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
+<header class="site-header" id="site-header">
+  <div class="site-header__container">
+    <!-- Brand / Monogram -->
+    <a class="brand" href={paths.home()} aria-label="SoonWiki Beranda">
+      <span class="brand__icon">
+        <span class="brand__dot"></span>
+      </span>
+      <span class="brand__text">
+        <strong>SOON</strong><span class="brand__sub">WIKI</span>
+      </span>
+    </a>
+
+    <!-- Center Navigation Links (Pill Dock) -->
+    <nav aria-label="Navigasi utama" class="desktop-nav">
+      <ul class="nav-pill-list">
+        {
+          navItems.map((link) => {
+            const isActive =
+              currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
+            return (
+              <li>
+                <a
+                  href={link.href}
+                  class:list={['nav-link', { 'is-active': isActive }]}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  <span>{link.label}</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <!-- Right Controls: Surprise Action & Auth CTA -->
+    <div class="site-header__actions">
+      <!-- Surprise Me Action: Kisah Acak -->
+      <a
+        href={paths.randomJourney()}
+        class="surprise-btn"
+        title="Buka kisah alumni secara acak (Elemen Kejutan)"
+        aria-label="Kisah Acak"
+      >
+        <svg
+          class="surprise-icon"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path
+            d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"
+          ></path>
+        </svg>
+        <span>Kisah Acak</span>
+      </a>
+
+      <!-- Login CTA -->
+      <a
+        href={paths.login()}
+        class:list={['login-btn', { 'is-active': currentPath === paths.login() }]}
+        aria-label="Masuk ke Ruang Soonies"
+      >
+        <span>Masuk</span>
+      </a>
+    </div>
+  </div>
 </header>
+
+<script>
+  function setupHeaderScroll() {
+    const header = document.getElementById('site-header');
+    if (!header) return;
+
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 24) {
+            header?.setAttribute('data-scrolled', 'true');
+          } else {
+            header?.removeAttribute('data-scrolled');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  setupHeaderScroll();
+  document.addEventListener('astro:page-load', setupHeaderScroll);
+</script>
 
 <style>
   .site-header {
     position: sticky;
-    z-index: 40;
     top: 0;
+    z-index: 40;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0.85rem var(--page-gutter);
+    pointer-events: none;
+    transition:
+      padding 350ms cubic-bezier(0.19, 1, 0.22, 1),
+      transform 350ms cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .site-header__container {
+    pointer-events: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    min-height: 4.5rem;
-    padding: 0.75rem var(--page-gutter);
-    border-bottom: 1px solid var(--line-soft);
-    background: color-mix(in srgb, var(--canvas) 92%, transparent);
-    backdrop-filter: blur(14px);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: var(--content-max);
+    min-height: 3.5rem;
+    padding: 0.4rem 0.75rem 0.4rem 1.25rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--canvas) 85%, transparent);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid color-mix(in srgb, var(--line-soft) 80%, transparent);
+    box-shadow: 0 4px 20px -4px rgb(0 0 0 / 0.04);
+    transition:
+      max-width 400ms cubic-bezier(0.19, 1, 0.22, 1),
+      padding 300ms ease,
+      background-color 300ms ease,
+      border-color 300ms ease,
+      box-shadow 300ms ease,
+      transform 300ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
+  /* Scrolled Floating Island State */
+  .site-header[data-scrolled='true'] {
+    padding-top: 0.65rem;
+  }
+
+  .site-header[data-scrolled='true'] .site-header__container {
+    max-width: min(100%, 64rem);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    border-color: color-mix(in srgb, var(--ink) 12%, transparent);
+    box-shadow:
+      0 16px 36px -8px rgb(0 0 0 / 0.08),
+      0 1px 3px 0 rgb(0 0 0 / 0.04);
+  }
+
+  /* Brand Styling */
   .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--ink);
+    text-decoration: none;
+    transition: transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .brand:hover {
+    transform: scale(1.02);
+  }
+
+  .brand__icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--ink);
+  }
+
+  .brand__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: brand-pulse 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes brand-pulse {
+    0% {
+      opacity: 0.75;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+
+  .brand__text {
     font-size: 1.05rem;
     font-weight: 800;
-    letter-spacing: -0.025em;
-    text-decoration: none;
+    letter-spacing: -0.03em;
+    line-height: 1;
   }
 
+  .brand__sub {
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin-left: 1px;
+  }
+
+  /* Desktop Navigation Pills */
   .desktop-nav ul {
     display: flex;
-    gap: 1.5rem;
+    align-items: center;
+    gap: 0.35rem;
     margin: 0;
-    padding: 0;
+    padding: 0.25rem 0.35rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
     list-style: none;
   }
 
-  .desktop-nav a {
+  .nav-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0.35rem 1.1rem;
+    border-radius: 9999px;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
     font-weight: 700;
     text-decoration: none;
+    transition:
+      color 200ms ease,
+      background-color 200ms ease,
+      transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
-  .desktop-nav a[aria-current='page'] {
+  .nav-link:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
+  }
+
+  .nav-link.is-active {
+    color: var(--ink);
+    background: var(--surface);
+    box-shadow: 0 2px 8px -2px rgb(0 0 0 / 0.08);
+  }
+
+  /* Right Actions */
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  /* Surprise Button (Kisah Acak) */
+  .surprise-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 38px;
+    padding: 0.4rem 0.95rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
     color: var(--accent);
+    font-size: 0.84rem;
+    font-weight: 750;
+    text-decoration: none;
+    border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+    transition:
+      transform 250ms cubic-bezier(0.19, 1, 0.22, 1),
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 250ms ease;
   }
 
-  .desktop-nav a:focus-visible {
-    outline: none;
-    box-shadow: var(--focus-ring);
+  .surprise-btn:hover {
+    background: var(--accent);
+    color: var(--surface);
+    border-color: var(--accent);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 20px -4px color-mix(in srgb, var(--accent) 45%, transparent);
   }
 
-  @media (max-width: 640px) {
+  .surprise-btn:hover .surprise-icon {
+    transform: rotate(18deg) scale(1.15);
+  }
+
+  .surprise-icon {
+    transition: transform 300ms cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  /* Login Button */
+  .login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0.4rem 1.15rem;
+    border-radius: 9999px;
+    background: var(--ink);
+    color: var(--surface);
+    font-size: 0.86rem;
+    font-weight: 750;
+    text-decoration: none;
+    transition:
+      transform 200ms cubic-bezier(0.19, 1, 0.22, 1),
+      background-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  .login-btn:hover {
+    background: color-mix(in srgb, var(--ink) 85%, var(--accent));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px -4px rgb(0 0 0 / 0.16);
+  }
+
+  .login-btn.is-active {
+    background: var(--accent);
+  }
+
+  @media (max-width: 768px) {
     .desktop-nav {
       display: none;
+    }
+
+    .surprise-btn span {
+      display: none;
+    }
+
+    .surprise-btn {
+      padding: 0.4rem 0.6rem;
     }
   }
 </style>

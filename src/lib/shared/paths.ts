@@ -10,6 +10,7 @@ export const paths = {
   meEdit: () => '/me/edit',
   login: () => '/login',
   join: (token: string) => `/join/${token}`,
+  randomJourney: () => '/api/random-journey',
 };
 
 export interface NavigationLink {
