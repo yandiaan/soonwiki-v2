@@ -35,7 +35,11 @@ const people = [
     <div class="public-hero__orb public-hero__orb--accent"></div>
   </div>
 
-  <div class="public-hero__media" aria-hidden={people.length === 0 ? 'true' : undefined}>
+  <div
+    class="public-hero__media"
+    data-hero-glass
+    aria-hidden={people.length === 0 ? 'true' : undefined}
+  >
     {
       people.length > 0 ? (
         <ul>
@@ -60,7 +64,7 @@ const people = [
     }
   </div>
   <div class="public-hero__veil"></div>
-  <div class="public-hero__content" data-reveal>
+  <div class="public-hero__content" data-hero-glass>
     <h1 id="public-hero-title">Banyak jalan dimulai dari SOON.</h1>
     <p>Temukan perjalanan nyata, perubahan hidup, dan hal-hal yang dibanggakan oleh Soonies.</p>
     <div class="public-hero__actions">
