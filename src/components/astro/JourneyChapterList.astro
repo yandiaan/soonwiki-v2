@@ -23,7 +23,6 @@ function formatPeriod(entry: JourneyChapter): string {
 ---
 
 <section class="journey-list" aria-labelledby="journey-list-title">
-  <p class="frame-number">PERJALANAN</p>
   <h2 id="journey-list-title">Perjalanan</h2>
   <JourneyTimeline client:visible>
     <ol class="journey-list__items">
@@ -74,7 +73,7 @@ function formatPeriod(entry: JourneyChapter): string {
     display: grid;
     gap: 0.35rem;
     padding-inline-start: 1rem;
-    border-left: 2px solid var(--sage);
+    border-left: 1px solid var(--sage);
   }
 
   .journey-list__period {

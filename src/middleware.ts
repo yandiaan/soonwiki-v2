@@ -2,9 +2,15 @@ import { defineMiddleware } from 'astro:middleware';
 
 import { getOrCreateRequestId } from '@/lib/server/request-context';
 
+// Astro's client-hydration bootstrap for `client:*` islands (Svelte components)
+// emits small inline <script> tags with serialized props; there is no nonce
+// wiring available without extra tooling, so `'unsafe-inline'` on script-src is
+// a deliberate, documented trade-off rather than an oversight. Verified against
+// the production build: without it, every Svelte island silently fails to
+// hydrate (MobileNavigation, StoryRail, ProfileEditor, etc. all become inert).
 const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
-  "script-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' https: data:",
   "font-src 'self' data:",

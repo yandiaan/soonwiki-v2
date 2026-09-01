@@ -108,13 +108,16 @@
   }
 
   .report-dialog {
-    display: grid;
-    gap: 0.75rem;
     max-width: 28rem;
     padding: 1.25rem;
     border: 2px solid var(--ink);
     background: var(--paper);
     color: var(--ink);
+  }
+
+  .report-dialog[open] {
+    display: grid;
+    gap: 0.75rem;
   }
 
   .report-dialog::backdrop {
