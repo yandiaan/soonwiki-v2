@@ -283,7 +283,14 @@
           {#if previewUrl}
             <div class="media-preview-box">
               {#if mediaType === 'video'}
-                <video src={previewUrl} controls class="preview-media">
+                <video
+                  src={previewUrl}
+                  controls
+                  playsinline
+                  webkit-playsinline
+                  preload="metadata"
+                  class="preview-media"
+                >
                   <track kind="captions" />
                 </video>
               {:else}

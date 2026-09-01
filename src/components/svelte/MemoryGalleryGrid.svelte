@@ -270,10 +270,12 @@
           >
             {#if memory.mediaType === 'video'}
               <video
-                class="card-media"
+                src={mediaUrl}
+                class="card-media card-media--video"
                 preload="metadata"
                 muted
                 playsinline
+                webkit-playsinline
                 loop
                 onmouseenter={(e) => {
                   (e.currentTarget as HTMLVideoElement).play().catch(() => {});
@@ -635,6 +637,10 @@
     height: 100%;
     object-fit: cover;
     transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-media--video {
+    pointer-events: none;
   }
 
   .memory-card:hover .card-media {

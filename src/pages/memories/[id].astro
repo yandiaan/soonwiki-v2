@@ -82,7 +82,15 @@ const formattedDate = new Intl.DateTimeFormat('id-ID', {
       <div class={`media-frame ${memory.mediaType === 'video' ? 'media-frame--video' : ''}`}>
         {
           memory.mediaType === 'video' ? (
-            <video controls playsinline preload="auto" class="media-element media-element--video">
+            <video
+              src={mediaUrl}
+              controls
+              playsinline
+              webkit-playsinline
+              x5-playsinline
+              preload="metadata"
+              class="media-element media-element--video"
+            >
               <source src={mediaUrl} type="video/mp4" />
               <source src={mediaUrl} type="video/webm" />
               <p class="video-fallback">
