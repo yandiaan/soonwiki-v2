@@ -266,6 +266,7 @@ export async function upsertOwnProfile(
   const payload = {
     owner_id: user.id,
     name: input.name,
+    photo_path: input.photoPath ?? null,
     batch_year: input.batchYear,
     bio: input.bio ?? null,
     location: input.location ?? null,

@@ -41,7 +41,8 @@ export const profileInputSchema = z.object({
     .number()
     .int()
     .min(2000, { message: 'Batch minimal 2000' })
-    .max(new Date().getFullYear(), { message: 'Batch tidak boleh di masa depan' }),
+    .max(2100, { message: 'Batch maksimal 2100' }),
+  photoPath: trimmedOptional(500),
   bio: trimmedOptional(500),
   location: trimmedOptional(120),
   currentActivity: trimmedOptional(200),

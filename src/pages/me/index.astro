@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getMemberSession } from '@/lib/server/session';
 import { loadOwnProfile } from '@/lib/server/member-repository';
 import { createServerSupabase } from '@/lib/supabase/server';
-import { paths } from '@/lib/shared/paths';
+import { paths, publicStorageUrl } from '@/lib/shared/paths';
 
 const session = await getMemberSession(Astro);
 
@@ -26,62 +26,366 @@ if (!result.data) {
   return Astro.redirect(paths.meEdit());
 }
 
-const { profile } = result.data;
+const { profile, journeys, fieldIds, proudMoments } = result.data;
 ---
 
-<BaseLayout title="Profilku" description="Ringkasan profil SoonWiki kamu.">
-  <main id="main-content" class="me">
-    <p class="frame-number">PROFILKU</p>
-    <h1>{profile.name}</h1>
-    <p>Soon {profile.batchYear}</p>
-    <p class="me__status">
-      Status: {profile.isPublished ? 'Sudah terbit' : 'Belum terbit'}
-    </p>
-    <div class="me__actions">
-      <a href={paths.meEdit()}>Edit profil</a>
-      {profile.isPublished && <a href={paths.profile(profile.slug)}>Lihat profil publik</a>}
+<BaseLayout title={`Profilku | ${profile.name}`} description="Ringkasan profil SoonWiki kamu.">
+  <main id="main-content" class="me-page">
+    <div class="me-container">
+      <header class="me-header">
+        <span class="me-eyebrow">Ruang Anggota SoonMates</span>
+        <h1 class="me-title">Profil & Jejak Langkah</h1>
+        <p class="me-lead">Kelola cerita hidup, publikasi karya, dan tautan jejaringmu.</p>
+      </header>
+
+      <div class="me-card">
+        <div class="me-card__top">
+          <div class="me-avatar-box">
+            {
+              profile.photoPath ? (
+                <img
+                  src={publicStorageUrl('profile-photos', profile.photoPath)}
+                  alt={profile.name}
+                  class="me-avatar-img"
+                />
+              ) : (
+                <div class="me-avatar-fallback">
+                  <span>{profile.name.charAt(0).toUpperCase()}</span>
+                </div>
+              )
+            }
+          </div>
+
+          <div class="me-profile-info">
+            <div class="me-name-row">
+              <h2>{profile.name}</h2>
+              <span class="me-batch">Soon {profile.batchYear}</span>
+            </div>
+
+            {
+              (profile.currentActivity || profile.currentPlaceName) && (
+                <p class="me-role">
+                  {profile.currentActivity}
+                  {profile.currentActivity && profile.currentPlaceName && ' · '}
+                  <strong>{profile.currentPlaceName}</strong>
+                </p>
+              )
+            }
+
+            {profile.location && <p class="me-loc">📍 {profile.location}</p>}
+
+            <div class="me-badge-status" class:is-published={profile.isPublished}>
+              <span class="status-dot"></span>
+              <span
+                >{profile.isPublished ? 'Profil Publik Aktif' : 'Draf Privat (Belum Terbit)'}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="me-stats-grid">
+          <div class="stat-box">
+            <span class="stat-number">{journeys.length}</span>
+            <span class="stat-label">Babak Perjalanan</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">{proudMoments.length}</span>
+            <span class="stat-label">Karya & Momen</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">{fieldIds.length}</span>
+            <span class="stat-label">Bidang Ditekuni</span>
+          </div>
+        </div>
+
+        {profile.bio && <blockquote class="me-bio-quote">“{profile.bio}”</blockquote>}
+
+        <div class="me-actions">
+          <a href={paths.meEdit()} class="btn-edit-profile">
+            <svg
+              viewBox="0 0 24 24"
+              width="17"
+              height="17"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+            >
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            <span>Buka Studio Edit Profil</span>
+          </a>
+
+          {
+            profile.isPublished && (
+              <a href={paths.profile(profile.slug)} class="btn-view-public">
+                <span>Lihat Profil Publik</span>
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
+            )
+          }
+        </div>
+      </div>
     </div>
   </main>
 </BaseLayout>
 
 <style>
-  .me {
-    display: grid;
-    max-width: 32rem;
-    min-height: 60vh;
-    gap: 0.75rem;
-    align-content: center;
-    padding: var(--page-gutter);
+  .me-page {
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+    padding-block: 2.5rem 5rem;
   }
 
-  .frame-number {
-    margin: 0;
-    color: var(--cobalt);
-    font-size: 0.75rem;
+  .me-container {
+    max-width: 44rem;
+    display: grid;
+    gap: 2rem;
+  }
+
+  .me-header {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .me-eyebrow {
+    color: var(--accent);
+    font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
-  h1 {
+  .me-title {
     margin: 0;
-    font-size: clamp(2rem, 6vw, 3rem);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    color: var(--ink);
   }
 
-  .me__status {
-    font-weight: 700;
+  .me-lead {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--ink-soft);
   }
 
-  .me__actions {
+  .me-card {
+    border-radius: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    display: grid;
+    gap: 1.5rem;
+    box-shadow: 0 8px 24px -4px rgba(18, 21, 20, 0.05);
+  }
+
+  .me-card__top {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 1.25rem;
   }
 
-  .me__actions a {
+  @media (min-width: 600px) {
+    .me-card__top {
+      flex-direction: row;
+      align-items: center;
+      gap: 1.75rem;
+    }
+  }
+
+  .me-avatar-box {
+    width: 96px;
+    height: 96px;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--canvas);
+    border: 1px solid var(--line-soft);
+    flex-shrink: 0;
+  }
+
+  .me-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .me-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    opacity: 0.4;
+  }
+
+  .me-profile-info {
+    display: grid;
+    gap: 0.4rem;
+    flex: 1;
+  }
+
+  .me-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .me-name-row h2 {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 750;
+    color: var(--ink);
+  }
+
+  .me-batch {
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  .me-role {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+
+  .me-loc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  .me-badge-status {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
+    gap: 0.4rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    color: var(--cobalt);
+    color: var(--ink-soft);
+    padding-top: 0.25rem;
+  }
+
+  .me-badge-status.is-published {
+    color: #15803d;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Stats Grid */
+  .me-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    padding-block: 1rem;
+    border-block: 1px solid var(--line-soft);
+  }
+
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.2rem;
+  }
+
+  .stat-number {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .me-bio-quote {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--canvas);
+    font-style: italic;
+    color: var(--ink);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .me-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+    padding-top: 0.5rem;
+  }
+
+  .btn-edit-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 0.75rem;
+    background: var(--accent);
+    color: var(--surface);
+    font-size: 0.92rem;
+    font-weight: 750;
+    text-decoration: none;
+    box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--accent) 40%, transparent);
+    transition:
+      transform 150ms var(--ease-out),
+      background-color 150ms ease;
+  }
+
+  .btn-edit-profile:hover {
+    background: var(--accent-strong);
+    transform: translateY(-2px);
+  }
+
+  .btn-view-public {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .btn-view-public:hover {
+    background: var(--canvas);
+    border-color: var(--ink);
   }
 </style>
