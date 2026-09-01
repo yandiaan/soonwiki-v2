@@ -39,7 +39,10 @@ const { highlights } = Astro.props;
                   {item.activity ?? 'Perjalanan'} · Soon {item.batchYear}
                 </span>
               </div>
-              <a href={paths.profile(item.profileSlug)} aria-label={`Baca kisah ${item.profileName}`}>
+              <a
+                href={paths.profile(item.profileSlug)}
+                aria-label={`Baca kisah ${item.profileName}`}
+              >
                 Baca kisah →
               </a>
             </div>

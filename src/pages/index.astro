@@ -6,6 +6,7 @@ import PossibilityContactSheet from '@/components/astro/PossibilityContactSheet.
 import ProudMomentFrame from '@/components/astro/ProudMomentFrame.astro';
 import PublicHero from '@/components/astro/PublicHero.astro';
 import PublicIntroduction from '@/components/astro/PublicIntroduction.astro';
+import TurningPointMosaic from '@/components/astro/TurningPointMosaic.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getHomeStoryData } from '@/lib/server/public-repository';
 import { paths } from '@/lib/shared/paths';
@@ -13,7 +14,7 @@ import '@/styles/home.css';
 
 const result = await getHomeStoryData(Astro);
 
-const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : undefined;
+const firstProudMoment = result.ok ? result.data.proudMoment : undefined;
 ---
 
 <BaseLayout
@@ -25,6 +26,7 @@ const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : unde
     <PublicHero
       featured={result.ok ? result.data.featured : undefined}
       profiles={result.ok ? result.data.contactSheet : []}
+      stats={result.ok ? result.data.stats : undefined}
     />
     <PublicIntroduction
       featured={result.ok ? result.data.featured : undefined}
@@ -34,6 +36,9 @@ const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : unde
       result.ok ? (
         <>
           <FeaturedJourney profile={result.data.featured} />
+          {result.data.turningPoints.length > 0 && (
+            <TurningPointMosaic highlights={result.data.turningPoints} />
+          )}
           <PossibilityContactSheet profiles={result.data.contactSheet} />
           {firstProudMoment && (
             <ProudMomentFrame
