@@ -21,10 +21,12 @@
     updateScrollState();
     if (railElement) {
       railElement.addEventListener('scroll', updateScrollState, { passive: true });
+      window.addEventListener('resize', updateScrollState);
     }
     return () => {
       if (railElement) {
         railElement.removeEventListener('scroll', updateScrollState);
+        window.removeEventListener('resize', updateScrollState);
       }
     };
   });
@@ -67,6 +69,7 @@
   >
     {@render children()}
   </div>
+
   {#if count > 1}
     <div class="story-rail__controls" aria-label="Navigasi kisah">
       <button
@@ -78,8 +81,8 @@
       >
         <svg
           viewBox="0 0 24 24"
-          width="20"
-          height="20"
+          width="18"
+          height="18"
           fill="none"
           stroke="currentColor"
           stroke-width="2.2"
@@ -99,8 +102,8 @@
       >
         <svg
           viewBox="0 0 24 24"
-          width="20"
-          height="20"
+          width="18"
+          height="18"
           fill="none"
           stroke="currentColor"
           stroke-width="2.2"
@@ -119,19 +122,23 @@
   .story-rail {
     position: relative;
     min-width: 0;
+    width: 100%;
+    display: grid;
+    gap: 1rem;
   }
 
   .story-rail__track {
-    display: flex;
+    display: block;
     max-width: 100%;
-    gap: 1.25rem;
-    padding-bottom: 0.75rem;
+    width: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     touch-action: pan-x;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
+    padding-bottom: 0.5rem;
   }
 
   .story-rail__track::-webkit-scrollbar {
@@ -144,52 +151,46 @@
   }
 
   .story-rail__controls {
-    display: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.6rem;
   }
 
-  @media (min-width: 641px) {
-    .story-rail__controls {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-    }
+  .story-rail__btn {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    box-shadow: 0 2px 8px -2px rgba(18, 21, 20, 0.08);
+    transition:
+      background-color 180ms var(--ease-out),
+      transform 180ms var(--ease-out),
+      border-color 180ms var(--ease-out),
+      opacity 180ms var(--ease-out);
+  }
 
-    .story-rail__btn {
-      display: inline-flex;
-      width: 44px;
-      height: 44px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      border: 1px solid var(--line-soft);
-      background: var(--surface);
-      color: var(--ink);
-      cursor: pointer;
-      transition:
-        background-color 180ms var(--ease-out),
-        transform 180ms var(--ease-out),
-        border-color 180ms var(--ease-out),
-        opacity 180ms var(--ease-out);
-    }
+  .story-rail__btn:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    transform: scale(1.05);
+  }
 
-    .story-rail__btn:hover:not(:disabled) {
-      background: var(--ink);
-      color: var(--surface);
-      border-color: var(--ink);
-      transform: scale(1.06);
-    }
+  .story-rail__btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: var(--line-soft);
+  }
 
-    .story-rail__btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      border-color: var(--line-soft);
-    }
-
-    .story-rail__btn:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
+  .story-rail__btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 </style>
