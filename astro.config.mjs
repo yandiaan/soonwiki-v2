@@ -11,6 +11,7 @@ export default defineConfig({
   security: { checkOrigin: true },
   vite: {
     optimizeDeps: {
+      force: true,
       include: ['leaflet'],
     },
     ssr: {
