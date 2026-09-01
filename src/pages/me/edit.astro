@@ -1,0 +1,65 @@
+---
+import ProfileEditor from '@/components/svelte/ProfileEditor.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { listAllFields, loadOwnProfile } from '@/lib/server/member-repository';
+import { getMemberSession } from '@/lib/server/session';
+import { createServerSupabase } from '@/lib/supabase/server';
+import '@/styles/editor.css';
+
+const session = await getMemberSession(Astro);
+
+if (!session) {
+  return Astro.redirect('/login');
+}
+
+if (!session.member || session.member.status !== 'active') {
+  return Astro.redirect('/join-required');
+}
+
+const supabase = createServerSupabase(Astro);
+const [profileResult, availableFields] = await Promise.all([
+  loadOwnProfile(supabase),
+  listAllFields(supabase),
+]);
+
+if (!profileResult.ok) {
+  return new Response('Terjadi kesalahan saat memuat profil.', { status: 500 });
+}
+
+const bundle = profileResult.data;
+---
+
+<BaseLayout title="Edit profil" description="Perbarui perjalanan SoonWiki kamu.">
+  <main id="main-content" class="editor-page">
+    <p class="frame-number">EDIT PROFIL</p>
+    <h1>Ceritakan perjalananmu</h1>
+    <p>
+      Isi minimal nama dan batch untuk mulai. Bagian lain boleh menyusul kapan saja — kamu bisa
+      menyimpan lalu kembali lagi nanti.
+    </p>
+    <ProfileEditor
+      client:load
+      userId={session.user.id}
+      initialProfile={bundle?.profile ?? null}
+      initialJourneys={bundle?.journeys ?? []}
+      initialFieldIds={bundle?.fieldIds ?? []}
+      initialProudMoments={bundle?.proudMoments ?? []}
+      availableFields={availableFields}
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .frame-number {
+    margin: 1.5rem 0 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+</style>

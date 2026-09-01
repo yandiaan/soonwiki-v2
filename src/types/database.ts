@@ -596,6 +596,41 @@ export type Database = {
       is_active_member: { Args: never; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       normalize_slug_source: { Args: { value: string }; Returns: string }
+      replace_own_journey_entries: {
+        Args: { entries: Json; profile_id: string }
+        Returns: {
+          activity: string
+          created_at: string
+          end_year: number | null
+          id: string
+          place_id: string | null
+          profile_id: string
+          sort_order: number
+          start_year: number | null
+          story: string | null
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "journey_entries"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      replace_own_profile_fields: {
+        Args: { field_ids: string[]; profile_id: string }
+        Returns: {
+          created_at: string
+          field_id: string
+          profile_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profile_fields"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       revoke_shared_invitation: {
         Args: { actor_user_id: string; invitation_id: string }
         Returns: undefined

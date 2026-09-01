@@ -1,0 +1,109 @@
+.editor-page {
+  max-width: 40rem;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+  padding-block-end: 6rem;
+}
+
+.editor-banner {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-block: 1rem;
+  border: 2px solid var(--cobalt);
+}
+
+.editor-banner__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editor-banner__actions button {
+  min-height: 44px;
+  padding-inline: 0.85rem;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  font-weight: 700;
+}
+
+.profile-editor {
+  display: grid;
+  gap: 2rem;
+  padding-block: 1.5rem;
+}
+
+.profile-editor__section {
+  display: grid;
+  gap: 1rem;
+  padding-block: 1.5rem;
+  border-top: 2px solid var(--ink);
+}
+
+.profile-editor__section h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+}
+
+.profile-editor__section > label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.profile-editor__section input[type='text'],
+.profile-editor__section input[type='number'],
+.profile-editor__section input[type='url'],
+.profile-editor__section textarea {
+  min-height: 44px;
+  padding-inline: 0.75rem;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+
+.profile-editor__section textarea {
+  min-height: unset;
+  padding-block: 0.5rem;
+}
+
+.profile-editor__checkbox {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-editor__sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 2px solid var(--ink);
+  background: var(--paper);
+}
+
+.profile-editor__sticky a {
+  font-weight: 700;
+  color: var(--cobalt);
+}
+
+.profile-editor__status {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.profile-editor__sticky button {
+  min-height: 44px;
+  margin-inline-start: auto;
+  padding-inline: 1.5rem;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 800;
+}

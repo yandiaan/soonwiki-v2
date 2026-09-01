@@ -1,0 +1,87 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getMemberSession } from '@/lib/server/session';
+import { loadOwnProfile } from '@/lib/server/member-repository';
+import { createServerSupabase } from '@/lib/supabase/server';
+import { paths } from '@/lib/shared/paths';
+
+const session = await getMemberSession(Astro);
+
+if (!session) {
+  return Astro.redirect(paths.login());
+}
+
+if (!session.member || session.member.status !== 'active') {
+  return Astro.redirect('/join-required');
+}
+
+const supabase = createServerSupabase(Astro);
+const result = await loadOwnProfile(supabase);
+
+if (!result.ok) {
+  return new Response('Terjadi kesalahan saat memuat profil.', { status: 500 });
+}
+
+if (!result.data) {
+  return Astro.redirect(paths.meEdit());
+}
+
+const { profile } = result.data;
+---
+
+<BaseLayout title="Profilku" description="Ringkasan profil SoonWiki kamu.">
+  <main id="main-content" class="me">
+    <p class="frame-number">PROFILKU</p>
+    <h1>{profile.name}</h1>
+    <p>Soon {profile.batchYear}</p>
+    <p class="me__status">
+      Status: {profile.isPublished ? 'Sudah terbit' : 'Belum terbit'}
+    </p>
+    <div class="me__actions">
+      <a href={paths.meEdit()}>Edit profil</a>
+      {profile.isPublished && <a href={paths.profile(profile.slug)}>Lihat profil publik</a>}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .me {
+    display: grid;
+    max-width: 32rem;
+    min-height: 60vh;
+    gap: 0.75rem;
+    align-content: center;
+    padding: var(--page-gutter);
+  }
+
+  .frame-number {
+    margin: 0;
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .me__status {
+    font-weight: 700;
+  }
+
+  .me__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .me__actions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 700;
+    color: var(--cobalt);
+  }
+</style>
