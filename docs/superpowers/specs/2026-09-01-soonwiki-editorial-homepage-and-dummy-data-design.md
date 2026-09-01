@@ -11,7 +11,7 @@
 SoonWiki is a story-first, mobile-first alumni archive designed as a *Public Community Gallery*. While the core data layer and basic page shells exist, the current homepage is too sparse when unpopulated, and even with minimal data, it lacks the editorial pacing, storytelling depth, and visual variety worthy of an inspiring community archive.
 
 This specification outlines:
-1. A **comprehensive, authentic synthetic dummy dataset** (6–8 distinct Soonies across different batches and diverse life paths) seeded directly in `supabase/seed.sql` and supported by demo image assets.
+1. A **comprehensive, authentic synthetic dummy dataset** (6–8 distinct SoonMates across different batches and diverse life paths) seeded directly in `supabase/seed.sql` and supported by demo image assets.
 2. A **rich *Editorial Living Archive* homepage layout** featuring metric indicators, a featured story with turning-point pullquote, an asymmetric *Turning Point Mosaic* highlighting inflection points from multiple alumni, an interactive discovery rail, a proud moment showcase, and thematic pathways.
 
 ---
@@ -73,7 +73,7 @@ This specification outlines:
    * Prominent headline: *"Banyak jalan dimulai dari SOON."*
    * Subtitle and primary CTAs (*"Jelajahi kisah"*, *"Tentang SoonWiki"*).
    * **Community Metric Ticker / Summary Badges:**
-     * `X Kisah terbit` · `Y Bidang ditekuni` · `Z Angkatan Soonies`
+     * `X Kisah terbit` · `Y Bidang ditekuni` · `Z Angkatan SoonMates`
 
 2. **`PublicIntroduction.astro`** (`#tentang`)
    * Editorial statement: *"Arsip hidup, bukan direktori pekerjaan."*

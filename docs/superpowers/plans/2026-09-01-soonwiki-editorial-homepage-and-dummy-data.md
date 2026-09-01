@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a rich, multi-dimensional *Editorial Living Archive* homepage and provide a comprehensive, authentic synthetic seed dataset (6–8 complete Soonies profiles) in Supabase.
+**Goal:** Build a rich, multi-dimensional *Editorial Living Archive* homepage and provide a comprehensive, authentic synthetic seed dataset (6–8 complete SoonMates profiles) in Supabase.
 
 **Architecture:** Extend Supabase `seed.sql` with complete dummy profiles, relationships, journeys, and proud moments. Enrich `getHomeStoryData()` in `public-repository.ts` to return community metrics and turning-point highlights. Introduce `TurningPointMosaic.astro` and upgrade homepage components (`PublicHero`, `FeaturedJourney`, `index.astro`).
 
@@ -114,7 +114,7 @@ git commit -m "feat: Enrich public repository with turning point highlights and 
 
 **Interfaces:**
 - Consumes: `highlights: TurningPointHighlight[]`
-- Produces: an asymmetric 3-card editorial grid showcasing pullquotes of inflection points from different Soonies with link to profile.
+- Produces: an asymmetric 3-card editorial grid showcasing pullquotes of inflection points from different SoonMates with link to profile.
 
 - [ ] **Step 1: Create `src/components/astro/TurningPointMosaic.astro`**
 
@@ -143,7 +143,7 @@ git commit -m "feat: Add TurningPointMosaic component for homepage story highlig
 
 **Interfaces:**
 - Consumes: `stats?: CommunityStats`
-- Produces: Metric badges rendered under the hero actions (`X Kisah terbit · Y Bidang ditekuni · Z Angkatan Soonies`).
+- Produces: Metric badges rendered under the hero actions (`X Kisah terbit · Y Bidang ditekuni · Z Angkatan SoonMates`).
 
 - [ ] **Step 1: Update `PublicHero.astro` props and template**
 - [ ] **Step 2: Add CSS styling for `.public-hero__metrics`**

@@ -106,7 +106,7 @@ Better Auth dipasang sebelum `express.json()` agar request stream auth tidak dik
 Admin menjalankan:
 
 ```text
-pnpm invite:create --label "Soonies Launch"
+pnpm invite:create --label "SoonMates Launch"
 ```
 
 Command menghasilkan random token minimal 32 bytes, menyimpan SHA-256 hash-nya, dan mencetak URL lengkap satu kali. Raw token tidak disimpan di database dan tidak ditulis ke application log.

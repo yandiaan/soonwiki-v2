@@ -46,12 +46,12 @@ function buildQuery(overrides: Record<string, string | number | undefined>): str
 
 <BaseLayout
   title="Jelajahi"
-  description="Jelajahi perjalanan Soonies berdasarkan nama, tempat, hal yang ditekuni, atau batch."
+  description="Jelajahi perjalanan SoonMates berdasarkan nama, tempat, hal yang ditekuni, atau batch."
   canonical={new URL('/explore', Astro.url)}
 >
   <main id="main-content" class="explore">
     <header class="explore__header">
-      <h1>Jelajahi Soonies</h1>
+      <h1>Jelajahi SoonMates</h1>
       <p class="explore__subtitle">
         Temukan perjalanan alumni dan member SOON berdasarkan nama, bidang, angkatan, atau tempat.
       </p>
@@ -61,9 +61,9 @@ function buildQuery(overrides: Record<string, string | number | undefined>): str
       profiles.length === 0 ? (
         <EmptyState
           title="Belum ada hasil"
-          description="Coba kata kunci lain, atau lihat semua Soonies tanpa filter."
+          description="Coba kata kunci lain, atau lihat semua SoonMates tanpa filter."
           actionHref={paths.explore()}
-          actionLabel="Lihat semua Soonies"
+          actionLabel="Lihat semua SoonMates"
         />
       ) : (
         <ul class="explore__results">

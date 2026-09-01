@@ -60,7 +60,7 @@
     bind:this={railElement}
     class="story-rail__track"
     role="group"
-    aria-label="Kisah lain dari Soonies, gulir untuk melihat lebih banyak"
+    aria-label="Kisah lain dari SoonMates, gulir untuk melihat lebih banyak"
     tabindex="0"
     onkeydown={handleKeydown}
   >

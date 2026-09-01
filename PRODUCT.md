@@ -54,7 +54,7 @@ SoonWiki menggabungkan arsip perjalanan komunitas dengan discovery yang diisi la
 - Homepage memimpin dengan inspirasi dan storytelling; search adalah utility sekunder di dalam Explore.
 - Bahasa UI tidak menganggap perusahaan, jabatan white-collar, atau employment formal sebagai ukuran keberhasilan.
 - Repository tidak memiliki unit, integration, atau E2E test code, test runner, maupun test scripts; quality gate menggunakan lint, typecheck, schema lint, build, dan manual review.
-- Scope MVP dibatasi pada kemampuan memahami, menjelajahi, dan mendokumentasikan perjalanan Soonies.
+- Scope MVP dibatasi pada kemampuan memahami, menjelajahi, dan mendokumentasikan perjalanan SoonMates.
 
 ## Brand Commitments
 
@@ -70,7 +70,7 @@ SoonWiki menggabungkan arsip perjalanan komunitas dengan discovery yang diisi la
 
 - Product requirements lengkap tersedia di `docs/PRD.md`.
 - PRD mendefinisikan contoh konten, hierarchy homepage, data model awal, acceptance criteria, dan sepuluh layar utama MVP.
-- Belum tersedia logo final, aset foto nyata, dataset Soonies, testimonial, atau bukti kuantitatif yang boleh digunakan. Materi tersebut tidak boleh direkayasa sebagai fakta.
+- Belum tersedia logo final, aset foto nyata, dataset SoonMates, testimonial, atau bukti kuantitatif yang boleh digunakan. Materi tersebut tidak boleh direkayasa sebagai fakta.
 
 ## Product Principles
 

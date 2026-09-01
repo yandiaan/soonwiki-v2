@@ -39,6 +39,10 @@ body {
   min-height: 100vh;
 }
 
+main:not(.home) {
+  padding-top: calc(4.25rem + env(safe-area-inset-top, 0px));
+}
+
 ::selection {
   background: var(--accent);
   color: var(--surface);

@@ -66,7 +66,7 @@ const people = [
   <div class="public-hero__veil"></div>
   <div class="public-hero__content" data-hero-glass>
     <h1 id="public-hero-title">Banyak jalan dimulai dari SOON.</h1>
-    <p>Temukan perjalanan nyata, perubahan hidup, dan hal-hal yang dibanggakan oleh Soonies.</p>
+    <p>Temukan perjalanan nyata, perubahan hidup, dan hal-hal yang dibanggakan oleh SoonMates.</p>
     <div class="public-hero__actions">
       <a class="public-hero__primary" href={paths.explore()}>Jelajahi kisah</a>
       <a class="public-hero__secondary" href="#tentang">Tentang SoonWiki</a>
@@ -86,7 +86,7 @@ const people = [
           <li class="public-hero__metrics-divider" aria-hidden="true" />
           <li>
             <strong>{stats.totalBatches}</strong>
-            <span>Angkatan Soonies</span>
+            <span>Angkatan SoonMates</span>
           </li>
         </ul>
       )
@@ -97,7 +97,7 @@ const people = [
 <style>
   .public-hero {
     position: relative;
-    min-height: calc(100svh - 4.5rem);
+    min-height: 100svh;
     overflow: hidden;
     background: var(--ink);
     color: var(--surface);
@@ -241,7 +241,7 @@ const people = [
     gap: 1.4rem;
     max-width: var(--content-max);
     margin-inline: auto;
-    padding: clamp(3rem, 7vw, 6.5rem) var(--page-gutter);
+    padding: clamp(5.5rem, 10vw, 8rem) var(--page-gutter) clamp(3rem, 6vw, 5rem);
   }
 
   h1 {
@@ -347,7 +347,7 @@ const people = [
 
   @media (max-width: 700px) {
     .public-hero {
-      min-height: calc(100svh - 4.5rem);
+      min-height: 100svh;
     }
 
     .public-hero__media ul,

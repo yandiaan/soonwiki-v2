@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { currentPath } = Astro.props;
+const isDarkHero = currentPath === '/';
 
 const navItems = [
   { href: paths.home(), label: 'Beranda' },
@@ -14,19 +15,31 @@ const navItems = [
 ];
 ---
 
-<header class="site-header" id="site-header">
+<header
+  class:list={['site-header', { 'is-dark-hero': isDarkHero }]}
+  id="site-header"
+  data-dark-hero={isDarkHero ? 'true' : undefined}
+>
   <div class="site-header__container">
-    <!-- Brand / Monogram -->
+    <!-- Brand / Editorial Monogram -->
     <a class="brand" href={paths.home()} aria-label="SoonWiki Beranda">
-      <span class="brand__icon">
-        <span class="brand__dot"></span>
+      <span class="brand__icon" aria-hidden="true">
+        <img
+          src="/soon-logo.png"
+          alt="SOON"
+          width="22"
+          height="22"
+          class="brand__logo"
+          loading="eager"
+          decoding="async"
+        />
       </span>
       <span class="brand__text">
-        <strong>SOON</strong><span class="brand__sub">WIKI</span>
+        <strong class="brand__name">SOON</strong><span class="brand__sub">WIKI</span>
       </span>
     </a>
 
-    <!-- Center Navigation Links with Sliding Active Pill -->
+    <!-- Center Navigation Links with Magnetic Sliding Active Pill -->
     <nav aria-label="Navigasi utama" class="desktop-nav">
       <ul class="nav-pill-list" id="nav-pill-list">
         <!-- Floating Sliding Background Indicator Pill -->
@@ -35,7 +48,9 @@ const navItems = [
         {
           navItems.map((link) => {
             const isActive =
-              currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
+              link.href === '/'
+                ? currentPath === '/'
+                : currentPath === link.href || currentPath.startsWith(link.href);
             return (
               <li class="nav-item">
                 <a
@@ -53,14 +68,31 @@ const navItems = [
       </ul>
     </nav>
 
-    <!-- Right Controls: Auth CTA -->
+    <!-- Right Controls: Auth CTA Button -->
     <div class="site-header__actions">
       <a
         href={paths.login()}
-        class:list={['login-btn', { 'is-active': currentPath === paths.login() }]}
-        aria-label="Masuk ke Ruang Soonies"
+        class:list={[
+          'login-btn',
+          { 'is-active': currentPath.startsWith('/login') || currentPath.startsWith('/join') },
+        ]}
+        aria-label="Masuk ke Ruang SoonMates"
       >
         <span>Masuk</span>
+        <svg
+          class="login-btn__arrow"
+          viewBox="0 0 16 16"
+          width="12"
+          height="12"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10"></path>
+        </svg>
       </a>
     </div>
   </div>
@@ -76,7 +108,7 @@ const navItems = [
 
     // 1. Hardware-Accelerated Scroll State Sync
     function updateScrolledState(scrollY: number) {
-      if (scrollY > 15) {
+      if (scrollY > 25) {
         header?.setAttribute('data-scrolled', 'true');
       } else {
         header?.removeAttribute('data-scrolled');
@@ -103,7 +135,10 @@ const navItems = [
     if (!list || !indicator) return;
 
     function moveIndicatorTo(targetEl: HTMLElement | null, animate = true) {
-      if (!targetEl || !indicator || !list) return;
+      if (!targetEl || !indicator || !list) {
+        if (indicator) indicator.style.opacity = '0';
+        return;
+      }
       const listRect = list.getBoundingClientRect();
       const targetRect = targetEl.getBoundingClientRect();
 
@@ -114,7 +149,7 @@ const navItems = [
         indicator.style.transition = 'none';
       } else {
         indicator.style.transition =
-          'transform 350ms cubic-bezier(0.19, 1, 0.22, 1), width 350ms cubic-bezier(0.19, 1, 0.22, 1), opacity 200ms ease';
+          'transform 340ms cubic-bezier(0.16, 1, 0.3, 1), width 340ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease';
       }
 
       indicator.style.opacity = '1';
@@ -122,15 +157,17 @@ const navItems = [
       indicator.style.width = `${width}px`;
     }
 
-    const activeLink =
-      list.querySelector<HTMLElement>('.nav-link.is-active') ||
-      list.querySelector<HTMLElement>('.nav-link');
+    const activeLink = list.querySelector<HTMLElement>('.nav-link.is-active');
 
-    // Initial position without jump
-    moveIndicatorTo(activeLink, false);
-    setTimeout(() => {
-      moveIndicatorTo(activeLink, true);
-    }, 50);
+    // Initial position without layout glitch
+    if (activeLink) {
+      moveIndicatorTo(activeLink, false);
+      requestAnimationFrame(() => {
+        moveIndicatorTo(activeLink, true);
+      });
+    } else {
+      indicator.style.opacity = '0';
+    }
 
     // Hover & focus gliding
     const links = list.querySelectorAll<HTMLElement>('[data-nav-item]');
@@ -144,8 +181,22 @@ const navItems = [
     });
 
     list.addEventListener('mouseleave', () => {
-      moveIndicatorTo(activeLink, true);
+      if (activeLink) {
+        moveIndicatorTo(activeLink, true);
+      } else {
+        indicator.style.opacity = '0';
+      }
     });
+
+    window.addEventListener(
+      'resize',
+      () => {
+        if (activeLink) {
+          moveIndicatorTo(activeLink, false);
+        }
+      },
+      { passive: true },
+    );
   }
 
   setupHeader();
@@ -154,15 +205,19 @@ const navItems = [
 
 <style>
   .site-header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 40;
+    left: 0;
+    right: 0;
+    z-index: 50;
     display: flex;
     justify-content: center;
     width: 100%;
     padding: 0.85rem var(--page-gutter);
     pointer-events: none;
-    transition: padding 350ms cubic-bezier(0.19, 1, 0.22, 1);
+    transition:
+      padding 350ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .site-header__container {
@@ -170,101 +225,240 @@ const navItems = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 1.25rem;
     width: 100%;
-    max-width: min(100%, 58rem);
+    max-width: min(100%, 60rem);
     min-height: 3.5rem;
-    padding: 0.4rem 0.75rem 0.4rem 1.25rem;
+    padding: 0.35rem 0.5rem 0.35rem 1.15rem;
     border-radius: 9999px;
-    background: color-mix(in srgb, var(--canvas) 85%, transparent);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    border: 1px solid color-mix(in srgb, var(--line-soft) 80%, transparent);
-    box-shadow: 0 4px 20px -4px rgb(0 0 0 / 0.04);
+    background: color-mix(in srgb, var(--surface) 86%, transparent);
+    backdrop-filter: blur(24px) saturate(1.7);
+    -webkit-backdrop-filter: blur(24px) saturate(1.7);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    box-shadow:
+      0 4px 20px -4px rgb(18 21 20 / 0.06),
+      inset 0 1px 1px 0 rgb(255 255 255 / 0.9);
     will-change: transform, backdrop-filter, box-shadow;
     transition:
-      background-color 300ms ease,
-      border-color 300ms ease,
-      box-shadow 350ms cubic-bezier(0.19, 1, 0.22, 1),
-      backdrop-filter 300ms ease,
-      transform 350ms cubic-bezier(0.19, 1, 0.22, 1);
+      background-color 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 350ms cubic-bezier(0.16, 1, 0.3, 1),
+      backdrop-filter 320ms ease,
+      color 320ms ease,
+      transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Scrolled State: GPU-Accelerated Elevation (Zero Layout Reflow) */
+  /* ----------------------------------------------------
+     1. Dark Hero Floating State (Homepage at Scroll = 0)
+     ---------------------------------------------------- */
+  .site-header.is-dark-hero:not([data-scrolled='true']) .site-header__container {
+    background: rgba(10, 12, 11, 0.55);
+    backdrop-filter: blur(28px) saturate(1.8);
+    -webkit-backdrop-filter: blur(28px) saturate(1.8);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 12px 36px -4px rgba(0, 0, 0, 0.38),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .brand {
+    color: var(--surface);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .brand__name {
+    color: var(--surface);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .brand__sub {
+    color: color-mix(in srgb, var(--surface) 75%, transparent);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .brand__icon {
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .brand__tag {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: color-mix(in srgb, var(--surface) 90%, transparent);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-pill-list {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-indicator {
+    background: var(--surface);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 3px 12px -2px rgba(0, 0, 0, 0.3),
+      0 1px 3px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-link {
+    color: color-mix(in srgb, var(--surface) 75%, transparent);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-link.is-active {
+    color: var(--ink);
+    font-weight: 750;
+  }
+
+  /* When hovering/focusing any nav item: the hovered link gets dark text over the white sliding pill */
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-link:hover,
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-link:focus-visible {
+    color: var(--ink);
+    font-weight: 750;
+  }
+
+  /* When hovering the list: any item NOT hovered (including inactive or previously active) dims to light text */
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-pill-list:hover .nav-link:not(:hover),
+  .site-header.is-dark-hero:not([data-scrolled='true'])
+    .nav-pill-list:focus-within
+    .nav-link:not(:focus-visible) {
+    color: color-mix(in srgb, var(--surface) 75%, transparent);
+    font-weight: 600;
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .nav-pill-list:hover .nav-link:hover,
+  .site-header.is-dark-hero:not([data-scrolled='true'])
+    .nav-pill-list:focus-within
+    .nav-link:focus-visible {
+    color: var(--ink);
+    font-weight: 750;
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .login-btn {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--surface);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .site-header.is-dark-hero:not([data-scrolled='true']) .login-btn:hover {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--surface);
+    box-shadow: 0 8px 24px -4px rgba(255, 255, 255, 0.3);
+  }
+
+  /* ----------------------------------------------------
+     2. Scrolled State (Elevated Light Editorial Surface)
+     ---------------------------------------------------- */
   .site-header[data-scrolled='true'] {
-    padding-top: 0.65rem;
+    padding-top: 0.55rem;
   }
 
   .site-header[data-scrolled='true'] .site-header__container {
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    backdrop-filter: blur(28px) saturate(1.6);
-    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(30px) saturate(1.8);
+    -webkit-backdrop-filter: blur(30px) saturate(1.8);
     border-color: color-mix(in srgb, var(--ink) 12%, transparent);
     box-shadow:
-      0 16px 36px -8px rgb(0 0 0 / 0.09),
-      0 1px 3px 0 rgb(0 0 0 / 0.04);
+      0 16px 36px -8px rgb(18 21 20 / 0.1),
+      0 2px 6px 0 rgb(18 21 20 / 0.03),
+      inset 0 1px 1px 0 rgb(255 255 255 / 0.95);
     transform: translate3d(0, -1px, 0);
   }
 
-  /* Brand Styling */
+  /* Brand / Monogram Styling */
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.65rem;
     color: var(--ink);
     text-decoration: none;
-    transition: transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
+    user-select: none;
+    transition:
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 300ms ease;
   }
 
   .brand:hover {
-    transform: scale(1.02);
+    transform: translateY(-0.5px);
   }
 
   .brand__icon {
-    position: relative;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    background: var(--ink);
+    width: 28px;
+    height: 28px;
+    padding: 3px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    box-shadow:
+      0 2px 6px -1px rgb(18 21 20 / 0.12),
+      inset 0 1px 0 rgb(255 255 255 / 1);
+    overflow: hidden;
+    transition:
+      transform 250ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 250ms ease,
+      border-color 300ms ease;
   }
 
-  .brand__dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: brand-pulse 3s ease-in-out infinite alternate;
+  .brand__logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    border-radius: 4px;
   }
 
-  @keyframes brand-pulse {
-    0% {
-      opacity: 0.75;
-      transform: scale(0.9);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1.15);
-    }
+  .brand:hover .brand__icon {
+    transform: scale(1.08);
+    box-shadow:
+      0 4px 12px -2px rgb(18 21 20 / 0.2),
+      inset 0 1px 0 rgb(255 255 255 / 1);
   }
 
   .brand__text {
+    display: inline-flex;
+    align-items: baseline;
     font-size: 1.05rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
     line-height: 1;
   }
 
-  .brand__sub {
-    font-weight: 400;
-    color: var(--ink-soft);
-    margin-left: 1px;
+  .brand__name {
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    transition: color 300ms ease;
   }
 
-  /* Desktop Navigation Pills */
+  .brand__sub {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ink-soft);
+    margin-left: 1.5px;
+    transition: color 300ms ease;
+  }
+
+  .brand__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    color: var(--ink-soft);
+    font-size: 0.62rem;
+    font-weight: 750;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease,
+      color 300ms ease;
+  }
+
+  /* Desktop Navigation Track */
   .desktop-nav {
     position: relative;
   }
@@ -273,12 +467,16 @@ const navItems = [
     position: relative;
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.2rem;
     margin: 0;
     padding: 0.25rem;
     border-radius: 9999px;
     background: color-mix(in srgb, var(--ink) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 4%, transparent);
     list-style: none;
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease;
   }
 
   .nav-item {
@@ -286,7 +484,7 @@ const navItems = [
     z-index: 2;
   }
 
-  /* Floating Active Indicator Pill */
+  /* Floating Magnetic Active Indicator Pill */
   .nav-indicator {
     position: absolute;
     top: 0.25rem;
@@ -295,11 +493,18 @@ const navItems = [
     z-index: 1;
     border-radius: 9999px;
     background: var(--surface);
+    border: 1px solid color-mix(in srgb, var(--ink) 7%, transparent);
     box-shadow:
-      0 2px 8px -1px rgb(0 0 0 / 0.08),
-      0 1px 2px 0 rgb(0 0 0 / 0.04);
+      0 2px 8px -1px rgb(18 21 20 / 0.08),
+      0 1px 2px 0 rgb(18 21 20 / 0.04),
+      inset 0 1px 0 rgb(255 255 255 / 1);
     opacity: 0;
     pointer-events: none;
+    will-change: transform, width, opacity;
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease,
+      box-shadow 300ms ease;
   }
 
   .nav-link {
@@ -307,60 +512,124 @@ const navItems = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 36px;
+    min-height: 34px;
     padding: 0.35rem 1.15rem;
     border-radius: 9999px;
     color: var(--ink-soft);
-    font-size: 0.88rem;
-    font-weight: 700;
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     text-decoration: none;
-    transition: color 200ms ease;
+    transition:
+      color 200ms ease,
+      font-weight 200ms ease;
   }
 
   .nav-link:hover,
+  .nav-link:focus-visible {
+    color: var(--ink);
+    font-weight: 750;
+  }
+
   .nav-link.is-active {
     color: var(--ink);
+    font-weight: 750;
+  }
+
+  .nav-pill-list:hover .nav-link:not(:hover),
+  .nav-pill-list:focus-within .nav-link:not(:focus-visible) {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .nav-pill-list:hover .nav-link:hover,
+  .nav-pill-list:focus-within .nav-link:focus-visible {
+    color: var(--ink);
+    font-weight: 750;
   }
 
   /* Right Actions */
   .site-header__actions {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
-  /* Login Button */
+  /* Premium Architectural Login Button */
   .login-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 38px;
-    padding: 0.4rem 1.25rem;
+    gap: 0.4rem;
+    min-height: 36px;
+    padding: 0.38rem 1.15rem;
     border-radius: 9999px;
     background: var(--ink);
     color: var(--surface);
-    font-size: 0.86rem;
-    font-weight: 750;
+    border: 1px solid color-mix(in srgb, var(--surface) 18%, transparent);
+    box-shadow:
+      0 2px 8px -1px rgb(18 21 20 / 0.16),
+      inset 0 1px 0 rgb(255 255 255 / 0.18);
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     text-decoration: none;
     transition:
-      transform 200ms cubic-bezier(0.19, 1, 0.22, 1),
-      background-color 200ms ease,
-      box-shadow 200ms ease;
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 250ms ease,
+      box-shadow 250ms ease,
+      border-color 250ms ease,
+      color 250ms ease;
+  }
+
+  .login-btn__arrow {
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .login-btn:hover {
-    background: color-mix(in srgb, var(--ink) 85%, var(--accent));
+    background: color-mix(in srgb, var(--ink) 82%, var(--accent));
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px -4px rgb(0 0 0 / 0.16);
+    box-shadow:
+      0 8px 20px -4px rgb(18 21 20 / 0.24),
+      inset 0 1px 0 rgb(255 255 255 / 0.25);
+    border-color: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+  }
+
+  .login-btn:hover .login-btn__arrow {
+    transform: translate(1.5px, -1.5px);
+  }
+
+  .login-btn:active {
+    transform: translateY(0) scale(0.97);
   }
 
   .login-btn.is-active {
     background: var(--accent);
+    border-color: color-mix(in srgb, var(--accent-soft) 40%, transparent);
   }
 
   @media (max-width: 768px) {
+    .site-header {
+      padding: 0.5rem var(--page-gutter);
+    }
+
+    .site-header__container {
+      min-height: 3.25rem;
+      padding: 0.3rem 0.45rem 0.3rem 0.95rem;
+    }
+
+    .brand__tag {
+      display: none;
+    }
+
     .desktop-nav {
       display: none;
+    }
+
+    .login-btn {
+      min-height: 32px;
+      padding: 0.3rem 0.95rem;
+      font-size: 0.8rem;
     }
   }
 </style>

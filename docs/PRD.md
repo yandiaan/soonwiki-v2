@@ -36,7 +36,7 @@ SoonWiki dapat diakses secara publik tanpa login.
 
 Member/alumni yang telah login dapat membuat dan mengelola profil mereka sendiri. Admin dapat mengelola seluruh data.
 
-SoonWiki bukan social media dan bukan pengganti LinkedIn. Fokusnya adalah menjadi **collective directory dan showcase perjalanan Soonies setelah maupun selama berada di Soon.**
+SoonWiki bukan social media dan bukan pengganti LinkedIn. Fokusnya adalah menjadi **collective directory dan showcase perjalanan SoonMates setelah maupun selama berada di Soon.**
 
 ### Product statement
 
@@ -120,7 +120,7 @@ Setiap Soonie dapat memiliki halaman profil publik yang menunjukkan:
 
 ### G3 — Achievement Documentation
 
-Soonies dapat mendokumentasikan berbagai hal yang mereka banggakan tanpa harus mengikuti kategori pencapaian yang terlalu ketat.
+SoonMates dapat mendokumentasikan berbagai hal yang mereka banggakan tanpa harus mengikuti kategori pencapaian yang terlalu ketat.
 
 ### G4 — Community Showcase
 
@@ -176,7 +176,7 @@ Siapa pun yang mengakses SoonWiki.
 Tujuan utama:
 
 * mencari seseorang,
-* melihat profil Soonies,
+* melihat profil SoonMates,
 * melihat alumni bekerja di mana,
 * melihat expertise,
 * melihat achievement.
@@ -332,7 +332,7 @@ Homepage
     ↓
 Company
     ↓
-Soonies working there
+SoonMates working there
     ↓
 Profile
 ```
@@ -344,7 +344,7 @@ Homepage
     ↓
 Expertise
     ↓
-Relevant Soonies
+Relevant SoonMates
     ↓
 Profile
 ```
@@ -383,7 +383,7 @@ Homepage harus menjawab tiga pertanyaan dengan cepat:
 
 1. Apa itu SoonWiki?
 2. Siapa saja orang di dalamnya?
-3. Apa yang dilakukan Soonies sekarang?
+3. Apa yang dilakukan SoonMates sekarang?
 
 ---
 
@@ -391,11 +391,11 @@ Homepage harus menjawab tiga pertanyaan dengan cepat:
 
 ### Headline
 
-**Where are Soonies now?**
+**Where are SoonMates now?**
 
 ### Supporting copy
 
-> Discover where Soonies are now, what they're building, and the things they're proud of.
+> Discover where SoonMates are now, what they're building, and the things they're proud of.
 
 ### Primary interaction
 
@@ -415,7 +415,7 @@ Contoh:
 
 ```text
 500+
-Soonies
+SoonMates
 
 120+
 Companies
@@ -457,7 +457,7 @@ maksimal **6–8 profile**.
 
 ---
 
-# 15. What Soonies Are Doing
+# 15. What SoonMates Are Doing
 
 Achievement feed sederhana pada homepage.
 
@@ -513,7 +513,7 @@ Route:
 /people
 ```
 
-Directory merupakan halaman utama untuk menemukan Soonies.
+Directory merupakan halaman utama untuk menemukan SoonMates.
 
 ---
 
@@ -549,7 +549,7 @@ Satu search box digunakan untuk mencari berdasarkan:
 Contoh:
 
 ```text
-Search Soonies...
+Search SoonMates...
 
 > tempo
 ```
@@ -989,7 +989,7 @@ Contoh:
 ```text
 Video Production
 
-18 Soonies
+18 SoonMates
 ```
 
 Kemudian menampilkan people cards.
@@ -1057,7 +1057,7 @@ Contoh:
 # Tempo
 
 ```text
-6 Soonies
+6 SoonMates
 ```
 
 Menampilkan:
@@ -1090,7 +1090,7 @@ Contoh:
 ```text
 Soon 2019
 
-42 Soonies
+42 SoonMates
 ```
 
 Menampilkan seluruh member/alumni pada batch tersebut.
@@ -1177,7 +1177,7 @@ Karena publishing dilakukan langsung, MVP membutuhkan tiga perlindungan dasar.
 
 ### Authentication
 
-Hanya account Soonies yang dapat melakukan write.
+Hanya account SoonMates yang dapat melakukan write.
 
 ### Ownership
 
@@ -1508,7 +1508,7 @@ Prioritas hasil:
 Jika search tidak menemukan hasil:
 
 ```text
-No Soonies found.
+No SoonMates found.
 
 Try searching another name,
 company, or expertise.
@@ -1734,7 +1734,7 @@ Tiga indikator utama:
 ### Profile Coverage
 
 ```text
-Active profile / estimated total Soonies
+Active profile / estimated total SoonMates
 ```
 
 ### Profile Freshness
@@ -1942,9 +1942,9 @@ Login
 
 HERO
 
-Where are Soonies now?
+Where are SoonMates now?
 
-Discover where Soonies are now,
+Discover where SoonMates are now,
 what they're building,
 and the things they're proud of.
 
@@ -1953,12 +1953,12 @@ and the things they're proud of.
 
 COMMUNITY NUMBERS
 
-500+ Soonies
+500+ SoonMates
 120+ Companies
 250+ Achievements
 
 
-RECENT SOONIES
+RECENT SoonMates
 
 [person]
 [person]
@@ -1966,7 +1966,7 @@ RECENT SOONIES
 [person]
 
 
-WHAT SOONIES ARE DOING
+WHAT SoonMates ARE DOING
 
 [achievement]
 
@@ -1984,7 +1984,7 @@ Business
 Research
 
 
-COMPANIES WITH SOONIES
+COMPANIES WITH SoonMates
 
 Gojek
 Tempo
@@ -2049,7 +2049,7 @@ untuk versi pertama.
 
 Untuk menjaga project tetap kecil, setiap request baru sebaiknya diuji menggunakan pertanyaan:
 
-> **Apakah fitur ini membantu menemukan Soonies atau mendokumentasikan perjalanan mereka?**
+> **Apakah fitur ini membantu menemukan SoonMates atau mendokumentasikan perjalanan mereka?**
 
 Jika jawabannya tidak, kemungkinan fitur tersebut **bukan bagian dari MVP**.
 
@@ -2071,7 +2071,7 @@ Itulah keseluruhan value loop dari MVP.
 
 ## Final Product Definition
 
-> **SoonWiki adalah public directory dan collective archive untuk member dan alumni Soon, yang memungkinkan siapa pun menemukan Soonies berdasarkan orang, perusahaan, expertise, dan batch, sekaligus melihat perjalanan karier serta achievement yang mereka banggakan.**
+> **SoonWiki adalah public directory dan collective archive untuk member dan alumni Soon, yang memungkinkan siapa pun menemukan SoonMates berdasarkan orang, perusahaan, expertise, dan batch, sekaligus melihat perjalanan karier serta achievement yang mereka banggakan.**
 
 ### **SoonWiki**
 

@@ -9,7 +9,7 @@ SCOPE AND VISITOR MODE
 Homepage (`src/pages/index.astro`), Persuade-adjacent Experience: the visitor's job is to be inspired by a real journey, not to operate a directory.
 
 AUDIENCE, JOB, ACTION, PROOF, CONSTRAINTS
-- Audience: public visitors arriving from WhatsApp/Instagram/group-chat links, and Soonies checking their own community.
+- Audience: public visitors arriving from WhatsApp/Instagram/group-chat links, and SoonMates checking their own community.
 - Job: encounter one honest alumni journey, sense its turning point, then discover many other valid paths.
 - Action: continue into a profile, a field/batch/place collection, or Explore; search is a secondary utility, never the hero.
 - Proof/content: real published profile data only (featured profile picked by richest available story, deterministic fallback to most recently updated); no invented counts, testimonials, or achievements.

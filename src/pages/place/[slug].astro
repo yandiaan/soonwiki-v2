@@ -26,7 +26,7 @@ const coverPhoto = profiles[0]?.photoPath
 
 <BaseLayout
   title={name}
-  description={`Soonies yang menjalani proses dan perjalanannya di ${name}.`}
+  description={`SoonMates yang menjalani proses dan perjalanannya di ${name}.`}
   canonical={new URL(`/place/${slug}`, Astro.url)}
   image={coverPhoto}
 >
@@ -34,13 +34,13 @@ const coverPhoto = profiles[0]?.photoPath
     <header class="collection__header">
       <p class="collection__tag">Tempat, organisasi, atau usaha</p>
       <h1>{name}</h1>
-      <p class="collection__intro">Soonies yang menjalani perjalanannya lewat {name}.</p>
+      <p class="collection__intro">SoonMates yang menjalani perjalanannya lewat {name}.</p>
     </header>
     {
       profiles.length === 0 ? (
         <EmptyState
           title="Belum ada kisah di sini"
-          description="Belum ada Soonies di tempat ini yang menerbitkan profilnya."
+          description="Belum ada SoonMates di tempat ini yang menerbitkan profilnya."
           actionHref={paths.explore()}
           actionLabel="Jelajahi semua"
         />

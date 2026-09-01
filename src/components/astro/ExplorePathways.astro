@@ -19,7 +19,7 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
     <h2 id="explore-pathways-title">Cari seseorang. Temukan lebih banyak jalan.</h2>
     <p>Semua kisah dapat dibaca tanpa akun.</p>
     <form method="get" action={paths.explore()} role="search">
-      <label for="home-search">Cari Soonies</label>
+      <label for="home-search">Cari SoonMates</label>
       <div>
         <input
           id="home-search"
@@ -61,7 +61,7 @@ const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
       Punya cerita untuk dibagikan? <a href={paths.login()}>Masuk sebagai member</a>
     </p>
   </div>
-  <ul class="explore-pathways__people" aria-label="Beberapa Soonies" data-reveal-group>
+  <ul class="explore-pathways__people" aria-label="Beberapa SoonMates" data-reveal-group>
     {
       profiles.map((profile) => (
         <li>

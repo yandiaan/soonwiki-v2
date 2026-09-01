@@ -387,7 +387,7 @@ Run:
 
 ```bash
 pnpm test:integration -- tests/integration/invitation-admin.test.ts
-pnpm invite:create -- --label "Soonies Launch"
+pnpm invite:create -- --label "SoonMates Launch"
 pnpm invite:list
 pnpm typecheck
 ```
