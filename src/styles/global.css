@@ -107,6 +107,16 @@ select {
   transform: translateY(0);
 }
 
+@media (max-width: 768px) {
+  :root {
+    --nav-height: 3.75rem;
+  }
+
+  body {
+    padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

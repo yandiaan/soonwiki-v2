@@ -194,13 +194,34 @@ const navItems = [
     const list = document.getElementById('nav-pill-list');
     const indicator = document.getElementById('nav-indicator');
 
-    // 1. Hardware-Accelerated Scroll State Sync
+    // 1. Hardware-Accelerated Scroll State Sync & Mobile Auto-Hide
+    let lastScrollY = window.scrollY;
+    let isHidden = false;
+
     function updateScrolledState(scrollY: number) {
       if (scrollY > 25) {
         header?.setAttribute('data-scrolled', 'true');
       } else {
         header?.removeAttribute('data-scrolled');
       }
+
+      if (window.innerWidth <= 768) {
+        if (scrollY > 75 && scrollY > lastScrollY + 6) {
+          if (!isHidden) {
+            header?.setAttribute('data-hidden', 'true');
+            isHidden = true;
+          }
+        } else if (scrollY < lastScrollY - 6 || scrollY <= 75) {
+          if (isHidden) {
+            header?.removeAttribute('data-hidden');
+            isHidden = false;
+          }
+        }
+      } else {
+        header?.removeAttribute('data-hidden');
+        isHidden = false;
+      }
+      lastScrollY = Math.max(0, scrollY);
     }
 
     const lenis = getLenis();
@@ -837,14 +858,20 @@ const navItems = [
     transform: translateY(0) scale(0.95);
   }
 
+  .site-header[data-hidden='true'] {
+    transform: translateY(-130%);
+  }
+
   @media (max-width: 768px) {
     .site-header {
       padding: 0.5rem var(--page-gutter);
     }
 
     .site-header__container {
-      min-height: 3.25rem;
-      padding: 0.3rem 0.45rem 0.3rem 0.95rem;
+      min-height: 2.75rem;
+      padding: 0.25rem 0.85rem;
+      width: fit-content;
+      margin-inline: auto;
     }
 
     .brand__tag {
@@ -855,22 +882,8 @@ const navItems = [
       display: none;
     }
 
-    .login-btn,
-    .user-pill-btn {
-      min-height: 32px;
-      padding: 0.3rem 0.85rem;
-      font-size: 0.8rem;
-    }
-
-    .admin-pill-btn {
-      min-height: 32px;
-      padding: 0.25rem 0.65rem;
-      font-size: 0.76rem;
-    }
-
-    .logout-icon-btn {
-      width: 32px;
-      height: 32px;
+    .site-header__actions {
+      display: none;
     }
   }
 </style>

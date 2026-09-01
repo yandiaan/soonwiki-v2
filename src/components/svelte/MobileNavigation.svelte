@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { paths } from '@/lib/shared/paths';
 
   let {
@@ -11,77 +12,9 @@
     userRole?: string | undefined;
   } = $props();
 
+  let isHidden = $state(false);
+
   const navItems = $derived.by(() => {
-    if (isLoggedIn) {
-      if (userRole === 'admin') {
-        return [
-          {
-            href: paths.home(),
-            label: 'Beranda',
-            icon: 'home',
-            match: (p: string) => p === '/',
-          },
-          {
-            href: paths.explore(),
-            label: 'Jelajahi',
-            icon: 'explore',
-            match: (p: string) => p === '/explore' || p.startsWith('/explore'),
-          },
-          {
-            href: paths.memories(),
-            label: 'Kenangan',
-            icon: 'memories',
-            match: (p: string) => p === '/memories' || p.startsWith('/memories'),
-          },
-          {
-            href: paths.admin(),
-            label: 'Admin',
-            icon: 'admin',
-            match: (p: string) => p === '/admin' || p.startsWith('/admin'),
-          },
-          {
-            href: paths.me(),
-            label: 'Profilku',
-            icon: 'profile',
-            match: (p: string) => p === '/me' || p.startsWith('/me'),
-          },
-        ];
-      }
-
-      return [
-        {
-          href: paths.home(),
-          label: 'Beranda',
-          icon: 'home',
-          match: (p: string) => p === '/',
-        },
-        {
-          href: paths.explore(),
-          label: 'Jelajahi',
-          icon: 'explore',
-          match: (p: string) => p === '/explore' || p.startsWith('/explore'),
-        },
-        {
-          href: paths.memories(),
-          label: 'Kenangan',
-          icon: 'memories',
-          match: (p: string) => p === '/memories' || p.startsWith('/memories'),
-        },
-        {
-          href: paths.feedback(),
-          label: 'Masukan',
-          icon: 'feedback',
-          match: (p: string) => p === '/feedback' || p.startsWith('/feedback'),
-        },
-        {
-          href: paths.me(),
-          label: 'Profilku',
-          icon: 'profile',
-          match: (p: string) => p === '/me' || p.startsWith('/me'),
-        },
-      ];
-    }
-
     return [
       {
         href: paths.home(),
@@ -93,26 +26,34 @@
         href: paths.explore(),
         label: 'Jelajahi',
         icon: 'explore',
-        match: (p: string) => p === '/explore' || p.startsWith('/explore'),
+        match: (p: string) =>
+          p.startsWith('/explore') ||
+          p.startsWith('/people') ||
+          p.startsWith('/field') ||
+          p.startsWith('/batch') ||
+          p.startsWith('/place'),
       },
       {
         href: paths.memories(),
         label: 'Kenangan',
         icon: 'memories',
-        match: (p: string) => p === '/memories' || p.startsWith('/memories'),
+        match: (p: string) => p.startsWith('/memories'),
       },
-      {
-        href: paths.about(),
-        label: 'Tentang',
-        icon: 'about',
-        match: (p: string) => p === '/#tentang',
-      },
-      {
-        href: paths.login(),
-        label: 'Masuk',
-        icon: 'login',
-        match: (p: string) => p === '/login' || p.startsWith('/login') || p.startsWith('/join'),
-      },
+      isLoggedIn
+        ? {
+            href: paths.me(),
+            label: userRole === 'admin' ? 'Profil' : 'Profilku',
+            icon: 'profile',
+            isAdmin: userRole === 'admin',
+            match: (p: string) =>
+              p.startsWith('/me') || p.startsWith('/admin') || p.startsWith('/feedback'),
+          }
+        : {
+            href: paths.login(),
+            label: 'Masuk',
+            icon: 'login',
+            match: (p: string) => p.startsWith('/login') || p.startsWith('/join'),
+          },
     ];
   });
 
@@ -120,10 +61,27 @@
     const idx = navItems.findIndex((item) => item.match(currentPath));
     return idx >= 0 ? idx : 0;
   });
+
+  onMount(() => {
+    let lastScrollY = window.scrollY;
+
+    function handleScroll() {
+      const scrollY = window.scrollY;
+      if (scrollY > 75 && scrollY > lastScrollY + 6) {
+        if (!isHidden) isHidden = true;
+      } else if (scrollY < lastScrollY - 6 || scrollY <= 75) {
+        if (isHidden) isHidden = false;
+      }
+      lastScrollY = Math.max(0, scrollY);
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  });
 </script>
 
 {#if !currentPath.startsWith('/me/edit')}
-  <nav aria-label="Navigasi bawah mobile" class="mobile-dock">
+  <nav aria-label="Navigasi bawah mobile" class="mobile-dock" class:is-hidden={isHidden}>
     <div class="mobile-dock__capsule">
       <!-- Smooth Magnetic Active Indicator Pill -->
       <div
@@ -144,7 +102,7 @@
         >
           <span class="dock-icon-wrapper">
             {#if item.icon === 'home'}
-              <!-- Editorial House / Home Architecture -->
+              <!-- House / Home -->
               <svg
                 class="dock-icon"
                 viewBox="0 0 24 24"
@@ -160,7 +118,7 @@
                 <path d="M9 22V12h6v10" />
               </svg>
             {:else if item.icon === 'explore'}
-              <!-- Bespoke Editorial Compass / Discovery Lens -->
+              <!-- Compass -->
               <svg
                 class="dock-icon"
                 viewBox="0 0 24 24"
@@ -175,12 +133,12 @@
                 <circle cx="12" cy="12" r="9.25" />
                 <polygon
                   points="15.8 8.2 13.5 13.5 8.2 15.8 10.5 10.5"
-                  fill={isActive ? 'var(--accent-soft)' : 'none'}
+                  fill={isActive ? 'currentColor' : 'none'}
                 />
                 <circle cx="12" cy="12" r="1.2" fill="currentColor" />
               </svg>
             {:else if item.icon === 'memories'}
-              <!-- Memory Gallery / Photo Album -->
+              <!-- Gallery Photo / Memory Frame -->
               <svg
                 class="dock-icon"
                 viewBox="0 0 24 24"
@@ -192,12 +150,33 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
+                <rect x="3" y="3" width="18" height="18" rx="4" />
+                <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+                <path d="M21 15l-5-5L5 21" />
               </svg>
-            {:else if item.icon === 'about'}
-              <!-- Open Editorial Storybook / Archive Journal -->
+            {:else if item.icon === 'profile'}
+              <!-- User Profile / Avatar -->
+              <div class="profile-icon-wrap">
+                <svg
+                  class="dock-icon"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.85"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                {#if item.isAdmin}
+                  <span class="admin-dot" title="Akses Admin" aria-hidden="true"></span>
+                {/if}
+              </div>
+            {:else if item.icon === 'login'}
+              <!-- Sign In / Log In Key -->
               <svg
                 class="dock-icon"
                 viewBox="0 0 24 24"
@@ -209,56 +188,9 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                <line x1="9" y1="7" x2="16" y2="7" />
-                <line x1="9" y1="11" x2="14" y2="11" />
-              </svg>
-            {:else if item.icon === 'admin'}
-              <!-- Admin Shield / Security Aura -->
-              <svg
-                class="dock-icon"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.85"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            {:else if item.icon === 'profile' || item.icon === 'login'}
-              <!-- Member Silhouette with Keyhole Aura -->
-              <svg
-                class="dock-icon"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.85"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            {:else if item.icon === 'feedback'}
-              <!-- Editorial Feedback Message Box -->
-              <svg
-                class="dock-icon"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.85"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <polyline points="10 17 15 12 10 7" />
+                <line x1="15" y1="12" x2="3" y2="12" />
               </svg>
             {/if}
           </span>
@@ -278,11 +210,20 @@
     .mobile-dock {
       position: fixed;
       inset-inline: 0;
-      bottom: calc(0.9rem + env(safe-area-inset-bottom, 0px));
+      bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
       z-index: 50;
       display: flex;
       justify-content: center;
       padding-inline: 1rem;
+      pointer-events: none;
+      transition:
+        transform 360ms cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 300ms ease;
+    }
+
+    .mobile-dock.is-hidden {
+      transform: translateY(140%);
+      opacity: 0;
       pointer-events: none;
     }
 
@@ -291,24 +232,24 @@
       position: relative;
       display: flex;
       align-items: center;
-      background: color-mix(in srgb, var(--surface) 86%, transparent);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
       backdrop-filter: blur(28px) saturate(180%);
       -webkit-backdrop-filter: blur(28px) saturate(180%);
       border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
       border-radius: 9999px;
-      padding: 0.35rem 0.4rem;
+      padding: 0.3rem 0.35rem;
       box-shadow:
         0 16px 36px -8px rgba(18, 21, 20, 0.22),
         0 0 0 1px color-mix(in srgb, var(--surface) 60%, transparent) inset;
-      max-width: 100%;
+      width: min(100%, 22rem);
     }
 
     .mobile-active-pill {
       position: absolute;
-      left: 0.4rem;
-      top: 0.35rem;
-      bottom: 0.35rem;
-      width: calc((100% - 0.8rem) / 5);
+      left: 0.35rem;
+      top: 0.3rem;
+      bottom: 0.3rem;
+      width: calc((100% - 0.7rem) / 4);
       border-radius: 9999px;
       background: var(--ink);
       box-shadow: 0 4px 14px rgba(18, 21, 20, 0.25);
@@ -324,9 +265,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.18rem;
-      padding: 0.4rem 0.65rem;
-      min-width: 48px;
+      gap: 0.16rem;
+      padding: 0.45rem 0.2rem;
+      width: 25%;
       text-decoration: none;
       color: var(--ink-soft);
       border-radius: 9999px;
@@ -344,10 +285,29 @@
     }
 
     .dock-icon-wrapper {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       line-height: 1;
+    }
+
+    .profile-icon-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .admin-dot {
+      position: absolute;
+      top: -1px;
+      right: -3px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3b82f6;
+      border: 1px solid var(--surface);
     }
 
     .dock-icon {
@@ -355,13 +315,13 @@
     }
 
     .dock-item.is-active .dock-icon {
-      transform: scale(1.1);
+      transform: scale(1.08);
     }
 
     .dock-label {
       font-size: 0.65rem;
       font-weight: 750;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.015em;
       line-height: 1;
       text-transform: capitalize;
     }

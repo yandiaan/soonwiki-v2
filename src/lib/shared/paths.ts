@@ -38,6 +38,9 @@ export function publicStorageUrl(
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/')) {
     return path;
   }
+  if (bucket === 'memories' && path.includes('1788287546105-c2d63702.mp4')) {
+    return `/memories/${path}`;
+  }
   const base = (import.meta.env.PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
   return `${base}/storage/v1/object/public/${bucket}/${path}`;
 }
