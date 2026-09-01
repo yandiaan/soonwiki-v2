@@ -179,6 +179,20 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "journey_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journey_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_details"
+            referencedColumns: ["id"]
+          },
         ]
       }
       members: {
@@ -261,6 +275,20 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_fields_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_fields_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_details"
             referencedColumns: ["id"]
           },
         ]
@@ -398,6 +426,20 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "proud_moments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proud_moments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_details"
+            referencedColumns: ["id"]
+          },
         ]
       }
       reports: {
@@ -446,6 +488,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "reports_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "published_profile_details"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "reports_proud_moment_id_fkey"
             columns: ["proud_moment_id"]
             isOneToOne: false
@@ -486,10 +542,94 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      published_profile_cards: {
+        Row: {
+          batch_year: number | null
+          current_activity: string | null
+          current_place_name: string | null
+          current_place_slug: string | null
+          field_labels: string[] | null
+          id: string | null
+          name: string | null
+          photo_path: string | null
+          slug: string | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
+      published_profile_details: {
+        Row: {
+          batch_year: number | null
+          bio: string | null
+          current_activity: string | null
+          current_direction_story: string | null
+          current_place_name: string | null
+          current_place_slug: string | null
+          id: string | null
+          instagram_url: string | null
+          linkedin_url: string | null
+          location: string | null
+          name: string | null
+          photo_path: string | null
+          since_soon_story: string | null
+          slug: string | null
+          turning_point_story: string | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      complete_invitation_attempt: {
+        Args: { actor_user_id: string; raw_attempt: string }
+        Returns: undefined
+      }
+      create_shared_invitation: {
+        Args: { actor_user_id: string; label: string }
+        Returns: {
+          invitation_id: string
+          raw_token: string
+        }[]
+      }
+      immutable_unaccent: { Args: { value: string }; Returns: string }
+      is_active_member: { Args: never; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
       normalize_slug_source: { Args: { value: string }; Returns: string }
+      revoke_shared_invitation: {
+        Args: { actor_user_id: string; invitation_id: string }
+        Returns: undefined
+      }
+      search_profiles: {
+        Args: {
+          batch_year?: number
+          field_slug?: string
+          place_slug?: string
+          query?: string
+          result_limit?: number
+          result_offset?: number
+        }
+        Returns: {
+          batch_year: number
+          current_activity: string
+          current_place_name: string
+          current_place_slug: string
+          field_labels: string[]
+          id: string
+          name: string
+          photo_path: string
+          rank: number
+          slug: string
+          updated_at: string
+        }[]
+      }
+      start_invitation_attempt: {
+        Args: { raw_token: string }
+        Returns: {
+          attempt_token: string
+          expires_at: string
+        }[]
+      }
     }
     Enums: {
       invitation_status: "active" | "revoked"
