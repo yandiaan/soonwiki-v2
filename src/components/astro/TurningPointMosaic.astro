@@ -1,0 +1,209 @@
+---
+import { paths } from '@/lib/shared/paths';
+
+import type { TurningPointHighlight } from '@/lib/shared/public-models';
+
+interface Props {
+  highlights: TurningPointHighlight[];
+}
+
+const { highlights } = Astro.props;
+---
+
+{
+  highlights.length > 0 && (
+    <section class="turning-points" aria-labelledby="turning-points-title">
+      <div class="turning-points__header">
+        <p class="turning-points__tag">Turning point</p>
+        <h2 id="turning-points-title">Titik balik yang mengubah arah hidup.</h2>
+        <p class="turning-points__intro">
+          Pilihan berani, kesadaran baru, dan momen ketika jalan hidup Soonies didefinisikan ulang.
+        </p>
+      </div>
+
+      <div class="turning-points__grid">
+        {highlights.map((item, index) => (
+          <article
+            class={`turning-point-card turning-point-card--${index === 0 ? 'lead' : 'secondary'}`}
+          >
+            <span class="turning-point-card__mark" aria-hidden="true">
+              “
+            </span>
+            <blockquote class="turning-point-card__quote">
+              <p>{item.quote}</p>
+            </blockquote>
+            <div class="turning-point-card__author">
+              <div>
+                <strong>{item.profileName}</strong>
+                <span>
+                  {item.activity ?? 'Perjalanan'} · Soon {item.batchYear}
+                </span>
+              </div>
+              <a href={paths.profile(item.profileSlug)} aria-label={`Baca kisah ${item.profileName}`}>
+                Baca kisah →
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .turning-points {
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: clamp(4rem, 8vw, 7.5rem) var(--page-gutter);
+  }
+
+  .turning-points__header {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 44rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .turning-points__tag {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2.2rem, 5vw, 4.25rem);
+    font-weight: 650;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+  }
+
+  .turning-points__intro {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 1.1rem;
+    line-height: 1.55;
+  }
+
+  .turning-points__grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .turning-point-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    border-radius: 1rem;
+    border: 1px solid var(--line-soft);
+    background: var(--surface);
+    transition:
+      transform 180ms var(--ease-out),
+      box-shadow 180ms var(--ease-out);
+  }
+
+  .turning-point-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.06);
+  }
+
+  .turning-point-card--lead {
+    background: var(--ink);
+    color: var(--surface);
+    border-color: var(--ink);
+  }
+
+  .turning-point-card__mark {
+    display: block;
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    line-height: 0.8;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .turning-point-card--lead .turning-point-card__mark {
+    color: var(--accent-soft);
+  }
+
+  .turning-point-card__quote {
+    margin: 0 0 2rem;
+    padding: 0;
+  }
+
+  .turning-point-card__quote p {
+    margin: 0;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    line-height: 1.55;
+    font-weight: 550;
+  }
+
+  .turning-point-card--lead .turning-point-card__quote p {
+    font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+    line-height: 1.45;
+  }
+
+  .turning-point-card__author {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .turning-point-card--lead .turning-point-card__author {
+    border-top-color: color-mix(in srgb, var(--surface) 20%, transparent);
+  }
+
+  .turning-point-card__author strong {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .turning-point-card__author span {
+    display: block;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    margin-top: 0.15rem;
+  }
+
+  .turning-point-card--lead .turning-point-card__author span {
+    color: color-mix(in srgb, var(--surface) 70%, transparent);
+  }
+
+  .turning-point-card__author a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    font-weight: 750;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .turning-point-card--lead .turning-point-card__author a {
+    color: var(--surface);
+  }
+
+  .turning-point-card__author a:hover {
+    text-decoration: underline;
+  }
+
+  @media (min-width: 900px) {
+    .turning-points__grid {
+      grid-template-columns: 1.2fr 1fr;
+      grid-template-rows: repeat(2, 1fr);
+    }
+
+    .turning-point-card--lead {
+      grid-row: 1 / 3;
+      grid-column: 1;
+    }
+  }
+</style>
