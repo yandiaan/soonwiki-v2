@@ -1,3 +1,8 @@
+import {
+  applyCoordinateJitter,
+  resolveCoordinates,
+  type GeoMemberPin,
+} from '@/lib/shared/geo-resolver';
 import { createServerSupabase } from '@/lib/supabase/server';
 
 import type {
@@ -318,12 +323,94 @@ export async function getPlaceCollection(
     place_slug: slug,
     result_limit: 50,
   });
-
   if (error) {
     return { ok: false, code: 'UNAVAILABLE' };
   }
 
-  return { ok: true, data: { name: place.name, profiles: (data ?? []).map(toProfileCard) } };
+  const profiles = (data ?? []).map(toProfileCard);
+
+  return { ok: true, data: { name: place.name, profiles } };
+}
+
+export async function getMembersGeoDistribution(context: ServerContext): Promise<GeoMemberPin[]> {
+  const supabase = createServerSupabase(context);
+
+  const { data: profiles, error } = await supabase
+    .from('published_profile_details')
+    .select(
+      'id, slug, name, photo_path, batch_year, location, current_activity, current_place_name',
+    )
+    .not('location', 'is', null)
+    .neq('location', '');
+
+  if (error || !profiles) {
+    return [];
+  }
+
+  const profileIds = profiles.map((p) => p.id).filter((id): id is string => Boolean(id));
+  const { data: fieldsData } = await supabase
+    .from('profile_fields')
+    .select('profile_id, fields(name)')
+    .in('profile_id', profileIds);
+
+  const fieldsByProfile = new Map<string, string[]>();
+  for (const item of (fieldsData ?? []) as unknown as Array<{
+    profile_id: string;
+    fields: { name: string } | null;
+  }>) {
+    if (!item.profile_id || !item.fields?.name) continue;
+    const existing = fieldsByProfile.get(item.profile_id) ?? [];
+    existing.push(item.fields.name);
+    fieldsByProfile.set(item.profile_id, existing);
+  }
+
+  const rawPins: Array<{
+    profile: (typeof profiles)[number];
+    coords: { lat: number; lon: number };
+    clusterKey: string;
+  }> = [];
+
+  for (const profile of profiles) {
+    if (!profile.location || !profile.slug) continue;
+    const coords = resolveCoordinates(profile.location);
+    if (!coords) continue;
+
+    const clusterKey = `${coords.lat.toFixed(2)},${coords.lon.toFixed(2)}`;
+    rawPins.push({ profile, coords, clusterKey });
+  }
+
+  const clusterCounts = new Map<string, number>();
+  for (const pin of rawPins) {
+    clusterCounts.set(pin.clusterKey, (clusterCounts.get(pin.clusterKey) ?? 0) + 1);
+  }
+
+  const clusterIndex = new Map<string, number>();
+  const pins: GeoMemberPin[] = [];
+
+  for (const item of rawPins) {
+    const { profile, coords, clusterKey } = item;
+    const totalInCluster = clusterCounts.get(clusterKey) ?? 1;
+    const currentIndex = clusterIndex.get(clusterKey) ?? 0;
+    clusterIndex.set(clusterKey, currentIndex + 1);
+
+    const jittered = applyCoordinateJitter(coords.lat, coords.lon, currentIndex, totalInCluster);
+
+    pins.push({
+      id: profile.id ?? '',
+      slug: profile.slug ?? '',
+      name: profile.name ?? '',
+      photoPath: profile.photo_path ?? null,
+      batchYear: profile.batch_year ?? 0,
+      location: profile.location ?? '',
+      lat: jittered.lat,
+      lon: jittered.lon,
+      currentActivity: profile.current_activity ?? null,
+      currentPlaceName: profile.current_place_name ?? null,
+      fieldLabels: fieldsByProfile.get(profile.id ?? '') ?? [],
+    });
+  }
+
+  return pins;
 }
 
 export async function getRandomProfileSlug(context: ServerContext): Promise<string | null> {

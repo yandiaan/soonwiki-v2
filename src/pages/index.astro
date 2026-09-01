@@ -2,17 +2,21 @@
 import EmptyState from '@/components/astro/EmptyState.astro';
 import ExplorePathways from '@/components/astro/ExplorePathways.astro';
 import FeaturedJourney from '@/components/astro/FeaturedJourney.astro';
+import MemberDistributionSection from '@/components/astro/MemberDistributionSection.astro';
 import PossibilityContactSheet from '@/components/astro/PossibilityContactSheet.astro';
 import ProudMomentFrame from '@/components/astro/ProudMomentFrame.astro';
 import PublicHero from '@/components/astro/PublicHero.astro';
 import PublicIntroduction from '@/components/astro/PublicIntroduction.astro';
 import TurningPointMosaic from '@/components/astro/TurningPointMosaic.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getHomeStoryData } from '@/lib/server/public-repository';
+import { getHomeStoryData, getMembersGeoDistribution } from '@/lib/server/public-repository';
 import { paths, publicStorageUrl } from '@/lib/shared/paths';
 import '@/styles/home.css';
 
-const result = await getHomeStoryData(Astro);
+const [result, memberPins] = await Promise.all([
+  getHomeStoryData(Astro),
+  getMembersGeoDistribution(Astro),
+]);
 
 const firstProudMoment = result.ok ? result.data.proudMoment : undefined;
 const featuredPhoto =
@@ -45,6 +49,7 @@ const featuredPhoto =
             <TurningPointMosaic highlights={result.data.turningPoints} />
           )}
           <PossibilityContactSheet profiles={result.data.contactSheet} />
+          {memberPins.length > 0 && <MemberDistributionSection pins={memberPins} />}
           {firstProudMoment && (
             <ProudMomentFrame
               moment={firstProudMoment}

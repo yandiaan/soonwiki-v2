@@ -16,6 +16,8 @@ export const SOON_GENERATIONS: SoonGeneration[] = [
   { year: 2018, name: 'Gen.Beta', label: 'Gen.Beta' },
 ];
 
+export const GENERATIONS = SOON_GENERATIONS;
+
 export function getGenerationName(batchYear: number | null | undefined): string {
   if (!batchYear) return 'Alumni SOON';
   const found = SOON_GENERATIONS.find((g) => g.year === batchYear);

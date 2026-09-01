@@ -1,0 +1,75 @@
+---
+import MemberMap from '@/components/svelte/MemberMap.svelte';
+import 'leaflet/dist/leaflet.css';
+
+import type { GeoMemberPin } from '@/lib/shared/geo-resolver';
+
+interface Props {
+  pins: GeoMemberPin[];
+}
+
+const { pins } = Astro.props;
+---
+
+{
+  pins.length > 0 && (
+    <section class="member-distribution" aria-labelledby="member-distribution-title" data-reveal>
+      <header class="member-distribution__header">
+        <p class="member-distribution__tag">Persebaran Komunitas</p>
+        <h2 id="member-distribution-title">Jejak SoonMates di berbagai penjuru.</h2>
+        <p class="member-distribution__intro">
+          Eksplorasi lokasi dan kota tempat para SoonMates kini menetap, berkarya, dan memberikan
+          dampak nyata.
+        </p>
+      </header>
+
+      <MemberMap client:only="svelte" pins={pins} />
+    </section>
+  )
+}
+
+<style>
+  .member-distribution {
+    display: grid;
+    min-width: 0;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: clamp(4rem, 9vw, 8rem) var(--page-gutter);
+    overflow-x: clip;
+  }
+
+  .member-distribution__header {
+    display: grid;
+    min-width: 0;
+    gap: 0.75rem;
+  }
+
+  .member-distribution__tag {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .member-distribution__header h2 {
+    max-width: 24ch;
+    margin: 0;
+    font-size: clamp(2rem, 4.5vw, 3.25rem);
+    font-weight: 850;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .member-distribution__intro {
+    width: 100%;
+    max-width: 38rem;
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+</style>
