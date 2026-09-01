@@ -45,6 +45,8 @@ const displayMemories = memories.slice(0, 4);
                 href={`/memories/${memory.id}`}
                 class="featured-memory-card__media-link"
                 aria-label={`Lihat kenangan: ${memory.title}`}
+                onmouseenter="this.querySelector('video')?.play().catch(() => {})"
+                onmouseleave="const v = this.querySelector('video'); if (v) { v.pause(); v.currentTime = 0; }"
               >
                 <div
                   class="featured-memory-card__media-wrap"
@@ -53,13 +55,15 @@ const displayMemories = memories.slice(0, 4);
                   {memory.mediaType === 'video' ? (
                     <div class="video-container">
                       <video
-                        src={mediaUrl}
                         preload="metadata"
                         muted
                         playsinline
                         webkit-playsinline
+                        loop
                         class="featured-memory-card__media"
-                      />
+                      >
+                        <source src={mediaUrl} type="video/mp4" />
+                      </video>
                       <div class="video-play-badge" aria-hidden="true">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                           <path d="M8 5v14l11-7z" />

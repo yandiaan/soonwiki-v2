@@ -86,16 +86,13 @@ const formattedDate = new Intl.DateTimeFormat('id-ID', {
         {
           memory.mediaType === 'video' ? (
             <video
-              src={mediaUrl}
               controls
               playsinline
               webkit-playsinline
-              x5-playsinline
               preload="metadata"
               class="media-element media-element--video"
             >
               <source src={mediaUrl} type="video/mp4" />
-              <source src={mediaUrl} type="video/webm" />
               <p class="video-fallback">
                 Browser kamu tidak dapat memutar video ini secara langsung.{' '}
                 <a href={mediaUrl} target="_blank" rel="noopener noreferrer">

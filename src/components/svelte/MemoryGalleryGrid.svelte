@@ -269,28 +269,29 @@
                 type: memory.mediaType,
                 title: memory.title,
               })}
+            onmouseenter={(e) => {
+              const v = (e.currentTarget as HTMLElement).querySelector('video');
+              if (v) v.play().catch(() => {});
+            }}
+            onmouseleave={(e) => {
+              const v = (e.currentTarget as HTMLElement).querySelector('video');
+              if (v) {
+                v.pause();
+                v.currentTime = 0;
+              }
+            }}
             aria-label={`Perbesar media ${memory.title}`}
           >
             {#if memory.mediaType === 'video'}
               <video
-                src={mediaUrl}
                 class="card-media card-media--video"
                 preload="metadata"
                 muted
                 playsinline
                 webkit-playsinline
                 loop
-                onmouseenter={(e) => {
-                  (e.currentTarget as HTMLVideoElement).play().catch(() => {});
-                }}
-                onmouseleave={(e) => {
-                  const v = e.currentTarget as HTMLVideoElement;
-                  v.pause();
-                  v.currentTime = 0;
-                }}
               >
                 <source src={mediaUrl} type="video/mp4" />
-                <source src={mediaUrl} type="video/webm" />
               </video>
               <div class="video-indicator" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">

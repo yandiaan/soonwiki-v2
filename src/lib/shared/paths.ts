@@ -46,8 +46,5 @@ export function mediaStreamUrl(
   bucket: 'memories' | 'profile-photos' | 'proud-moments',
   path: string,
 ): string {
-  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/')) {
-    return path;
-  }
-  return `/api/media/stream?bucket=${bucket}&path=${encodeURIComponent(path)}`;
+  return publicStorageUrl(bucket, path);
 }
