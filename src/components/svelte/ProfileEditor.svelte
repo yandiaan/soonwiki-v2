@@ -3,6 +3,7 @@
   import EditorTour from '@/components/svelte/EditorTour.svelte';
   import FieldPicker from '@/components/svelte/FieldPicker.svelte';
   import JourneyEditor from '@/components/svelte/JourneyEditor.svelte';
+  import LocationPicker from '@/components/svelte/LocationPicker.svelte';
   import MediaUploader from '@/components/svelte/MediaUploader.svelte';
   import ProudMomentEditor from '@/components/svelte/ProudMomentEditor.svelte';
   import { clearDraft, loadDraft, saveDraft } from '@/lib/browser/local-draft';
@@ -587,12 +588,14 @@
 
             <div class="field field--full">
               <label for="profile-location">Domisili / Kota Saat Ini</label>
-              <input
-                id="profile-location"
-                type="text"
+              <LocationPicker
                 bind:value={form.location}
-                placeholder="Contoh: Bandung, Indonesia atau Tokyo, Japan"
+                placeholder="Ketik nama kota atau gunakan deteksi GPS…"
               />
+              <span class="field-hint"
+                >Ketik nama kotamu untuk rekomendasi otomatis atau klik <strong>Gunakan GPS</strong
+                >.</span
+              >
             </div>
           </div>
 
