@@ -27,8 +27,9 @@
       inset-inline: 0;
       bottom: 0;
       z-index: 20;
-      border-top: 2px solid var(--ink);
-      background: var(--paper);
+      border-top: 1px solid var(--line-soft);
+      background: color-mix(in srgb, var(--canvas) 94%, transparent);
+      backdrop-filter: blur(14px);
       padding-bottom: env(safe-area-inset-bottom, 0);
     }
 
@@ -47,13 +48,13 @@
       align-items: center;
       justify-content: center;
       padding: 0.5rem;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 700;
       text-decoration: none;
     }
 
     .mobile-nav a[aria-current='page'] {
-      color: var(--cobalt);
+      color: var(--accent);
     }
 
     .mobile-nav a:focus-visible {

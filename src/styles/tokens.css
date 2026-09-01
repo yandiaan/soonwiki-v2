@@ -1,11 +1,21 @@
 :root {
-  --paper: #f1ebdd;
-  --ink: #161616;
-  --cobalt: #2045b8;
-  --signal: #eb5428;
-  --sage: #9eae98;
-  --line: color-mix(in srgb, var(--ink) 72%, transparent);
+  --canvas: #f4f5f1;
+  --surface: #ffffff;
+  --surface-muted: #e9ece6;
+  --ink: #171918;
+  --ink-soft: #5d625e;
+  --accent: #2448d8;
+  --accent-strong: #1833a8;
+  --accent-soft: #e3e9ff;
+  --line-soft: #d5d9d3;
+  --paper: var(--canvas);
+  --cobalt: var(--accent);
+  --signal: #b54332;
+  --sage: #cbd2c8;
+  --line: var(--line-soft);
   --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
-  --page-gutter: clamp(1rem, 4vw, 4rem);
-  --focus-ring: 0 0 0 3px var(--paper), 0 0 0 6px var(--cobalt);
+  --page-gutter: clamp(1rem, 4vw, 4.5rem);
+  --content-max: 90rem;
+  --focus-ring: 0 0 0 3px var(--canvas), 0 0 0 6px var(--accent);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }

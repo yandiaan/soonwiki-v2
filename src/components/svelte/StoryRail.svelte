@@ -46,8 +46,8 @@
   </div>
   {#if count > 1}
     <div class="story-rail__controls">
-      <button type="button" aria-label="Sebelumnya" onclick={() => scrollByCard(-1)}>‹</button>
-      <button type="button" aria-label="Berikutnya" onclick={() => scrollByCard(1)}>›</button>
+      <button type="button" onclick={() => scrollByCard(-1)}>Sebelumnya</button>
+      <button type="button" onclick={() => scrollByCard(1)}>Berikutnya</button>
     </div>
   {/if}
 </div>
@@ -55,15 +55,21 @@
 <style>
   .story-rail {
     position: relative;
+    min-width: 0;
   }
 
   .story-rail__track {
     display: flex;
+    max-width: 100%;
     gap: 1rem;
     padding-bottom: 0.5rem;
     overflow-x: auto;
     scroll-snap-type: x proximity;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+  }
+
+  .story-rail__track::-webkit-scrollbar {
+    display: none;
   }
 
   .story-rail__track:focus-visible {
@@ -78,21 +84,24 @@
   @media (min-width: 641px) {
     .story-rail__controls {
       display: flex;
-      justify-content: flex-end;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
     }
 
     .story-rail__controls button {
       display: inline-flex;
-      min-width: 44px;
       min-height: 44px;
       align-items: center;
       justify-content: center;
-      border: 2px solid var(--ink);
-      background: var(--paper);
-      font-size: 1.25rem;
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid currentColor;
+      background: transparent;
+      color: var(--ink);
+      font-size: 0.9rem;
       font-weight: 700;
+      cursor: pointer;
     }
 
     .story-rail__controls button:focus-visible {

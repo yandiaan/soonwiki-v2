@@ -1,4 +1,5 @@
 ---
+import PortraitFrame from '@/components/astro/PortraitFrame.astro';
 import { paths } from '@/lib/shared/paths';
 
 import type { HomeStory } from '@/lib/shared/public-models';
@@ -8,104 +9,210 @@ interface Props {
 }
 
 const { story } = Astro.props;
-
-const summaries = [story.featured, ...story.contactSheet].map((profile) => ({
-  batchYear: profile.batchYear,
-  placeName: profile.currentPlaceName,
-  placeSlug: profile.currentPlaceSlug,
-}));
-
-const batchYears = Array.from(new Set(summaries.map((item) => item.batchYear))).sort(
-  (a, b) => b - a,
-);
-
-const places = Array.from(
-  new Map(
-    summaries
-      .filter((item): item is typeof item & { placeSlug: string; placeName: string } =>
-        Boolean(item.placeSlug && item.placeName),
-      )
-      .map((item) => [item.placeSlug, item.placeName]),
-  ).entries(),
-).slice(0, 6);
+const profiles = [story.featured, ...story.contactSheet].slice(0, 4);
+const firstBatch = profiles[0]?.batchYear;
+const firstPlace = profiles.find((profile) => profile.currentPlaceSlug);
 ---
 
 <section class="explore-pathways" aria-labelledby="explore-pathways-title">
-  <p class="frame-number">JELAJAHI SOONWIKI</p>
-  <h2 id="explore-pathways-title">Banyak jalan untuk dijelajahi</h2>
-  <p>
-    {story.totalPublishedProfiles} kisah Soonies sudah terbit di SoonWiki. Masuk lewat batch atau tempat,
-    atau jelajahi semuanya.
-  </p>
-  <ul class="explore-pathways__chips">
+  <div class="explore-pathways__content">
+    <h2 id="explore-pathways-title">Cari seseorang. Temukan lebih banyak jalan.</h2>
+    <p>Semua kisah dapat dibaca tanpa akun.</p>
+    <form method="get" action={paths.explore()} role="search">
+      <label for="home-search">Cari Soonies</label>
+      <div>
+        <input
+          id="home-search"
+          type="search"
+          name="q"
+          placeholder="Cari nama, bidang, angkatan, atau tempat"
+        />
+        <button type="submit">Cari</button>
+      </div>
+    </form>
+    <nav class="explore-pathways__routes" aria-label="Cara menjelajahi SoonWiki">
+      <a href={paths.explore()}>Lewat bidang</a>
+      <a href={firstBatch ? paths.batch(firstBatch) : paths.explore()}>Lewat angkatan</a>
+      <a
+        href={firstPlace?.currentPlaceSlug
+          ? paths.place(firstPlace.currentPlaceSlug)
+          : paths.explore()}
+      >
+        Lewat tempat
+      </a>
+    </nav>
+    <a class="explore-pathways__all" href={paths.explore()}>Jelajahi semua Soonies</a>
+    <p class="explore-pathways__member">
+      Punya cerita untuk dibagikan? <a href={paths.login()}>Masuk sebagai member</a>
+    </p>
+  </div>
+  <ul class="explore-pathways__people" aria-label="Beberapa Soonies">
     {
-      batchYears.map((year) => (
+      profiles.map((profile) => (
         <li>
-          <a href={paths.batch(year)}>Soon {year}</a>
-        </li>
-      ))
-    }
-    {
-      places.map(([slug, name]) => (
-        <li>
-          <a href={paths.place(slug)}>{name}</a>
+          <a href={paths.profile(profile.slug)}>
+            <PortraitFrame photoPath={profile.photoPath} name={profile.name} />
+            <strong>{profile.name}</strong>
+          </a>
         </li>
       ))
     }
   </ul>
-  <a class="explore-pathways__cta" href={paths.explore()}>Jelajahi semua Soonies</a>
 </section>
 
 <style>
   .explore-pathways {
-    display: grid;
-    gap: 0.75rem;
-    padding-block: 1.5rem 3rem;
-    border-top: 2px solid var(--ink);
+    padding: clamp(4.5rem, 9vw, 8rem) var(--page-gutter) 0;
+    background: var(--accent-soft);
   }
 
-  .frame-number {
-    margin: 0;
-    color: var(--cobalt);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+  .explore-pathways__content {
+    display: grid;
+    justify-items: center;
+    max-width: 70rem;
+    margin-inline: auto;
+    text-align: center;
   }
 
   h2 {
+    max-width: 17ch;
     margin: 0;
-    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-size: clamp(2.6rem, 5.5vw, 5.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
   }
 
-  .explore-pathways__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0;
+  .explore-pathways__content > p:first-of-type {
+    margin: 1.5rem 0 0;
+    color: var(--ink-soft);
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+  }
+
+  form {
+    width: min(100%, 58rem);
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  form > label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  form > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+  }
+
+  input,
+  button {
+    min-height: 4.25rem;
+    border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent);
+    border-radius: 0.75rem;
+    font: inherit;
+  }
+
+  input {
+    min-width: 0;
+    padding-inline: 1.25rem;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 1.05rem;
+  }
+
+  button {
+    padding-inline: 1.5rem;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--surface);
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: var(--accent-strong);
+    transform: translateY(-2px);
+  }
+
+  .explore-pathways__routes {
+    display: grid;
+    width: min(100%, 58rem);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .explore-pathways__routes a {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 750;
+  }
+
+  .explore-pathways__all {
+    min-height: 48px;
+    margin-top: 1.5rem;
+    color: var(--accent);
+    font-weight: 750;
+  }
+
+  .explore-pathways__member {
+    margin: 0.75rem 0 3rem;
+    color: var(--ink-soft);
+  }
+
+  .explore-pathways__member a {
+    color: var(--accent);
+  }
+
+  .explore-pathways__people {
+    display: grid;
+    max-width: var(--content-max);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0 auto;
     padding: 0;
     list-style: none;
   }
 
-  .explore-pathways__chips a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding-inline: 1rem;
-    border: 2px solid var(--ink);
-    font-weight: 700;
-    text-decoration: none;
+  .explore-pathways__people a {
+    position: relative;
+    display: block;
+    color: var(--surface);
   }
 
-  .explore-pathways__chips a:focus-visible {
-    outline: none;
-    box-shadow: var(--focus-ring);
+  .explore-pathways__people :global(.portrait-frame) {
+    height: clamp(12rem, 24vw, 24rem);
+    border: 0;
+    border-radius: 0.75rem 0.75rem 0 0;
+    aspect-ratio: auto;
   }
 
-  .explore-pathways__cta {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-weight: 800;
-    color: var(--signal);
+  .explore-pathways__people strong {
+    position: absolute;
+    inset-inline: 1rem;
+    bottom: 1rem;
+    text-shadow: 0 1px 12px rgb(0 0 0 / 0.65);
+  }
+
+  @media (max-width: 700px) {
+    form > div {
+      grid-template-columns: 1fr;
+    }
+
+    .explore-pathways__routes {
+      grid-template-columns: 1fr;
+    }
+
+    .explore-pathways__people {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 </style>

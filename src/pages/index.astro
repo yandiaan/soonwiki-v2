@@ -4,36 +4,14 @@ import ExplorePathways from '@/components/astro/ExplorePathways.astro';
 import FeaturedJourney from '@/components/astro/FeaturedJourney.astro';
 import PossibilityContactSheet from '@/components/astro/PossibilityContactSheet.astro';
 import ProudMomentFrame from '@/components/astro/ProudMomentFrame.astro';
-import StoryChapter from '@/components/astro/StoryChapter.astro';
+import PublicHero from '@/components/astro/PublicHero.astro';
+import PublicIntroduction from '@/components/astro/PublicIntroduction.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getHomeStoryData } from '@/lib/server/public-repository';
 import { paths } from '@/lib/shared/paths';
 import '@/styles/home.css';
 
 const result = await getHomeStoryData(Astro);
-
-const chapters = result.ok
-  ? [
-      {
-        label: 'Sejak SOON',
-        story: result.data.featured.sinceSoonStory,
-        frameNumber: '002',
-        variant: 'default' as const,
-      },
-      {
-        label: 'Turning point',
-        story: result.data.featured.turningPointStory,
-        frameNumber: '003',
-        variant: 'pullquote' as const,
-      },
-      {
-        label: 'Arah sekarang',
-        story: result.data.featured.currentDirectionStory,
-        frameNumber: '004',
-        variant: 'default' as const,
-      },
-    ].filter((chapter): chapter is typeof chapter & { story: string } => Boolean(chapter.story))
-  : [];
 
 const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : undefined;
 ---
@@ -44,22 +22,19 @@ const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : unde
   canonical={new URL('/', Astro.url)}
 >
   <main id="main-content" class="home">
+    <PublicHero
+      featured={result.ok ? result.data.featured : undefined}
+      profiles={result.ok ? result.data.contactSheet : []}
+    />
+    <PublicIntroduction
+      featured={result.ok ? result.data.featured : undefined}
+      profiles={result.ok ? result.data.contactSheet : []}
+    />
     {
       result.ok ? (
         <>
           <FeaturedJourney profile={result.data.featured} />
-          {chapters.length > 0 && (
-            <div class="home__chapters">
-              {chapters.map((chapter) => (
-                <StoryChapter
-                  label={chapter.label}
-                  story={chapter.story}
-                  frameNumber={chapter.frameNumber}
-                  variant={chapter.variant}
-                />
-              ))}
-            </div>
-          )}
+          <PossibilityContactSheet profiles={result.data.contactSheet} />
           {firstProudMoment && (
             <ProudMomentFrame
               moment={firstProudMoment}
@@ -67,7 +42,6 @@ const firstProudMoment = result.ok ? result.data.featured.proudMoments[0] : unde
               profileName={result.data.featured.name}
             />
           )}
-          <PossibilityContactSheet profiles={result.data.contactSheet} />
           <ExplorePathways story={result.data} />
         </>
       ) : (

@@ -3,14 +3,28 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-  <p>SoonWiki &middot; Arsip hidup perjalanan member dan alumni SOON &middot; {year}</p>
+  <p><strong>SoonWiki</strong> menyimpan banyak jalan yang dimulai dari SOON.</p>
+  <p>{year}</p>
 </footer>
 
 <style>
   .site-footer {
-    padding: 1.5rem var(--page-gutter) calc(1.5rem + env(safe-area-inset-bottom, 0));
-    border-top: 2px solid var(--ink);
-    font-size: 0.75rem;
-    letter-spacing: 0.02em;
+    display: flex;
+    max-width: var(--content-max);
+    justify-content: space-between;
+    gap: 2rem;
+    margin-inline: auto;
+    padding: 2rem var(--page-gutter) calc(5rem + env(safe-area-inset-bottom, 0));
+    border-top: 1px solid var(--line-soft);
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+  }
+
+  .site-footer p {
+    margin: 0;
+  }
+
+  .site-footer strong {
+    color: var(--ink);
   }
 </style>

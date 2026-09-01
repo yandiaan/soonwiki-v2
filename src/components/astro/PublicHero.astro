@@ -1,0 +1,212 @@
+---
+import PortraitFrame from '@/components/astro/PortraitFrame.astro';
+import { paths } from '@/lib/shared/paths';
+
+import type { ProfileCard, ProfileDetail } from '@/lib/shared/public-models';
+
+interface Props {
+  featured?: ProfileDetail | undefined;
+  profiles?: ProfileCard[];
+}
+
+const { featured, profiles = [] } = Astro.props;
+const people = [
+  ...(featured
+    ? [
+        {
+          id: featured.id,
+          slug: featured.slug,
+          name: featured.name,
+          photoPath: featured.photoPath,
+          batchYear: featured.batchYear,
+        },
+      ]
+    : []),
+  ...profiles,
+].slice(0, 6);
+---
+
+<section class="public-hero" aria-labelledby="public-hero-title">
+  <div class="public-hero__media" aria-hidden={people.length === 0 ? 'true' : undefined}>
+    {
+      people.length > 0 ? (
+        <ul>
+          {people.map((person) => (
+            <li>
+              <PortraitFrame
+                photoPath={person.photoPath}
+                name={person.name}
+                loading={person.id === featured?.id ? 'eager' : 'lazy'}
+                transitionKey={'profile-' + person.id}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="public-hero__canvas">
+          <span />
+          <span />
+          <span />
+        </div>
+      )
+    }
+  </div>
+  <div class="public-hero__veil"></div>
+  <div class="public-hero__content">
+    <h1 id="public-hero-title">Banyak jalan dimulai dari SOON.</h1>
+    <p>Temukan perjalanan nyata, perubahan hidup, dan hal-hal yang dibanggakan oleh Soonies.</p>
+    <div class="public-hero__actions">
+      <a class="public-hero__primary" href={paths.explore()}>Jelajahi kisah</a>
+      <a class="public-hero__secondary" href="#tentang">Tentang SoonWiki</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .public-hero {
+    position: relative;
+    min-height: calc(100svh - 4.5rem);
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--surface);
+  }
+
+  .public-hero__media,
+  .public-hero__veil {
+    position: absolute;
+    inset: 0;
+  }
+
+  .public-hero__media ul,
+  .public-hero__canvas {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .public-hero__media li {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .public-hero__media li:nth-child(2n) {
+    transform: translateY(8%);
+  }
+
+  .public-hero__media :global(.portrait-frame) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    aspect-ratio: auto;
+    background: #879087;
+  }
+
+  .public-hero__media :global(.portrait-frame img) {
+    filter: saturate(0.86) contrast(1.04);
+  }
+
+  .public-hero__canvas span {
+    grid-column: span 2;
+    background: var(--accent);
+  }
+
+  .public-hero__canvas span:nth-child(2) {
+    background: var(--ink);
+  }
+
+  .public-hero__canvas span:nth-child(3) {
+    background: var(--accent-soft);
+  }
+
+  .public-hero__veil {
+    background:
+      linear-gradient(90deg, rgb(10 12 11 / 0.88) 0%, rgb(10 12 11 / 0.48) 48%, transparent 82%),
+      linear-gradient(0deg, rgb(10 12 11 / 0.42), transparent 55%);
+  }
+
+  .public-hero__content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-height: inherit;
+    align-content: end;
+    gap: 1.4rem;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: clamp(3rem, 7vw, 6.5rem) var(--page-gutter);
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin: 0;
+    font-size: clamp(3.2rem, 8vw, 7.25rem);
+    font-weight: 650;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+  }
+
+  .public-hero__content > p {
+    max-width: 39rem;
+    margin: 0;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    line-height: 1.5;
+  }
+
+  .public-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+
+  .public-hero__actions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    font-weight: 750;
+  }
+
+  .public-hero__primary {
+    padding-inline: 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--accent);
+    color: var(--surface);
+    text-decoration: none;
+  }
+
+  .public-hero__primary:hover {
+    background: var(--accent-strong);
+    transform: translateY(-2px);
+  }
+
+  .public-hero__secondary {
+    text-decoration-color: color-mix(in srgb, var(--surface) 55%, transparent);
+  }
+
+  @media (max-width: 700px) {
+    .public-hero {
+      min-height: calc(100svh - 4.5rem);
+    }
+
+    .public-hero__media ul,
+    .public-hero__canvas {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .public-hero__media li:nth-child(n + 4) {
+      display: none;
+    }
+
+    .public-hero__veil {
+      background: linear-gradient(0deg, rgb(10 12 11 / 0.92) 0%, rgb(10 12 11 / 0.48) 72%);
+    }
+
+    h1 {
+      font-size: clamp(3rem, 15vw, 4.3rem);
+    }
+  }
+</style>

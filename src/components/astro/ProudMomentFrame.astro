@@ -17,7 +17,6 @@ const captionParts = [moment.placeName, moment.year ? String(moment.year) : null
 ---
 
 <section class="proud-moment" aria-labelledby="proud-moment-title">
-  <p class="frame-number">HAL YANG DIBANGGAKAN</p>
   <div class="proud-moment__frame">
     {
       imageUrl && (
@@ -31,6 +30,7 @@ const captionParts = [moment.placeName, moment.year ? String(moment.year) : null
       )
     }
     <div class="proud-moment__overlay">
+      <p class="proud-moment__context">Hal yang berarti bagi {profileName ?? 'seorang Soonie'}</p>
       <h2 id="proud-moment-title">{moment.title}</h2>
       {moment.description && <p class="proud-moment__description">{moment.description}</p>}
       {captionParts.length > 0 && <p class="proud-moment__caption">{captionParts.join(' · ')}</p>}
@@ -54,53 +54,56 @@ const captionParts = [moment.placeName, moment.year ? String(moment.year) : null
 
 <style>
   .proud-moment {
-    padding-block: 1.5rem;
-    border-top: 2px solid var(--ink);
-  }
-
-  .frame-number {
-    margin: 0 0 0.75rem;
-    color: var(--cobalt);
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: clamp(4rem, 9vw, 8rem) var(--page-gutter);
   }
 
   .proud-moment__frame {
     position: relative;
-    width: 100vw;
-    margin-inline: calc(50% - 50vw);
     overflow: hidden;
-    border-block: 2px solid var(--ink);
+    border-radius: 1rem;
+    background: var(--ink);
+    color: var(--surface);
   }
 
   .proud-moment__image {
-    display: block;
+    position: absolute;
+    inset: 0;
     width: 100%;
-    max-height: 34rem;
+    height: 100%;
     object-fit: cover;
   }
 
   .proud-moment__overlay {
-    position: relative;
     display: grid;
-    gap: 0.5rem;
-    padding: 1.5rem var(--page-gutter);
+    align-content: end;
+    gap: 1rem;
+    min-height: min(36rem, 76svh);
+    padding: clamp(2rem, 5vw, 5rem);
   }
 
   .proud-moment__frame:has(.proud-moment__image) .proud-moment__overlay {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    background: color-mix(in srgb, var(--ink) 82%, transparent);
-    color: var(--paper);
+    position: relative;
+    min-height: min(50rem, 86svh);
+    background:
+      linear-gradient(90deg, rgb(10 12 11 / 0.9) 0%, rgb(10 12 11 / 0.58) 44%, transparent 78%),
+      linear-gradient(0deg, rgb(10 12 11 / 0.45), transparent 62%);
   }
 
   h2 {
-    max-width: 30ch;
+    max-width: 15ch;
     margin: 0;
-    font-size: clamp(1.75rem, 6vw, 3rem);
-    line-height: 1.1;
+    font-size: clamp(2.4rem, 5vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+  }
+
+  .proud-moment__context {
+    margin: 0;
+    color: color-mix(in srgb, var(--surface) 70%, transparent);
+    font-size: 0.9rem;
+    font-weight: 650;
   }
 
   .proud-moment__description {
@@ -110,14 +113,9 @@ const captionParts = [moment.placeName, moment.year ? String(moment.year) : null
 
   .proud-moment__caption {
     margin: 0;
-    color: var(--signal);
+    color: color-mix(in srgb, var(--surface) 72%, transparent);
     font-size: 0.85rem;
     font-weight: 700;
-  }
-
-  .proud-moment__frame:has(.proud-moment__image) .proud-moment__caption {
-    color: var(--paper);
-    opacity: 0.85;
   }
 
   .proud-moment__actions {
@@ -131,11 +129,7 @@ const captionParts = [moment.placeName, moment.year ? String(moment.year) : null
     align-items: center;
     min-height: 44px;
     font-weight: 700;
-    color: var(--cobalt);
-  }
-
-  .proud-moment__frame:has(.proud-moment__image) .proud-moment__actions a {
-    color: var(--paper);
-    text-decoration-color: var(--signal);
+    color: var(--surface);
+    text-decoration-color: color-mix(in srgb, var(--surface) 45%, transparent);
   }
 </style>

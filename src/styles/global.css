@@ -7,7 +7,7 @@
 }
 
 html {
-  background: var(--paper);
+  background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-sans);
   scroll-behavior: smooth;
@@ -17,6 +17,11 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--surface);
 }
 
 body,
@@ -36,6 +41,8 @@ svg {
 
 a {
   color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
 }
 
 button,
@@ -57,8 +64,19 @@ select {
   left: 0.75rem;
   padding: 0.75rem 1rem;
   background: var(--ink);
-  color: var(--paper);
+  color: var(--surface);
   transform: translateY(-160%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a,
+  button {
+    transition:
+      color 180ms var(--ease-out),
+      background-color 180ms var(--ease-out),
+      border-color 180ms var(--ease-out),
+      transform 180ms var(--ease-out);
+  }
 }
 
 .skip-link:focus {

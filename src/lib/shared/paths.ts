@@ -1,5 +1,6 @@
 export const paths = {
   home: () => '/',
+  about: () => '/#tentang',
   explore: () => '/explore',
   profile: (slug: string) => `/people/${slug}`,
   field: (slug: string) => `/field/${slug}`,
@@ -19,7 +20,8 @@ export interface NavigationLink {
 export const navigationLinks: NavigationLink[] = [
   { href: paths.home(), label: 'Beranda' },
   { href: paths.explore(), label: 'Jelajahi' },
-  { href: paths.me(), label: 'Profilku' },
+  { href: paths.about(), label: 'Tentang' },
+  { href: paths.login(), label: 'Masuk' },
 ];
 
 export function publicStorageUrl(bucket: 'profile-photos' | 'proud-moments', path: string): string {

@@ -9,7 +9,7 @@ const { currentPath } = Astro.props;
 ---
 
 <header class="site-header">
-  <a class="brand" href={paths.home()}>SOONWIKI</a>
+  <a class="brand" href={paths.home()}>SoonWiki</a>
   <nav aria-label="Navigasi utama" class="desktop-nav">
     <ul>
       {
@@ -27,19 +27,24 @@ const { currentPath } = Astro.props;
 
 <style>
   .site-header {
+    position: sticky;
+    z-index: 40;
+    top: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.85rem var(--page-gutter);
-    border-bottom: 2px solid var(--ink);
-    background: var(--paper);
+    min-height: 4.5rem;
+    padding: 0.75rem var(--page-gutter);
+    border-bottom: 1px solid var(--line-soft);
+    background: color-mix(in srgb, var(--canvas) 92%, transparent);
+    backdrop-filter: blur(14px);
   }
 
   .brand {
+    font-size: 1.05rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
-    font-size: 0.9rem;
+    letter-spacing: -0.025em;
     text-decoration: none;
   }
 
@@ -60,7 +65,7 @@ const { currentPath } = Astro.props;
   }
 
   .desktop-nav a[aria-current='page'] {
-    color: var(--cobalt);
+    color: var(--accent);
   }
 
   .desktop-nav a:focus-visible {
