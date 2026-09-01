@@ -13,11 +13,27 @@ export default tseslint.config(
   ...astro.configs['flat/recommended'],
   ...svelte.configs['flat/recommended'],
   {
+    files: ['**/*.svelte'],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+      },
+    },
+  },
+  {
     files: ['**/*.{js,mjs,cjs,ts,astro,svelte}'],
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node,
+      },
+    },
+  },
+  {
+    files: ['supabase/functions/**/*.ts'],
+    languageOptions: {
+      globals: {
+        Deno: 'readonly',
       },
     },
   },

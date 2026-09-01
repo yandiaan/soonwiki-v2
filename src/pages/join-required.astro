@@ -1,0 +1,36 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Butuh tautan undangan"
+  description="Akses SoonWiki membutuhkan tautan undangan dari pengelola SOON."
+>
+  <main id="main-content" class="join-required">
+    <p class="frame-number">AKSES / SOON</p>
+    <h1>Kamu perlu tautan undangan</h1>
+    <p>
+      Akun Google ini belum terhubung dengan keanggotaan SoonWiki. Minta tautan undangan dari
+      pengelola komunitas SOON untuk bergabung dan membuat profil.
+    </p>
+    <a href="/login">Sudah member? Masuk di sini</a>
+  </main>
+</BaseLayout>
+
+<style>
+  .join-required {
+    display: grid;
+    gap: 1rem;
+    max-width: 32rem;
+    min-height: 100vh;
+    align-content: center;
+    padding: var(--page-gutter);
+  }
+
+  .frame-number {
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+</style>

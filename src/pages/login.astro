@@ -1,0 +1,38 @@
+---
+import JoinWithGoogle from '@/components/svelte/JoinWithGoogle.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const message = Astro.url.searchParams.get('message');
+---
+
+<BaseLayout title="Masuk" description="Masuk ke SoonWiki dengan Google.">
+  <main id="main-content" class="login">
+    <p class="frame-number">MASUK / SOON</p>
+    <h1>Masuk ke SoonWiki</h1>
+    {message && <p role="alert">{message}</p>}
+    <JoinWithGoogle client:load mode="login" />
+  </main>
+</BaseLayout>
+
+<style>
+  .login {
+    display: grid;
+    gap: 1rem;
+    max-width: 32rem;
+    min-height: 100vh;
+    align-content: center;
+    padding: var(--page-gutter);
+  }
+
+  .frame-number {
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  [role='alert'] {
+    color: var(--signal);
+    font-weight: 700;
+  }
+</style>

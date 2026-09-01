@@ -1,0 +1,67 @@
+---
+import JoinWithGoogle from '@/components/svelte/JoinWithGoogle.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { describeAuthError } from '@/lib/shared/auth-errors';
+
+const { token } = Astro.params;
+
+if (!token) {
+  return Astro.redirect('/join-required');
+}
+
+const functionsUrl = `${import.meta.env.PUBLIC_SUPABASE_URL}/functions/v1/invitations`;
+const validation = await fetch(functionsUrl, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    apikey: import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  },
+  body: JSON.stringify({ action: 'start', token }),
+});
+
+const invalidMessage = validation.ok
+  ? null
+  : describeAuthError(
+      ((await validation.json().catch(() => null)) as { error?: string } | null)?.error,
+    );
+---
+
+<BaseLayout title="Gabung SoonWiki" description="Gabung SoonWiki lewat tautan undangan SOON.">
+  <main id="main-content" class="join">
+    <p class="frame-number">JOIN / SOON</p>
+    <h1>Gabung SoonWiki</h1>
+    {
+      invalidMessage ? (
+        <p role="alert">{invalidMessage}</p>
+      ) : (
+        <>
+          <p>Tautan undangan ini berlaku. Lanjutkan dengan akun Google kamu untuk bergabung.</p>
+          <JoinWithGoogle client:load mode="join" invitationToken={token} />
+        </>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<style>
+  .join {
+    display: grid;
+    gap: 1rem;
+    max-width: 32rem;
+    min-height: 100vh;
+    align-content: center;
+    padding: var(--page-gutter);
+  }
+
+  .frame-number {
+    color: var(--cobalt);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  [role='alert'] {
+    color: var(--signal);
+    font-weight: 700;
+  }
+</style>
