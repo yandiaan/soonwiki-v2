@@ -269,7 +269,24 @@
             aria-label={`Perbesar media ${memory.title}`}
           >
             {#if memory.mediaType === 'video'}
-              <video src={mediaUrl} class="card-media" preload="metadata" muted playsinline></video>
+              <video
+                class="card-media"
+                preload="metadata"
+                muted
+                playsinline
+                loop
+                onmouseenter={(e) => {
+                  (e.currentTarget as HTMLVideoElement).play().catch(() => {});
+                }}
+                onmouseleave={(e) => {
+                  const v = e.currentTarget as HTMLVideoElement;
+                  v.pause();
+                  v.currentTime = 0;
+                }}
+              >
+                <source src={mediaUrl} type="video/mp4" />
+                <source src={mediaUrl} type="video/webm" />
+              </video>
               <div class="video-indicator" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                   <polygon points="5 3 19 12 5 21 5 3" />

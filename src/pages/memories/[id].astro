@@ -77,10 +77,20 @@ const formattedDate = new Intl.DateTimeFormat('id-ID', {
     <!-- Main Detail Article -->
     <article class="memory-article" data-hero-glass>
       <!-- Media Showcase Frame -->
-      <div class="media-frame">
+      <div class={`media-frame ${memory.mediaType === 'video' ? 'media-frame--video' : ''}`}>
         {
           memory.mediaType === 'video' ? (
-            <video src={mediaUrl} controls playsinline class="media-element" />
+            <video controls playsinline preload="auto" class="media-element media-element--video">
+              <source src={mediaUrl} type="video/mp4" />
+              <source src={mediaUrl} type="video/webm" />
+              <p class="video-fallback">
+                Browser kamu tidak dapat memutar video ini secara langsung.{' '}
+                <a href={mediaUrl} target="_blank" rel="noopener noreferrer">
+                  Buka video langsung di tab baru
+                </a>
+                .
+              </p>
+            </video>
           ) : (
             <img src={mediaUrl} alt={memory.title} class="media-element" loading="eager" />
           )

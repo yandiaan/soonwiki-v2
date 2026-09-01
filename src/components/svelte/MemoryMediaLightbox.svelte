@@ -61,7 +61,9 @@
     <!-- Media Content -->
     <div class="lightbox-media-wrapper">
       {#if mediaType === 'video'}
-        <video src={url} controls autoplay playsinline class="lightbox-video">
+        <video controls playsinline preload="auto" class="lightbox-video">
+          <source src={url} type="video/mp4" />
+          <source src={url} type="video/webm" />
           <track kind="captions" />
           Browser Anda tidak mendukung tag video.
         </video>
