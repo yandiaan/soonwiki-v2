@@ -1,0 +1,87 @@
+---
+import { publicStorageUrl } from '@/lib/shared/paths';
+
+interface Props {
+  photoPath?: string | null;
+  name: string;
+  frameNumber?: string;
+  caption?: string;
+  loading?: 'eager' | 'lazy';
+  transitionKey?: string;
+}
+
+const { photoPath, name, frameNumber, caption, loading = 'lazy', transitionKey } = Astro.props;
+
+const initials = name
+  .split(' ')
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => part[0]?.toUpperCase())
+  .join('');
+
+const photoUrl = photoPath ? publicStorageUrl('profile-photos', photoPath) : null;
+---
+
+<figure class="portrait-frame" data-profile-transition-key={transitionKey}>
+  {
+    photoUrl ? (
+      <img src={photoUrl} alt={name} loading={loading} decoding="async" />
+    ) : (
+      <span class="initials" aria-hidden="true">
+        {initials}
+      </span>
+    )
+  }
+  {frameNumber && <span class="frame-number">{frameNumber}</span>}
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .portrait-frame {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    background: var(--sage);
+  }
+
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .initials {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  .frame-number {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.15rem 0.4rem;
+    background: var(--paper);
+    color: var(--cobalt);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  figcaption {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    padding: 0.5rem 0.6rem;
+    background: color-mix(in srgb, var(--ink) 78%, transparent);
+    color: var(--paper);
+    font-size: 0.75rem;
+  }
+</style>

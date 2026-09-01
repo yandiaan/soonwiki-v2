@@ -2,6 +2,11 @@
 import '@fontsource-variable/plus-jakarta-sans';
 import '@/styles/global.css';
 
+import MobileNavigation from '@/components/svelte/MobileNavigation.svelte';
+import SiteFooter from '@/components/astro/SiteFooter.astro';
+import SiteHeader from '@/components/astro/SiteHeader.astro';
+import { navigationLinks } from '@/lib/shared/paths';
+
 interface Props {
   title: string;
   description: string;
@@ -12,6 +17,7 @@ interface Props {
 const { title, description, image, canonical } = Astro.props;
 const siteName = 'SoonWiki';
 const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -39,6 +45,9 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
     -->
     <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+    <SiteHeader currentPath={currentPath} />
     <slot />
+    <SiteFooter />
+    <MobileNavigation client:load links={navigationLinks} currentPath={currentPath} />
   </body>
 </html>
