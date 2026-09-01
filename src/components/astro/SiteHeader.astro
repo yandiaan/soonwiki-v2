@@ -67,28 +67,37 @@ const navItems = [
 </header>
 
 <script>
+  import { getLenis } from '@/lib/browser/smooth-scroll';
+
   function setupHeader() {
     const header = document.getElementById('site-header');
     const list = document.getElementById('nav-pill-list');
     const indicator = document.getElementById('nav-indicator');
 
-    // 1. Scroll-Aware Island Compression
-    let ticking = false;
-    function onScroll() {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (window.scrollY > 24) {
-            header?.setAttribute('data-scrolled', 'true');
-          } else {
-            header?.removeAttribute('data-scrolled');
-          }
-          ticking = false;
-        });
-        ticking = true;
+    // 1. Hardware-Accelerated Scroll State Sync
+    function updateScrolledState(scrollY: number) {
+      if (scrollY > 15) {
+        header?.setAttribute('data-scrolled', 'true');
+      } else {
+        header?.removeAttribute('data-scrolled');
       }
     }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+
+    const lenis = getLenis();
+    if (lenis) {
+      lenis.on('scroll', ({ scroll }: { scroll: number }) => {
+        updateScrolledState(scroll);
+      });
+    }
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        updateScrolledState(window.scrollY);
+      },
+      { passive: true },
+    );
+    updateScrolledState(window.scrollY);
 
     // 2. Sliding Active Pill Motion Engine
     if (!list || !indicator) return;
@@ -153,9 +162,7 @@ const navItems = [
     width: 100%;
     padding: 0.85rem var(--page-gutter);
     pointer-events: none;
-    transition:
-      padding 350ms cubic-bezier(0.19, 1, 0.22, 1),
-      transform 350ms cubic-bezier(0.19, 1, 0.22, 1);
+    transition: padding 350ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
   .site-header__container {
@@ -165,7 +172,7 @@ const navItems = [
     justify-content: space-between;
     gap: 1.5rem;
     width: 100%;
-    max-width: var(--content-max);
+    max-width: min(100%, 58rem);
     min-height: 3.5rem;
     padding: 0.4rem 0.75rem 0.4rem 1.25rem;
     border-radius: 9999px;
@@ -174,29 +181,29 @@ const navItems = [
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
     border: 1px solid color-mix(in srgb, var(--line-soft) 80%, transparent);
     box-shadow: 0 4px 20px -4px rgb(0 0 0 / 0.04);
+    will-change: transform, backdrop-filter, box-shadow;
     transition:
-      max-width 400ms cubic-bezier(0.19, 1, 0.22, 1),
-      padding 300ms ease,
       background-color 300ms ease,
       border-color 300ms ease,
-      box-shadow 300ms ease,
-      transform 300ms cubic-bezier(0.19, 1, 0.22, 1);
+      box-shadow 350ms cubic-bezier(0.19, 1, 0.22, 1),
+      backdrop-filter 300ms ease,
+      transform 350ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
-  /* Scrolled Floating Island State */
+  /* Scrolled State: GPU-Accelerated Elevation (Zero Layout Reflow) */
   .site-header[data-scrolled='true'] {
     padding-top: 0.65rem;
   }
 
   .site-header[data-scrolled='true'] .site-header__container {
-    max-width: min(100%, 54rem);
     background: color-mix(in srgb, var(--surface) 88%, transparent);
     backdrop-filter: blur(28px) saturate(1.6);
     -webkit-backdrop-filter: blur(28px) saturate(1.6);
     border-color: color-mix(in srgb, var(--ink) 12%, transparent);
     box-shadow:
-      0 16px 36px -8px rgb(0 0 0 / 0.08),
+      0 16px 36px -8px rgb(0 0 0 / 0.09),
       0 1px 3px 0 rgb(0 0 0 / 0.04);
+    transform: translate3d(0, -1px, 0);
   }
 
   /* Brand Styling */
