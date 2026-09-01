@@ -98,10 +98,12 @@ const ogImageAlt = imageAlt || `SoonWiki — ${fullTitle}`;
 
     <script>
       import { initScrollReveals } from '@/lib/browser/motion-effects';
+      import { initSmoothScroll } from '@/lib/browser/smooth-scroll';
 
       let cleanup: (() => void) | undefined;
       function run() {
         if (cleanup) cleanup();
+        initSmoothScroll();
         cleanup = initScrollReveals();
       }
 
