@@ -1,5 +1,7 @@
 # SoonWiki Foundation + Identity Design
 
+> **SUPERSEDED — 1 September 2026.** Jangan implementasikan dokumen ini. Arsitektur Express, Drizzle, Better Auth, S3, email magic link, dan automated testing telah digantikan oleh `docs/superpowers/specs/2026-09-01-soonwiki-supabase-story-first-design.md`.
+
 Tanggal: 31 Agustus 2026  
 Status: Menunggu review pengguna  
 Scope: Milestone 1 — Foundation + Identity

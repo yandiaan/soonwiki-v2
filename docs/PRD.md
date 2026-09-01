@@ -2,20 +2,35 @@
 
 **Product:** SoonWiki
 **Version:** MVP / v1.0
-**Status:** Draft siap implementasi
+**Status:** Approved with 2026-09-01 direction addendum
 **Tagline:** **From Soon, Everywhere.**
+
+---
+
+## Approved Direction Addendum — 1 September 2026
+
+Bagian ini memiliki precedence atas requirement lama yang bertentangan. Detail lengkap berada di `docs/superpowers/specs/2026-09-01-soonwiki-supabase-story-first-design.md`.
+
+- Product hierarchy berubah dari search-first directory menjadi story-first living alumni archive. Search tetap tersedia di Explore sebagai utility sekunder.
+- PRD tetap menjadi functional scope MVP, tetapi bahasa dan model tidak boleh mengasumsikan semua alumni bekerja di perusahaan atau menjalani career path formal.
+- Istilah UI utama berubah: `career` menjadi `perjalanan`, `role` menjadi `peran atau kegiatan`, `company` menjadi `tempat, organisasi, atau usaha` dan bersifat opsional, `expertise` menjadi `hal yang ditekuni`, serta `achievement` menjadi `hal yang dibanggakan`.
+- Profile menambahkan tiga prompt naratif opsional: perubahan sejak SOON, turning point terbesar, dan apa yang sedang dibangun atau dituju sekarang.
+- Backend menggunakan Supabase penuh untuk database, Google OAuth, Storage, RLS, database functions, dan Edge Functions. Express, Drizzle, Better Auth, Resend, serta S3-compatible storage tidak digunakan.
+- Registrasi menggunakan reusable shared invitation link diikuti Google OAuth. Link dapat dipakai puluhan orang, satu akun hanya dapat redeem satu kali, dan admin dapat revoke atau rotate link.
+- Frontend menggunakan Astro SSR + Svelte islands dan package `motion` JavaScript. Visual world tetap Lembar Kontak Redaksi dengan pengalaman mobile-first.
+- Repository tidak boleh memiliki unit, integration, atau E2E test scripts maupun test code. Verification menggunakan lint, typecheck, schema lint, production build, dan manual review.
 
 ---
 
 ## 1. Product Overview
 
-**SoonWiki** adalah public directory untuk mendokumentasikan member aktif dan alumni Soon, termasuk:
+**SoonWiki** adalah living alumni archive untuk mendokumentasikan member aktif dan alumni Soon, termasuk:
 
-* mereka sekarang bekerja di mana,
-* role/profesi mereka,
-* bidang expertise,
-* perjalanan karier,
-* serta achievement atau hal yang mereka banggakan.
+* apa yang sedang mereka jalani,
+* peran, kegiatan, atau hal yang mereka tekuni,
+* perjalanan dan turning point mereka,
+* tempat, organisasi, atau usaha jika relevan,
+* serta hal yang mereka banggakan.
 
 SoonWiki dapat diakses secara publik tanpa login.
 

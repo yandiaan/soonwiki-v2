@@ -1,5 +1,7 @@
 # SoonWiki Foundation + Identity Implementation Plan
 
+> **SUPERSEDED — 1 September 2026.** Jangan eksekusi plan ini. Plan baru harus ditulis dari `docs/superpowers/specs/2026-09-01-soonwiki-supabase-story-first-design.md` setelah spec tersebut direview dan disetujui pengguna.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the production-ready Foundation + Identity vertical slice: reusable shared invitation, email verification, authenticated member session, owned basic profile, and instant public publishing.
