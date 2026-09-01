@@ -593,6 +593,7 @@
                 bind:value={form.currentPlaceName}
                 placeholder="Contoh: Gojek, Studio Keramik, Freelance"
               />
+              <span class="field-hint"> </span>
             </div>
 
             <div class="field field--full">
