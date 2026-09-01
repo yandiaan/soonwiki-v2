@@ -1,18 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import L from 'leaflet';
   import { SOON_GENERATIONS, getGenerationName } from '@/lib/shared/generations';
   import { paths, publicStorageUrl } from '@/lib/shared/paths';
   import 'leaflet/dist/leaflet.css';
 
   import type { GeoMemberPin } from '@/lib/shared/geo-resolver';
-  import type * as LeafletType from 'leaflet';
 
   let { pins = [] }: { pins: GeoMemberPin[] } = $props();
 
   let mapContainer: HTMLDivElement | undefined = $state();
-  let mapInstance: LeafletType.Map | null = $state(null);
-  let leaflet: typeof LeafletType | null = null;
-  let markersLayer: LeafletType.LayerGroup | null = null;
+  let mapInstance: L.Map | null = $state(null);
+  let markersLayer: L.LayerGroup | null = null;
 
   let selectedGeneration = $state<number | 'all'>('all');
   let searchQuery = $state('');
@@ -46,14 +45,10 @@
       .sort((a, b) => b.count - a.count);
   });
 
-  onMount(async () => {
-    if (typeof window === 'undefined' || !mapContainer) return;
+  onMount(() => {
+    if (!mapContainer) return;
 
     try {
-      const leafletModule = await import('leaflet');
-      const L = (leafletModule.default || leafletModule) as typeof LeafletType;
-      leaflet = L;
-
       // Initialize map centered over Indonesia
       const map = L.map(mapContainer, {
         center: [-2.5489, 118.0149],
@@ -95,16 +90,16 @@
   });
 
   function renderMarkers() {
-    if (!mapInstance || !leaflet || !markersLayer) return;
+    if (!mapInstance || !markersLayer) return;
 
     markersLayer.clearLayers();
 
     if (filteredPins.length === 0) return;
 
-    const bounds = leaflet.latLngBounds([]);
+    const bounds = L.latLngBounds([]);
 
     filteredPins.forEach((pin) => {
-      if (!leaflet || !mapInstance || !markersLayer) return;
+      if (!mapInstance || !markersLayer) return;
 
       const photoUrl = pin.photoPath ? publicStorageUrl('profile-photos', pin.photoPath) : null;
       const initials = pin.name
@@ -131,7 +126,7 @@
         </div>
       `;
 
-      const customIcon = leaflet.divIcon({
+      const customIcon = L.divIcon({
         className: 'soon-marker-wrapper',
         html: iconHtml,
         iconSize: [44, 44],
@@ -139,7 +134,7 @@
         popupAnchor: [0, -44],
       });
 
-      const marker = leaflet.marker([pin.lat, pin.lon], { icon: customIcon });
+      const marker = L.marker([pin.lat, pin.lon], { icon: customIcon });
 
       // Popup Content
       const popupHtml = `

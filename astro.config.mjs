@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 
-import vercel from '@astrojs/vercel';
 import svelte from '@astrojs/svelte';
+import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
@@ -10,6 +10,12 @@ export default defineConfig({
   integrations: [svelte()],
   security: { checkOrigin: true },
   vite: {
+    optimizeDeps: {
+      include: ['leaflet'],
+    },
+    ssr: {
+      noExternal: ['leaflet'],
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
