@@ -54,10 +54,29 @@ export interface ProfileDetail {
   updatedAt: string;
 }
 
+export interface TurningPointHighlight {
+  profileId: string;
+  profileName: string;
+  profileSlug: string;
+  batchYear: number;
+  activity: string | null;
+  placeName: string | null;
+  quote: string;
+}
+
+export interface CommunityStats {
+  totalStories: number;
+  totalFields: number;
+  totalBatches: number;
+}
+
 export interface HomeStory {
   featured: ProfileDetail;
   contactSheet: ProfileCard[];
+  turningPoints: TurningPointHighlight[];
+  proudMoment?: ProudMoment | undefined;
   totalPublishedProfiles: number;
+  stats: CommunityStats;
 }
 
 export interface ExploreResult {

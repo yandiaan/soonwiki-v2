@@ -170,7 +170,7 @@ export async function getHomeStoryData(
 
   const { data: candidates, error } = await supabase
     .from('published_profile_details')
-    .select('id, slug, since_soon_story, turning_point_story, current_direction_story, updated_at')
+    .select('*')
     .order('updated_at', { ascending: false })
     .limit(20);
 
@@ -205,16 +205,46 @@ export async function getHomeStoryData(
     .order('updated_at', { ascending: false })
     .limit(12);
 
-  const { count } = await supabase
+  const turningPoints = candidates
+    .filter((row) => Boolean(row.turning_point_story && row.slug && row.id))
+    .slice(0, 3)
+    .map((row) => ({
+      profileId: row.id ?? '',
+      profileName: row.name ?? '',
+      profileSlug: row.slug ?? '',
+      batchYear: row.batch_year ?? 0,
+      activity: row.current_activity ?? null,
+      placeName: row.current_place_name ?? null,
+      quote: row.turning_point_story ?? '',
+    }));
+
+  const { count: totalPublishedProfiles } = await supabase
     .from('published_profile_cards')
     .select('id', { count: 'exact', head: true });
+
+  const { count: totalFields } = await supabase
+    .from('fields')
+    .select('id', { count: 'exact', head: true });
+
+  const batchYears = Array.from(
+    new Set(candidates.map((c) => c.batch_year).filter((y): y is number => Boolean(y))),
+  );
+
+  const firstProudMoment = featuredResult.data.proudMoments[0];
 
   return {
     ok: true,
     data: {
       featured: featuredResult.data,
       contactSheet: (contactSheetRows ?? []).map(toProfileCard),
-      totalPublishedProfiles: count ?? 0,
+      turningPoints,
+      proudMoment: firstProudMoment,
+      totalPublishedProfiles: totalPublishedProfiles ?? candidates.length,
+      stats: {
+        totalStories: totalPublishedProfiles ?? candidates.length,
+        totalFields: totalFields ?? 8,
+        totalBatches: Math.max(batchYears.length, 1),
+      },
     },
   };
 }
