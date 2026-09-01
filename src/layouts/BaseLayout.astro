@@ -10,31 +10,77 @@ import { navigationLinks } from '@/lib/shared/paths';
 interface Props {
   title: string;
   description: string;
-  image?: string;
-  canonical?: URL;
+  image?: string | undefined;
+  imageAlt?: string | undefined;
+  canonical?: URL | undefined;
+  type?: 'website' | 'profile' | 'article' | undefined;
 }
 
-const { title, description, image, canonical } = Astro.props;
+const { title, description, image, imageAlt, canonical, type = 'website' } = Astro.props;
 const siteName = 'SoonWiki';
-const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+const fullTitle =
+  title === siteName ? `${siteName} — Direktori & Arsip Alumni SOON` : `${title} · ${siteName}`;
 const currentPath = Astro.url.pathname;
+
+// Resolve clean canonical and absolute URLs
+const siteOrigin = (
+  import.meta.env.PUBLIC_SITE_URL ||
+  Astro.site?.origin ||
+  Astro.url.origin
+).replace(/\/$/, '');
+
+const pageUrl = canonical ? canonical.toString() : `${siteOrigin}${currentPath}`;
+
+// Default High-Res Open Graph preview card (1200x630) for rich WhatsApp / Telegram link previews
+const defaultOgImage =
+  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&h=630&q=85';
+
+const ogImage = image
+  ? image.startsWith('http')
+    ? image
+    : `${siteOrigin}${image.startsWith('/') ? '' : '/'}${image}`
+  : defaultOgImage;
+
+const ogImageAlt = imageAlt || `SoonWiki — ${fullTitle}`;
 ---
 
 <!doctype html>
 <html lang="id">
   <head>
+    <!-- Primary Meta Tags -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="title" content={fullTitle} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f4f5f1" />
+    <meta name="theme-color" content="#0a0c0b" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="view-transition" content="same-origin" />
-    <meta property="og:type" content="website" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Komunitas Alumni SOON" />
+    <link rel="canonical" href={pageUrl} />
+
+    <!-- Open Graph / WhatsApp / Telegram / Facebook / LinkedIn -->
+    <meta property="og:type" content={type} />
     <meta property="og:site_name" content={siteName} />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    {image && <meta property="og:image" content={image} />}
-    {canonical && <link rel="canonical" href={canonical.toString()} />}
-    <title>{fullTitle}</title>
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:secure_url" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:locale" content="id_ID" />
+
+    <!-- Twitter / X / Discord Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={pageUrl} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
   </head>
   <body>
     <!--

@@ -3,7 +3,7 @@ import EmptyState from '@/components/astro/EmptyState.astro';
 import ProfileCard from '@/components/astro/ProfileCard.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getFieldCollection } from '@/lib/server/public-repository';
-import { paths } from '@/lib/shared/paths';
+import { paths, publicStorageUrl } from '@/lib/shared/paths';
 import '@/styles/collections.css';
 
 const { slug } = Astro.params;
@@ -19,12 +19,16 @@ if (!result.ok) {
 }
 
 const { name, profiles } = result.data;
+const coverPhoto = profiles[0]?.photoPath
+  ? publicStorageUrl('profile-photos', profiles[0].photoPath)
+  : undefined;
 ---
 
 <BaseLayout
   title={name}
-  description={`Soonies yang menekuni ${name}.`}
+  description={`Soonies yang menekuni ${name} di berbagai peran, tempat, dan tahap perjalanan.`}
   canonical={new URL(`/field/${slug}`, Astro.url)}
+  image={coverPhoto}
 >
   <main id="main-content" class="collection">
     <header class="collection__header">

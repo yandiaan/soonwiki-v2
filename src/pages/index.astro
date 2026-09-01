@@ -9,18 +9,23 @@ import PublicIntroduction from '@/components/astro/PublicIntroduction.astro';
 import TurningPointMosaic from '@/components/astro/TurningPointMosaic.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getHomeStoryData } from '@/lib/server/public-repository';
-import { paths } from '@/lib/shared/paths';
+import { paths, publicStorageUrl } from '@/lib/shared/paths';
 import '@/styles/home.css';
 
 const result = await getHomeStoryData(Astro);
 
 const firstProudMoment = result.ok ? result.data.proudMoment : undefined;
+const featuredPhoto =
+  result.ok && result.data.featured.photoPath
+    ? publicStorageUrl('profile-photos', result.data.featured.photoPath)
+    : undefined;
 ---
 
 <BaseLayout
   title="SoonWiki"
-  description="Arsip hidup perjalanan member dan alumni SOON."
+  description="Arsip hidup perjalanan member dan alumni SOON. Temukan kisah, titik balik, dan karya kebanggaan Soonies."
   canonical={new URL('/', Astro.url)}
+  image={featuredPhoto}
 >
   <main id="main-content" class="home">
     <PublicHero
