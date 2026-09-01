@@ -113,6 +113,7 @@
 
   let saveState: 'idle' | 'dirty' | 'saving' | 'saved' | 'error' = $state('idle');
   let errorMessage = $state('');
+  let isLocationValid = $state(true);
   let duplicateCandidates = $state<DuplicateCandidate[]>([]);
   let duplicateConfirmed = $state(false);
   let showDraftBanner = $state(false);
@@ -191,6 +192,14 @@
   async function performSave() {
     saveState = 'saving';
     errorMessage = '';
+
+    if (form.location.trim().length > 0 && !isLocationValid) {
+      saveState = 'error';
+      errorMessage =
+        'Lokasi domisili belum memiliki koordinat peta yang valid. Silakan pilih salah satu kota dari rekomendasi pencarian atau klik Gunakan GPS.';
+      currentTab = 'identity';
+      return;
+    }
 
     const batchYearNum = Number.parseInt(form.batchYear, 10);
 
@@ -590,6 +599,7 @@
               <label for="profile-location">Domisili / Kota Saat Ini</label>
               <LocationPicker
                 bind:value={form.location}
+                bind:isValid={isLocationValid}
                 placeholder="Ketik nama kota atau gunakan deteksi GPS…"
               />
               <span class="field-hint"

@@ -3,9 +3,13 @@
 
   let {
     value = $bindable(''),
+    isValid = $bindable(),
+    coords = $bindable(),
     placeholder = 'Ketik nama kota atau gunakan deteksi GPS…',
   }: {
     value: string;
+    isValid?: boolean;
+    coords?: { lat: number; lon: number } | null;
     placeholder?: string;
   } = $props();
 
@@ -24,9 +28,14 @@
   let suggestions = $state<LocationSuggestion[]>([]);
   let showSuggestions = $state(false);
   let geoError = $state('');
-  let coords = $state<{ lat: number; lon: number } | null>(null);
   let searchTimeout: ReturnType<typeof setTimeout> | undefined;
   let containerEl: HTMLElement | undefined;
+
+  $effect(() => {
+    isValid =
+      !value.trim() ||
+      Boolean(coords && Number.isFinite(coords.lat) && Number.isFinite(coords.lon));
+  });
 
   function formatLocationName(item: {
     name?: string;
@@ -116,11 +125,21 @@
     }, 320);
   }
 
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      if (showSuggestions && suggestions.length > 0 && suggestions[0]) {
+        event.preventDefault();
+        selectSuggestion(suggestions[0]);
+      }
+    }
+  }
+
   function selectSuggestion(suggestion: LocationSuggestion) {
     value = suggestion.display_name;
     coords = { lat: suggestion.lat, lon: suggestion.lon };
     showSuggestions = false;
     suggestions = [];
+    geoError = '';
   }
 
   async function handleGetCurrentLocation() {
@@ -189,6 +208,17 @@
   function handleBlur(event: FocusEvent) {
     if (containerEl && !containerEl.contains(event.relatedTarget as Node)) {
       setTimeout(() => {
+        // If user typed and left without clicking, auto-resolve if first suggestion matches
+        if (value.trim() && !coords && suggestions.length > 0 && suggestions[0]) {
+          const top = suggestions[0];
+          if (
+            top.name.toLowerCase().includes(value.trim().toLowerCase()) ||
+            value.trim().toLowerCase().includes(top.name.toLowerCase())
+          ) {
+            selectSuggestion(top);
+            return;
+          }
+        }
         showSuggestions = false;
       }, 180);
     }
@@ -231,7 +261,7 @@
 
 <div class="location-picker" bind:this={containerEl} onfocusout={handleBlur}>
   <div class="input-row">
-    <div class="input-with-pin">
+    <div class="input-with-pin" class:has-invalid-coord={value.trim() && !coords && !isSearching}>
       <svg
         class="input-pin-icon"
         viewBox="0 0 24 24"
@@ -252,10 +282,13 @@
         type="text"
         {value}
         oninput={handleInput}
+        onkeydown={handleKeydown}
         {placeholder}
         autocomplete="off"
         aria-autocomplete="list"
         aria-expanded={showSuggestions}
+        aria-invalid={!isValid}
+        class:is-invalid-field={!isValid}
       />
       {#if isSearching}
         <div class="search-mini-spinner" aria-hidden="true"></div>
@@ -400,7 +433,9 @@
         <line x1="12" y1="8" x2="12" y2="12" />
         <line x1="12" y1="16" x2="12.01" y2="16" />
       </svg>
-      <span>Pilih dari daftar rekomendasi di atas agar koordinat peta tercatat akurat.</span>
+      <span
+        >Wajib pilih salah satu saran kota di atas agar koordinat peta valid sebelum menyimpan.</span
+      >
     </div>
   {/if}
 
@@ -467,6 +502,10 @@
     transition:
       border-color 150ms ease,
       box-shadow 150ms ease;
+  }
+
+  .input-with-pin.has-invalid-coord input {
+    border-color: #f59e0b;
   }
 
   .input-with-pin input:focus {
