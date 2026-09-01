@@ -29,7 +29,7 @@ const featuredPhoto =
   title="SoonWiki"
   description="Arsip hidup perjalanan member dan alumni SOON. Temukan kisah, titik balik, dan karya kebanggaan SoonMates."
   canonical={new URL('/', Astro.url)}
-  image={featuredPhoto}
+  image={featuredPhoto || '/og-banner.jpg'}
 >
   <main id="main-content" class="home">
     <PublicHero

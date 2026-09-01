@@ -12,12 +12,13 @@ interface Props {
   description: string;
   image?: string | undefined;
   imageAlt?: string | undefined;
+  video?: string | undefined;
   canonical?: URL | undefined;
   type?: 'website' | 'profile' | 'article' | undefined;
   session?: MemberSession | null | undefined;
 }
 
-const { title, description, image, imageAlt, canonical, type = 'website' } = Astro.props;
+const { title, description, image, imageAlt, video, canonical, type = 'website' } = Astro.props;
 const session =
   Astro.props.session !== undefined ? Astro.props.session : await getMemberSession(Astro);
 const siteName = 'SoonWiki';
@@ -35,8 +36,7 @@ const siteOrigin = (
 const pageUrl = canonical ? canonical.toString() : `${siteOrigin}${currentPath}`;
 
 // Default High-Res Open Graph preview card (1200x630) for rich WhatsApp / Telegram link previews
-const defaultOgImage =
-  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&h=630&q=85';
+const defaultOgImage = `${siteOrigin}/og-banner.jpg`;
 
 const ogImage = image
   ? image.startsWith('http')
@@ -45,6 +45,16 @@ const ogImage = image
   : defaultOgImage;
 
 const ogImageAlt = imageAlt || `SoonWiki — ${fullTitle}`;
+
+const isPng = ogImage.toLowerCase().includes('.png');
+const isWebp = ogImage.toLowerCase().includes('.webp');
+const imageMimeType = isPng ? 'image/png' : isWebp ? 'image/webp' : 'image/jpeg';
+
+const ogVideo = video
+  ? video.startsWith('http')
+    ? video
+    : `${siteOrigin}${video.startsWith('/') ? '' : '/'}${video}`
+  : undefined;
 ---
 
 <!doctype html>
@@ -76,8 +86,19 @@ const ogImageAlt = imageAlt || `SoonWiki — ${fullTitle}`;
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogImageAlt} />
-    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:type" content={imageMimeType} />
     <meta property="og:locale" content="id_ID" />
+    {
+      ogVideo && (
+        <>
+          <meta property="og:video" content={ogVideo} />
+          <meta property="og:video:secure_url" content={ogVideo} />
+          <meta property="og:video:type" content="video/mp4" />
+          <meta property="og:video:width" content="1280" />
+          <meta property="og:video:height" content="720" />
+        </>
+      )
+    }
 
     <!-- Twitter / X / Discord Cards -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -86,6 +107,7 @@ const ogImageAlt = imageAlt || `SoonWiki — ${fullTitle}`;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
+    {ogVideo && <meta name="twitter:player" content={ogVideo} />}
   </head>
   <body>
     <!--

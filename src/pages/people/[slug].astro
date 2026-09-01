@@ -37,10 +37,11 @@ const image = profile.photoPath ? publicStorageUrl('profile-photos', profile.pho
 ---
 
 <BaseLayout
-  title={`${profile.name} · SoonWiki`}
+  title={profile.name}
   description={profile.bio ?? `Jejak langkah dan kisah perjalanan ${profile.name} di SoonWiki.`}
   canonical={new URL(`/people/${profile.slug}`, Astro.url)}
-  {...image ? { image } : {}}
+  image={image || '/og-banner.jpg'}
+  type="profile"
 >
   <main id="main-content" class="profile">
     <!-- Main Profile Hero Section -->

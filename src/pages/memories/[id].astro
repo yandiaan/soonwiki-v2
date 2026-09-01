@@ -46,7 +46,9 @@ const formattedDate = new Intl.DateTimeFormat('id-ID', {
   title={`${memory.title} · Galeri Kenangan SOON`}
   description={memory.story.slice(0, 160)}
   canonical={new URL(`/memories/${memory.id}`, Astro.url)}
-  {...memory.mediaType === 'image' ? { image: mediaUrl } : {}}
+  image={memory.mediaType === 'image' ? mediaUrl : authorAvatar || '/og-memories.jpg'}
+  {...memory.mediaType === 'video' ? { video: mediaUrl } : {}}
+  type="article"
 >
   <main id="main-content" class="memory-detail-page">
     <!-- Top Navigation -->
