@@ -56,10 +56,10 @@
           match: (p: string) => p === '/explore' || p.startsWith('/explore'),
         },
         {
-          href: paths.about(),
-          label: 'Tentang',
-          icon: 'about',
-          match: (p: string) => p === '/#tentang',
+          href: paths.feedback(),
+          label: 'Masukan',
+          icon: 'feedback',
+          match: (p: string) => p === '/feedback' || p.startsWith('/feedback'),
         },
         {
           href: paths.me(),
@@ -209,6 +209,21 @@
               >
                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
+              </svg>
+            {:else if item.icon === 'feedback'}
+              <!-- Editorial Feedback Message Box -->
+              <svg
+                class="dock-icon"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.85"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
             {/if}
           </span>

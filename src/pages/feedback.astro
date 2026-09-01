@@ -1,0 +1,115 @@
+---
+import FeedbackForm from '@/components/svelte/FeedbackForm.svelte';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { listMyFeedbacks } from '@/lib/server/feedback-repository';
+import { getMemberSession } from '@/lib/server/session';
+import { createServerSupabase } from '@/lib/supabase/server';
+import { paths } from '@/lib/shared/paths';
+
+const session = await getMemberSession(Astro);
+const supabase = createServerSupabase(Astro);
+
+const myFeedbacks = session?.user ? await listMyFeedbacks(supabase, session.user.id) : [];
+---
+
+<BaseLayout
+  title="Beri Masukan & Lapor Kendala | SoonWiki"
+  description="Kirimkan laporan kendala aplikasi atau ide fitur baru untuk SoonWiki."
+>
+  <main id="main-content" class="feedback-page">
+    <div class="feedback-hero">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={paths.home()} class="back-link">
+          <svg
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+          <span>Beranda</span>
+        </a>
+      </nav>
+      <span class="editorial-tag">PUSAT BANTUAN & IDE</span>
+      <h1>Masukan, Kendala & Usulan Fitur</h1>
+      <p class="hero-desc">
+        Temukan kendala saat menggunakan web atau punya ide fitur baru? Sampaikan langsung ke tim
+        pengembang untuk terus membangun SoonWiki bersama.
+      </p>
+    </div>
+
+    <div class="feedback-wrapper">
+      <FeedbackForm client:load initialFeedbacks={myFeedbacks} isLoggedIn={!!session?.user} />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .feedback-page {
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: clamp(1.5rem, 4vw, 3rem) var(--page-gutter) clamp(4rem, 8vw, 6rem);
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .feedback-hero {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 760px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .breadcrumb {
+    margin-bottom: 0.25rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .editorial-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .feedback-hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .hero-desc {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .feedback-wrapper {
+    width: 100%;
+  }
+</style>

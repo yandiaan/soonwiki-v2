@@ -1,30 +1,84 @@
 ---
+import { paths } from '@/lib/shared/paths';
+
 const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-  <p><strong>SoonWiki</strong> menyimpan banyak jalan yang dimulai dari SOON.</p>
-  <p>{year}</p>
+  <div class="footer-left">
+    <p><strong>SoonWiki</strong> menyimpan banyak jalan yang dimulai dari SOON.</p>
+  </div>
+  <div class="footer-right">
+    <a href={paths.feedback()} class="footer-link">
+      <svg
+        viewBox="0 0 24 24"
+        width="14"
+        height="14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <span>Lapor Kendala & Ide Fitur</span>
+    </a>
+    <span class="footer-dot" aria-hidden="true">·</span>
+    <p class="footer-year">{year}</p>
+  </div>
 </footer>
 
 <style>
   .site-footer {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     max-width: var(--content-max);
     justify-content: space-between;
-    gap: 2rem;
+    gap: 1.25rem;
     margin-inline: auto;
     padding: 2rem var(--page-gutter) calc(5rem + env(safe-area-inset-bottom, 0));
     border-top: 1px solid var(--line-soft);
     color: var(--ink-soft);
-    font-size: 0.8rem;
+    font-size: 0.82rem;
   }
 
-  .site-footer p {
+  .footer-left p,
+  .footer-right p {
     margin: 0;
   }
 
   .site-footer strong {
     color: var(--ink);
+  }
+
+  .footer-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 150ms ease;
+  }
+
+  .footer-link:hover {
+    color: var(--accent);
+  }
+
+  .footer-dot {
+    color: var(--line-soft);
+  }
+
+  .footer-year {
+    color: var(--ink-soft);
   }
 </style>

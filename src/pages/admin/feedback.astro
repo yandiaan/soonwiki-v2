@@ -1,7 +1,7 @@
 ---
-import AdminInvitationManager from '@/components/svelte/AdminInvitationManager.svelte';
+import AdminFeedbackQueue from '@/components/svelte/AdminFeedbackQueue.svelte';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { listInvitations } from '@/lib/server/admin-repository';
+import { listAllFeedbacks } from '@/lib/server/feedback-repository';
 import { getMemberSession } from '@/lib/server/session';
 import { createServerSupabase } from '@/lib/supabase/server';
 import '@/styles/admin.css';
@@ -13,7 +13,7 @@ if (!session || session.member?.role !== 'admin' || session.member.status !== 'a
 }
 
 const supabase = createServerSupabase(Astro);
-const invitations = await listInvitations(supabase);
+const feedbacks = await listAllFeedbacks(supabase);
 
 const navLinks = [
   { href: '/admin', label: 'Dashboard' },
@@ -27,10 +27,13 @@ const navLinks = [
 const currentPath = Astro.url.pathname;
 ---
 
-<BaseLayout title="Admin · Undangan" description="Kelola tautan undangan SoonWiki.">
+<BaseLayout
+  title="Admin · Masukan & Bug"
+  description="Kelola kendala dan usulan fitur dari anggota SoonWiki."
+>
   <main id="main-content" class="admin">
     <p class="frame-number">ADMIN</p>
-    <h1>Undangan</h1>
+    <h1>Masukan & Bug</h1>
     <nav class="admin__nav" aria-label="Navigasi admin">
       {
         navLinks.map((link) => (
@@ -40,7 +43,7 @@ const currentPath = Astro.url.pathname;
         ))
       }
     </nav>
-    <AdminInvitationManager client:load invitations={invitations} />
+    <AdminFeedbackQueue client:load feedbacks={feedbacks} adminUserId={session.user.id} />
   </main>
 </BaseLayout>
 
