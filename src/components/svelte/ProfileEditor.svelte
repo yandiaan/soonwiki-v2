@@ -441,7 +441,22 @@
             onclick={() => (showAiModal = true)}
             aria-label="Isi otomatis profil dengan bantuan AI"
           >
-            <span>Minta AI Bantu</span>
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"
+              />
+            </svg>
+            <span>Quick Fill AI</span>
           </button>
           <button
             type="button"
@@ -1172,7 +1187,7 @@
     background: var(--surface);
     border: 1px solid var(--line-soft);
     display: grid;
-    gap: 0.75rem;
+    gap: 0.85rem;
     box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.03);
   }
 
@@ -1180,12 +1195,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1rem;
   }
 
   .completion-info {
     display: flex;
     align-items: baseline;
     gap: 0.75rem;
+    white-space: nowrap;
   }
 
   .completion-title {
@@ -1204,6 +1221,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .ai-quickfill-btn {
@@ -1218,6 +1236,7 @@
     font-size: 0.82rem;
     font-weight: 750;
     cursor: pointer;
+    white-space: nowrap;
     transition:
       background-color 150ms ease,
       border-color 150ms ease,
@@ -1244,6 +1263,7 @@
     font-size: 0.82rem;
     font-weight: 750;
     cursor: pointer;
+    white-space: nowrap;
     transition:
       background-color 150ms ease,
       transform 150ms var(--ease-out);
@@ -1267,11 +1287,53 @@
     font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
+    white-space: nowrap;
     transition: background-color 150ms ease;
   }
 
   .preview-toggle-btn:hover {
     background: var(--surface-muted);
+  }
+
+  @media (max-width: 768px) {
+    .completion-card {
+      padding: 1rem 1.15rem;
+      gap: 0.85rem;
+    }
+
+    .completion-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .completion-info {
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .completion-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .ai-quickfill-btn {
+      grid-column: 1 / -1;
+      justify-content: center;
+      padding: 0.55rem 1rem;
+      font-size: 0.84rem;
+      width: 100%;
+    }
+
+    .tour-trigger-btn,
+    .preview-toggle-btn {
+      justify-content: center;
+      padding: 0.5rem 0.5rem;
+      font-size: 0.78rem;
+      width: 100%;
+    }
   }
 
   @media (min-width: 1024px) {
