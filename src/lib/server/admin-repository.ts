@@ -115,22 +115,10 @@ export async function listAllMemberProfilesForAdmin(
   search?: string,
 ): Promise<AdminResult<AdminMemberProfileRow[]>> {
   // 1. Try secure RPC first
-  const rpcResult = await client.rpc('admin_list_member_profiles' as unknown as 'search_profiles');
+  const rpcResult = await client.rpc('admin_list_member_profiles');
 
   if (!rpcResult.error && rpcResult.data && Array.isArray(rpcResult.data)) {
-    let list: AdminMemberProfileRow[] = (
-      rpcResult.data as unknown as Array<{
-        user_id: string;
-        email: string;
-        name: string;
-        slug: string | null;
-        generation_key: string | null;
-        profile_id: string | null;
-        is_published: boolean;
-        has_profile: boolean;
-        updated_at: string;
-      }>
-    ).map((row) => ({
+    let list: AdminMemberProfileRow[] = rpcResult.data.map((row) => ({
       userId: row.user_id,
       email: row.email || '',
       name: row.name || 'Tanpa nama',

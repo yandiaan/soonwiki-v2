@@ -39,6 +39,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_feedbacks: {
+        Row: {
+          admin_notes: string | null
+          category: string
+          created_at: string
+          description: string
+          device_info: string | null
+          id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          category: string
+          created_at?: string
+          description: string
+          device_info?: string | null
+          id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          device_info?: string | null
+          id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       fields: {
         Row: {
           created_at: string
@@ -219,6 +261,135 @@ export type Database = {
         }
         Relationships: []
       }
+      memories: {
+        Row: {
+          author_id: string
+          created_at: string
+          generation_key: string
+          id: string
+          is_published: boolean
+          location_tag: string | null
+          media_aspect_ratio: string
+          media_path: string
+          media_type: string
+          memory_year: number | null
+          story: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          generation_key: string
+          id?: string
+          is_published?: boolean
+          location_tag?: string | null
+          media_aspect_ratio?: string
+          media_path: string
+          media_type?: string
+          memory_year?: number | null
+          story: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          generation_key?: string
+          id?: string
+          is_published?: boolean
+          location_tag?: string | null
+          media_aspect_ratio?: string
+          media_path?: string
+          media_type?: string
+          memory_year?: number | null
+          story?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      memory_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          memory_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          memory_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          memory_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_comments_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memory_comments_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "published_memory_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memory_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          memory_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          memory_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          memory_id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_reactions_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memory_reactions_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "published_memory_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       places: {
         Row: {
           created_at: string
@@ -295,12 +466,12 @@ export type Database = {
       }
       profiles: {
         Row: {
-          generation_key: string
           bio: string | null
           created_at: string
           current_activity: string | null
           current_direction_story: string | null
           current_place_id: string | null
+          generation_key: string
           id: string
           instagram_url: string | null
           is_published: boolean
@@ -316,12 +487,12 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
-          generation_key: string
           bio?: string | null
           created_at?: string
           current_activity?: string | null
           current_direction_story?: string | null
           current_place_id?: string | null
+          generation_key: string
           id?: string
           instagram_url?: string | null
           is_published?: boolean
@@ -337,12 +508,12 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
-          generation_key?: string
           bio?: string | null
           created_at?: string
           current_activity?: string | null
           current_direction_story?: string | null
           current_place_id?: string | null
+          generation_key?: string
           id?: string
           instagram_url?: string | null
           is_published?: boolean
@@ -542,13 +713,64 @@ export type Database = {
       }
     }
     Views: {
+      published_memory_cards: {
+        Row: {
+          author_generation_key: string | null
+          author_id: string | null
+          author_name: string | null
+          author_photo_path: string | null
+          author_slug: string | null
+          comment_count: number | null
+          created_at: string | null
+          generation_key: string | null
+          id: string | null
+          location_tag: string | null
+          media_aspect_ratio: string | null
+          media_path: string | null
+          media_type: string | null
+          memory_year: number | null
+          reaction_count: number | null
+          story: string | null
+          title: string | null
+        }
+        Relationships: []
+      }
+      published_memory_comments: {
+        Row: {
+          author_generation_key: string | null
+          author_id: string | null
+          author_name: string | null
+          author_photo_path: string | null
+          author_slug: string | null
+          content: string | null
+          created_at: string | null
+          id: string | null
+          memory_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_comments_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memory_comments_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "published_memory_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       published_profile_cards: {
         Row: {
-          generation_key: string | null
           current_activity: string | null
           current_place_name: string | null
           current_place_slug: string | null
           field_labels: string[] | null
+          generation_key: string | null
           id: string | null
           name: string | null
           photo_path: string | null
@@ -559,12 +781,12 @@ export type Database = {
       }
       published_profile_details: {
         Row: {
-          generation_key: string | null
           bio: string | null
           current_activity: string | null
           current_direction_story: string | null
           current_place_name: string | null
           current_place_slug: string | null
+          generation_key: string | null
           id: string | null
           instagram_url: string | null
           linkedin_url: string | null
@@ -581,6 +803,20 @@ export type Database = {
       }
     }
     Functions: {
+      admin_list_member_profiles: {
+        Args: never
+        Returns: {
+          email: string
+          generation_key: string
+          has_profile: boolean
+          is_published: boolean
+          name: string
+          profile_id: string
+          slug: string
+          updated_at: string
+          user_id: string
+        }[]
+      }
       complete_invitation_attempt: {
         Args: { actor_user_id: string; raw_attempt: string }
         Returns: undefined
@@ -651,19 +887,19 @@ export type Database = {
       }
       search_profiles: {
         Args: {
-          generation_key?: string
           field_slug?: string
+          generation_key?: string
           place_slug?: string
           query?: string
           result_limit?: number
           result_offset?: number
         }
         Returns: {
-          generation_key: string
           current_activity: string
           current_place_name: string
           current_place_slug: string
           field_labels: string[]
+          generation_key: string
           id: string
           name: string
           photo_path: string
@@ -704,12 +940,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -733,11 +969,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -758,11 +994,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -783,11 +1019,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -800,11 +1036,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
