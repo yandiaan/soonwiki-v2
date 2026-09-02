@@ -27,6 +27,18 @@ export interface AdminProfileRow {
   updatedAt: string;
 }
 
+export interface AdminMemberProfileRow {
+  userId: string;
+  email: string;
+  name: string;
+  slug: string | null;
+  generationKey: string | null;
+  profileId: string | null;
+  isPublished: boolean;
+  hasProfile: boolean;
+  updatedAt: string;
+}
+
 export interface AdminReportRow {
   id: string;
   reason: string;
@@ -96,6 +108,91 @@ export async function listAllProfilesForAdmin(
       updatedAt: row.updated_at,
     })),
   };
+}
+
+export async function listAllMemberProfilesForAdmin(
+  client: Client,
+  search?: string,
+): Promise<AdminResult<AdminMemberProfileRow[]>> {
+  // 1. Try secure RPC first
+  const rpcResult = await client.rpc('admin_list_member_profiles' as unknown as 'search_profiles');
+
+  if (!rpcResult.error && rpcResult.data && Array.isArray(rpcResult.data)) {
+    let list: AdminMemberProfileRow[] = (
+      rpcResult.data as unknown as Array<{
+        user_id: string;
+        email: string;
+        name: string;
+        slug: string | null;
+        generation_key: string | null;
+        profile_id: string | null;
+        is_published: boolean;
+        has_profile: boolean;
+        updated_at: string;
+      }>
+    ).map((row) => ({
+      userId: row.user_id,
+      email: row.email || '',
+      name: row.name || 'Tanpa nama',
+      slug: row.slug,
+      generationKey: row.generation_key,
+      profileId: row.profile_id,
+      isPublished: Boolean(row.is_published),
+      hasProfile: Boolean(row.has_profile),
+      updatedAt: row.updated_at,
+    }));
+
+    if (search) {
+      const lower = search.toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.name.toLowerCase().includes(lower) ||
+          p.email.toLowerCase().includes(lower) ||
+          (p.slug && p.slug.toLowerCase().includes(lower)),
+      );
+    }
+
+    return { ok: true, data: list };
+  }
+
+  // 2. Fallback: Query profiles directly
+  const profilesResult = await listAllProfilesForAdmin(client, search);
+  if (!profilesResult.ok) {
+    return profilesResult;
+  }
+
+  return {
+    ok: true,
+    data: profilesResult.data.map((p) => ({
+      userId: p.ownerId,
+      email: '',
+      name: p.name,
+      slug: p.slug,
+      generationKey: p.generationKey,
+      profileId: p.id,
+      isPublished: p.isPublished,
+      hasProfile: true,
+      updatedAt: p.updatedAt,
+    })),
+  };
+}
+
+export async function getUnpublishedMembers(
+  client: Client,
+): Promise<AdminResult<Array<{ userId: string; email: string; name: string; isDraft: boolean }>>> {
+  const result = await listAllMemberProfilesForAdmin(client);
+  if (!result.ok) return result;
+
+  const unpublished = result.data
+    .filter((member) => !member.isPublished)
+    .map((member) => ({
+      userId: member.userId,
+      email: member.email,
+      name: member.name,
+      isDraft: member.hasProfile,
+    }));
+
+  return { ok: true, data: unpublished };
 }
 
 export async function setProfilePublished(

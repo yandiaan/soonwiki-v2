@@ -2,10 +2,15 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
   deleteProfileAsAdmin,
-  listAllProfilesForAdmin,
+  listAllMemberProfilesForAdmin,
+  getUnpublishedMembers,
   setProfilePublished,
   transferProfileOwner,
 } from '@/lib/server/admin-repository';
+import {
+  sendProfileReminderEmail,
+  sendBatchProfileReminders,
+} from '@/lib/server/email-service';
 import { getMemberSession } from '@/lib/server/session';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { getGenerationName } from '@/lib/shared/generations';
@@ -19,6 +24,7 @@ if (!session || session.member?.role !== 'admin' || session.member.status !== 'a
 
 const supabase = createServerSupabase(Astro);
 let actionMessage = '';
+let actionSuccess = true;
 
 if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
@@ -29,19 +35,74 @@ if (Astro.request.method === 'POST') {
     const nextState = form.get('nextState') === 'true';
     const result = await setProfilePublished(supabase, profileId, nextState);
     actionMessage = result.ok ? 'Status publikasi diperbarui.' : 'Gagal memperbarui status.';
+    actionSuccess = result.ok;
   } else if (action === 'delete' && profileId) {
     const result = await deleteProfileAsAdmin(supabase, profileId);
     actionMessage = result.ok ? 'Profil dihapus.' : 'Gagal menghapus profil.';
+    actionSuccess = result.ok;
   } else if (action === 'transfer' && profileId) {
     const newOwnerId = String(form.get('newOwnerId') ?? '');
     const result = await transferProfileOwner(supabase, profileId, newOwnerId);
     actionMessage = result.ok ? 'Kepemilikan dipindahkan.' : 'Gagal memindahkan kepemilikan.';
+    actionSuccess = result.ok;
+  } else if (action === 'send-reminder') {
+    const email = String(form.get('email') ?? '').trim();
+    const name = String(form.get('name') ?? '').trim();
+    const userId = String(form.get('userId') ?? '').trim();
+    const isDraft = form.get('isDraft') === 'true';
+
+    if (!email) {
+      actionMessage = 'Gagal: Email member ini tidak ditemukan di database.';
+      actionSuccess = false;
+    } else {
+      const result = await sendProfileReminderEmail(
+        { userId, email, name, isDraft },
+        Astro.url.origin,
+      );
+      if (result.ok) {
+        actionMessage = `Email pengingat berhasil dikirim ke ${email}.`;
+        actionSuccess = true;
+      } else {
+        actionMessage = `Gagal mengirim email ke ${email}: ${result.error ?? 'Terjadi kesalahan'}`;
+        actionSuccess = false;
+      }
+    }
+  } else if (action === 'send-all-reminders') {
+    const unpublishedResult = await getUnpublishedMembers(supabase);
+    if (!unpublishedResult.ok) {
+      actionMessage = 'Gagal memuat daftar member draf.';
+      actionSuccess = false;
+    } else {
+      const validRecipients = unpublishedResult.data.filter((r) => r.email && r.email.includes('@'));
+      if (validRecipients.length === 0) {
+        actionMessage = 'Tidak ada member draf/belum isi profil dengan alamat email yang valid.';
+        actionSuccess = false;
+      } else {
+        const summary = await sendBatchProfileReminders(validRecipients, Astro.url.origin);
+        actionMessage = `Pengiriman selesai! Berhasil: ${summary.successCount}, Gagal: ${summary.failedCount} dari total ${summary.total} member draf.`;
+        actionSuccess = summary.failedCount === 0;
+      }
+    }
   }
 }
 
 const search = Astro.url.searchParams.get('q') ?? '';
-const profilesResult = await listAllProfilesForAdmin(supabase, search || undefined);
-const profiles = profilesResult.ok ? profilesResult.data : [];
+const filter = Astro.url.searchParams.get('filter') ?? 'all';
+
+const profilesResult = await listAllMemberProfilesForAdmin(supabase, search || undefined);
+const allMembers = profilesResult.ok ? profilesResult.data : [];
+
+const totalPublished = allMembers.filter((m) => m.isPublished).length;
+const totalUnpublished = allMembers.filter((m) => !m.isPublished).length;
+const totalWithEmail = allMembers.filter((m) => !m.isPublished && m.email).length;
+
+const filteredMembers = allMembers.filter((member) => {
+  if (filter === 'published') return member.isPublished;
+  if (filter === 'draft') return !member.isPublished && member.hasProfile;
+  if (filter === 'uninitialized') return !member.hasProfile;
+  if (filter === 'unpublished') return !member.isPublished;
+  return true;
+});
 
 const navLinks = [
   { href: '/admin', label: 'Dashboard' },
@@ -58,7 +119,7 @@ const currentPath = Astro.url.pathname;
 <BaseLayout title="Admin · Orang" description="Kelola profil member SoonWiki.">
   <main id="main-content" class="admin">
     <p class="frame-number">ADMIN</p>
-    <h1>Orang</h1>
+    <h1>Orang &amp; Profil</h1>
     <nav class="admin__nav" aria-label="Navigasi admin">
       {
         navLinks.map((link) => (
@@ -68,55 +129,161 @@ const currentPath = Astro.url.pathname;
         ))
       }
     </nav>
-    {actionMessage && <p role="status">{actionMessage}</p>}
-    <form class="admin__search" method="get">
-      <input type="search" name="q" value={search} placeholder="Cari nama" />
-      <button type="submit">Cari</button>
-    </form>
-    <table>
-      <thead>
-        <tr>
-          <th>Nama</th>
-          <th>Batch</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          profiles.map((profile) => (
-            <tr>
-              <td>
-                <a href={`/people/${profile.slug}`}>{profile.name}</a>
-              </td>
-              <td>{getGenerationName(profile.generationKey)}</td>
-              <td>{profile.isPublished ? 'Terbit' : 'Draf'}</td>
-              <td>
-                <form class="inline" method="post">
-                  <input type="hidden" name="action" value="toggle-publish" />
-                  <input type="hidden" name="profileId" value={profile.id} />
-                  <input type="hidden" name="nextState" value={String(!profile.isPublished)} />
-                  <button type="submit">
-                    {profile.isPublished ? 'Batalkan terbit' : 'Terbitkan'}
-                  </button>
-                </form>
-                <form class="inline" method="post">
-                  <input type="hidden" name="action" value="delete" />
-                  <input type="hidden" name="profileId" value={profile.id} />
-                  <button type="submit">Hapus</button>
-                </form>
-                <form class="inline" method="post">
-                  <input type="hidden" name="action" value="transfer" />
-                  <input type="hidden" name="profileId" value={profile.id} />
-                  <input type="text" name="newOwnerId" placeholder="user_id pemilik baru" />
-                  <button type="submit">Pindahkan</button>
-                </form>
-              </td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
+
+    <!-- Stat Cards -->
+    <div class="admin__cards">
+      <div class="admin__card">
+        <span>Total Member</span>
+        <strong>{allMembers.length}</strong>
+      </div>
+      <div class="admin__card">
+        <span>Profil Terbit</span>
+        <strong style="color: #23376e;">{totalPublished}</strong>
+      </div>
+      <div class="admin__card">
+        <span>Draf / Belum Terbit</span>
+        <strong style="color: #c84428;">{totalUnpublished}</strong>
+      </div>
+    </div>
+
+    <!-- Feedback Message Banner -->
+    {
+      actionMessage && (
+        <div class={`admin__alert ${actionSuccess ? 'admin__alert--success' : 'admin__alert--error'}`} role={actionSuccess ? 'status' : 'alert'}>
+          {actionMessage}
+        </div>
+      )
+    }
+
+    <!-- Search and Filter Bar -->
+    <div class="admin__toolbar">
+      <form class="admin__search" method="get">
+        <input type="search" name="q" value={search} placeholder="Cari nama atau email..." />
+        {filter !== 'all' && <input type="hidden" name="filter" value={filter} />}
+        <button type="submit">Cari</button>
+      </form>
+
+      {totalWithEmail > 0 && (
+        <form method="post" onsubmit="return confirm('Kirim email reminder ke SEMUA ' + this.dataset.count + ' member yang belum mempublikasikan profilnya?');" data-count={totalWithEmail}>
+          <input type="hidden" name="action" value="send-all-reminders" />
+          <button type="submit" class="button--cta">
+            ✉️ Kirim Pengingat ke Semua Draf ({totalWithEmail})
+          </button>
+        </form>
+      )}
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs" role="tablist">
+      <a href={`?q=${search}&filter=all`} class:list={['filter-tab', { active: filter === 'all' }]}>
+        Semua ({allMembers.length})
+      </a>
+      <a href={`?q=${search}&filter=published`} class:list={['filter-tab', { active: filter === 'published' }]}>
+        Terbit ({totalPublished})
+      </a>
+      <a href={`?q=${search}&filter=unpublished`} class:list={['filter-tab', { active: filter === 'unpublished' }]}>
+        Belum Terbit ({totalUnpublished})
+      </a>
+    </div>
+
+    <!-- Members Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Email</th>
+            <th>Batch</th>
+            <th>Status</th>
+            <th>Aksi &amp; Reminder</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            filteredMembers.length === 0 ? (
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2.5rem; color: var(--ink-soft);">
+                  Tidak ada member yang sesuai dengan filter atau pencarian.
+                </td>
+              </tr>
+            ) : (
+              filteredMembers.map((member) => (
+                <tr>
+                  <td>
+                    <div class="member-cell">
+                      {member.slug ? (
+                        <a href={`/people/${member.slug}`} class="member-name">
+                          {member.name}
+                        </a>
+                      ) : (
+                        <span class="member-name">{member.name}</span>
+                      )}
+                      {!member.hasProfile && (
+                        <span class="tag-uninitialized">Belum membuat profil</span>
+                      )}
+                    </div>
+                  </td>
+                  <td>
+                    <span class="member-email">{member.email || '—'}</span>
+                  </td>
+                  <td>{member.generationKey ? getGenerationName(member.generationKey) : '—'}</td>
+                  <td>
+                    {member.isPublished ? (
+                      <span class="badge badge--published">Terbit</span>
+                    ) : member.hasProfile ? (
+                      <span class="badge badge--draft">Draf</span>
+                    ) : (
+                      <span class="badge badge--empty">Belum Isi</span>
+                    )}
+                  </td>
+                  <td class="action-cell">
+                    {/* Reminder Button */}
+                    {!member.isPublished && (
+                      <form class="inline" method="post">
+                        <input type="hidden" name="action" value="send-reminder" />
+                        <input type="hidden" name="userId" value={member.userId} />
+                        <input type="hidden" name="name" value={member.name} />
+                        <input type="hidden" name="email" value={member.email} />
+                        <input type="hidden" name="isDraft" value={String(member.hasProfile)} />
+                        <button
+                          type="submit"
+                          class="button--reminder"
+                          disabled={!member.email}
+                          title={member.email ? `Kirim email reminder ke ${member.email}` : 'Email tidak tersedia'}
+                        >
+                          ✉️ Kirim Reminder
+                        </button>
+                      </form>
+                    )}
+
+                    {/* Publish/Unpublish */}
+                    {member.profileId && (
+                      <form class="inline" method="post">
+                        <input type="hidden" name="action" value="toggle-publish" />
+                        <input type="hidden" name="profileId" value={member.profileId} />
+                        <input type="hidden" name="nextState" value={String(!member.isPublished)} />
+                        <button type="submit" class="button--secondary">
+                          {member.isPublished ? 'Batal Terbit' : 'Terbitkan'}
+                        </button>
+                      </form>
+                    )}
+
+                    {/* Delete Profile */}
+                    {member.profileId && (
+                      <form class="inline" method="post" onsubmit="return confirm('Yakin ingin menghapus profil ini?');">
+                        <input type="hidden" name="action" value="delete" />
+                        <input type="hidden" name="profileId" value={member.profileId} />
+                        <button type="submit" class="button--danger">Hapus</button>
+                      </form>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )
+          }
+        </tbody>
+      </table>
+    </div>
   </main>
 </BaseLayout>
 
@@ -132,5 +299,183 @@ const currentPath = Astro.url.pathname;
   h1 {
     margin: 0.25rem 0 0;
     font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .admin__alert {
+    margin-block: 1rem 1.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+
+  .admin__alert--success {
+    background: #edf7ed;
+    color: #1e4620;
+    border: 1px solid #c8e6c9;
+  }
+
+  .admin__alert--error {
+    background: #fdf2f2;
+    color: #9b1c1c;
+    border: 1px solid #f8b4b4;
+  }
+
+  .admin__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block: 1.5rem;
+  }
+
+  .admin__toolbar .admin__search {
+    margin-block: 0;
+    flex: 1;
+    min-width: 260px;
+  }
+
+  .button--cta {
+    min-height: 44px;
+    padding-inline: 1.25rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: #c84428;
+    color: #ffffff !important;
+    font-weight: 750;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 160ms ease;
+  }
+
+  .button--cta:hover {
+    opacity: 0.9;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 0.5rem;
+  }
+
+  .filter-tab {
+    padding: 0.4rem 0.85rem;
+    border-radius: 0.375rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: all 150ms ease;
+  }
+
+  .filter-tab:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+  }
+
+  .filter-tab.active {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .member-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .member-name {
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  a.member-name:hover {
+    text-decoration: underline;
+  }
+
+  .member-email {
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+
+  .tag-uninitialized {
+    font-size: 0.72rem;
+    color: #b45309;
+    font-style: italic;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .badge--published {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+
+  .badge--draft {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  .badge--empty {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+
+  .action-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .button--reminder {
+    background: #edf1fa;
+    color: #23376e;
+    border-color: #cbd5e1;
+    font-size: 0.8rem;
+  }
+
+  .button--reminder:hover:not(:disabled) {
+    background: #23376e;
+    color: #ffffff;
+  }
+
+  .button--reminder:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .button--secondary {
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.8rem;
+  }
+
+  .button--danger {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+    font-size: 0.8rem;
+  }
+
+  .button--danger:hover {
+    background: #b91c1c;
+    color: #ffffff;
   }
 </style>
