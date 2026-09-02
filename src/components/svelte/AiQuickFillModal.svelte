@@ -139,24 +139,6 @@ Website: https://diansetiawan.dev`;
       <!-- Header -->
       <div class="ai-modal-header">
         <div class="ai-header-lead">
-          <div class="ai-badge">
-            <svg
-              viewBox="0 0 24 24"
-              width="15"
-              height="15"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path
-                d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"
-              />
-            </svg>
-            <span>OpenRouter AI</span>
-          </div>
           <h2 id="ai-modal-title">Quick Fill Profil dengan AI</h2>
         </div>
 
