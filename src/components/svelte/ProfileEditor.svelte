@@ -1,4 +1,5 @@
 <script lang="ts">
+  import AiQuickFillModal from '@/components/svelte/AiQuickFillModal.svelte';
   import DuplicateWarning from '@/components/svelte/DuplicateWarning.svelte';
   import EditorTour from '@/components/svelte/EditorTour.svelte';
   import FieldPicker from '@/components/svelte/FieldPicker.svelte';
@@ -7,6 +8,7 @@
   import MediaUploader from '@/components/svelte/MediaUploader.svelte';
   import ProudMomentEditor from '@/components/svelte/ProudMomentEditor.svelte';
   import { clearDraft, loadDraft, saveDraft } from '@/lib/browser/local-draft';
+  import type { ExtractedProfileData } from '@/lib/server/ai-service';
   import { SOON_GENERATIONS, formatGenerationBadge } from '@/lib/shared/generations';
   import { publicStorageUrl } from '@/lib/shared/paths';
   import { profileInputSchema } from '@/lib/shared/profile-schema';
@@ -119,6 +121,7 @@
   let showDraftBanner = $state(false);
   let showMobilePreview = $state(false);
   let showTour = $state(false);
+  let showAiModal = $state(false);
 
   let mounted = false;
   let draftTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -310,6 +313,71 @@
     }
   }
 
+  function handleApplyAiData(data: ExtractedProfileData, mode: 'fill_empty' | 'overwrite_all') {
+    if (mode === 'overwrite_all') {
+      if (data.name) form.name = data.name;
+      if (data.generationKey) form.generationKey = data.generationKey;
+      if (data.bio) form.bio = data.bio;
+      if (data.location) form.location = data.location;
+      if (data.currentActivity) form.currentActivity = data.currentActivity;
+      if (data.currentPlaceName) form.currentPlaceName = data.currentPlaceName;
+      if (data.sinceSoonStory) form.sinceSoonStory = data.sinceSoonStory;
+      if (data.turningPointStory) form.turningPointStory = data.turningPointStory;
+      if (data.currentDirectionStory) form.currentDirectionStory = data.currentDirectionStory;
+      if (data.linkedinUrl) form.linkedinUrl = data.linkedinUrl;
+      if (data.instagramUrl) form.instagramUrl = data.instagramUrl;
+      if (data.websiteUrl) form.websiteUrl = data.websiteUrl;
+
+      if (data.journeys && data.journeys.length > 0) {
+        journeys = data.journeys.map((j) => ({
+          activity: j.activity,
+          placeName: j.placeName || '',
+          startYear: j.startYear ? String(j.startYear) : '',
+          endYear: j.endYear ? String(j.endYear) : '',
+          story: j.story || '',
+        }));
+      }
+
+      if (data.fieldIds && data.fieldIds.length > 0) {
+        selectedFieldIds = [...new Set([...selectedFieldIds, ...data.fieldIds])];
+      }
+    } else {
+      if (!form.name.trim() && data.name) form.name = data.name;
+      if (!form.generationKey.trim() && data.generationKey) form.generationKey = data.generationKey;
+      if (!form.bio.trim() && data.bio) form.bio = data.bio;
+      if (!form.location.trim() && data.location) form.location = data.location;
+      if (!form.currentActivity.trim() && data.currentActivity)
+        form.currentActivity = data.currentActivity;
+      if (!form.currentPlaceName.trim() && data.currentPlaceName)
+        form.currentPlaceName = data.currentPlaceName;
+      if (!form.sinceSoonStory.trim() && data.sinceSoonStory)
+        form.sinceSoonStory = data.sinceSoonStory;
+      if (!form.turningPointStory.trim() && data.turningPointStory)
+        form.turningPointStory = data.turningPointStory;
+      if (!form.currentDirectionStory.trim() && data.currentDirectionStory)
+        form.currentDirectionStory = data.currentDirectionStory;
+      if (!form.linkedinUrl.trim() && data.linkedinUrl) form.linkedinUrl = data.linkedinUrl;
+      if (!form.instagramUrl.trim() && data.instagramUrl) form.instagramUrl = data.instagramUrl;
+      if (!form.websiteUrl.trim() && data.websiteUrl) form.websiteUrl = data.websiteUrl;
+
+      if (journeys.length === 0 && data.journeys && data.journeys.length > 0) {
+        journeys = data.journeys.map((j) => ({
+          activity: j.activity,
+          placeName: j.placeName || '',
+          startYear: j.startYear ? String(j.startYear) : '',
+          endYear: j.endYear ? String(j.endYear) : '',
+          story: j.story || '',
+        }));
+      }
+
+      if (selectedFieldIds.length === 0 && data.fieldIds && data.fieldIds.length > 0) {
+        selectedFieldIds = [...data.fieldIds];
+      }
+    }
+
+    saveState = 'dirty';
+  }
+
   function handleKeydown(e: KeyboardEvent) {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault();
@@ -354,6 +422,8 @@
 
 <EditorTour bind:isOpen={showTour} onTabChange={(tab) => (currentTab = tab)} />
 
+<AiQuickFillModal bind:isOpen={showAiModal} {availableFields} onApply={handleApplyAiData} />
+
 <div class="editor-layout">
   <!-- Main Editing Studio -->
   <div class="editor-main">
@@ -365,6 +435,29 @@
           <span class="completion-value">{completionStats.score}% Selesai</span>
         </div>
         <div class="completion-actions">
+          <button
+            type="button"
+            class="ai-quickfill-btn"
+            onclick={() => (showAiModal = true)}
+            aria-label="Isi otomatis profil dengan bantuan AI"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"
+              />
+            </svg>
+            <span>Quick Fill AI</span>
+          </button>
           <button
             type="button"
             class="tour-trigger-btn"
@@ -1126,6 +1219,32 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .ai-quickfill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    background: color-mix(in srgb, var(--accent-soft) 85%, var(--surface));
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 750;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      transform 150ms var(--ease-out);
+  }
+
+  .ai-quickfill-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+    transform: translateY(-1px);
   }
 
   .tour-trigger-btn {
